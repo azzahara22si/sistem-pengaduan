@@ -12,11 +12,11 @@ return new class extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('role')->default('mahasiswa');
-    });
-}
+    {
+        Schema::table('pengaduans', function (Blueprint $table) {
+            //
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('pengaduans', function (Blueprint $table) {
             //
         });
     }

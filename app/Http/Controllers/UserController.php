@@ -3,13 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UnitLayanan;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::with('unit')->get();
+        $units = UnitLayanan::all();
 
-        return view('admin.user', compact('users'));
+        return view('admin-spmi.kelola-user', compact('users', 'units'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:mahasiswa,admin,admin_spmi',
+            'unit_id' => 'required_if:role,admin|nullable|exists:unit_layanans,id',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'unit_id' => $request->role === 'admin' ? $request->unit_id : null,
+        ]);
+
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$id,
+            'role' => 'required|in:mahasiswa,admin,admin_spmi',
+            'unit_id' => 'required_if:role,admin|nullable|exists:unit_layanans,id',
+        ]);
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'unit_id' => $request->role === 'admin' ? $request->unit_id : null,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('user.index')->with('success', 'User berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
     }
 }

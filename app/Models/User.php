@@ -18,7 +18,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role' // ✅ WAJIB ADA
+        'role',
+        'unit_id'
     ];
 
     /**
@@ -53,5 +54,10 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role === 'admin';
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(UnitLayanan::class, 'unit_id');
     }
 }

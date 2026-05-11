@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['mahasiswa', 'admin', 'admin_spmi'])->default('mahasiswa');
+            $table->foreignId('unit_id')->nullable()->constrained('unit_layanans')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });

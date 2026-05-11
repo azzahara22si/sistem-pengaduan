@@ -15,7 +15,12 @@ class Pengaduan extends Model
         'deskripsi',
         'unit_tujuan',
         'urgensi',
-        'status'
+        'klasifikasi',
+        'foto',
+        'status',
+        'unit_id',
+        'rating',
+        'feedback'
     ];
 
     // Relasi ke user (yang membuat pengaduan)
@@ -24,9 +29,14 @@ class Pengaduan extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke tanggapan (1 pengaduan = 1 tanggapan)
-    public function tanggapan()
+    public function unit()
     {
-        return $this->hasOne(Tanggapan::class);
+        return $this->belongsTo(UnitLayanan::class, 'unit_id');
     }
+
+    // Relasi ke tanggapan (1 pengaduan = 1 tanggapan)
+   public function tanggapan()
+{
+    return $this->hasMany(Tanggapan::class);
+}
 }
