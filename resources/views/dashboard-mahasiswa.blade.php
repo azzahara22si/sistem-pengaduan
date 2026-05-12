@@ -23,6 +23,14 @@
             <div class="stat-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
         </div>
 
+        <div class="stat-card yellow">
+            <div class="stat-info">
+                <h4>Menunggu</h4>
+                <div class="stat-number">{{ $stats['menunggu'] }}</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-hourglass-start"></i></div>
+        </div>
+
         <div class="stat-card orange">
             <div class="stat-info">
                 <h4>Sedang Diproses</h4>
@@ -38,15 +46,6 @@
             </div>
             <div class="stat-icon"><i class="fa-solid fa-square-check"></i></div>
         </div>
-
-        <a href="{{ route('pengaduan.create') }}" style="text-decoration: none;">
-            <div class="stat-card gray">
-                <div class="stat-info" style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-circle-plus" style="font-size: 24px;"></i>
-                    <h4 style="margin: 0;">Buat Pengaduan Baru</h4>
-                </div>
-            </div>
-        </a>
     </div>
 
     <div class="table-card">

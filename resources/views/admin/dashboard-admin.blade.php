@@ -15,7 +15,15 @@
     </div>
 
     <div class="stats-grid">
-        <div class="stat-card blue">
+        <div class="stat-card purple">
+            <div class="stat-info">
+                <h4>Total Pengaduan</h4>
+                <div class="stat-number">{{ $stats['total'] }}</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
+        </div>
+
+        <div class="stat-card light-blue">
             <div class="stat-info">
                 <h4>Pengaduan Baru</h4>
                 <div class="stat-number">{{ $stats['baru'] }}</div>

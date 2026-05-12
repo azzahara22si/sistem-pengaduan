@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pengaduan;
 use App\Models\UnitLayanan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class PengaduanController extends Controller
@@ -102,6 +103,60 @@ class PengaduanController extends Controller
     public function show(Pengaduan $pengaduan)
     {
         return view('pengaduan.show', compact('pengaduan'));
+    }
+
+    public function edit(Pengaduan $pengaduan)
+    {
+        if (Auth::user()->role === 'mahasiswa' && $pengaduan->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit aduan ini.');
+        }
+
+        if ($pengaduan->status !== 'menunggu') {
+            return redirect()->back()->with('error', 'Hanya pengaduan dengan status menunggu yang dapat diedit.');
+        }
+
+        $units = UnitLayanan::all();
+        return view('pengaduan.edit', compact('pengaduan', 'units'));
+    }
+
+    public function update(Request $request, Pengaduan $pengaduan)
+    {
+        if (Auth::user()->role === 'mahasiswa' && $pengaduan->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit aduan ini.');
+        }
+
+        if ($pengaduan->status !== 'menunggu') {
+            return redirect()->back()->with('error', 'Hanya pengaduan dengan status menunggu yang dapat diedit.');
+        }
+
+        $request->validate([
+            'judul' => 'required',
+            'deskripsi' => 'required',
+            'unit_tujuan' => 'required',
+            'urgensi' => 'required',
+            'klasifikasi' => 'required|in:pengaduan,aspirasi,permintaan_informasi',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $data = [
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'unit_tujuan' => $request->unit_tujuan,
+            'urgensi' => $request->urgensi,
+            'klasifikasi' => $request->klasifikasi,
+        ];
+
+        if ($request->hasFile('foto')) {
+            if ($pengaduan->foto) {
+                Storage::disk('public')->delete($pengaduan->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('pengaduan', 'public');
+        }
+
+        $pengaduan->update($data);
+
+        return redirect()->route('pengaduan.show', $pengaduan->id)
+            ->with('success', 'Pengaduan berhasil diperbarui.');
     }
 
     public function destroy($id)

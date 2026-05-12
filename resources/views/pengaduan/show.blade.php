@@ -119,6 +119,64 @@
     }
 
     .btn-back:hover { color: #0d428e; }
+
+    .action-panel {
+        margin-top: 35px;
+        padding: 25px 20px;
+        border-top: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: center;
+    }
+
+    .action-panel p {
+        margin: 0;
+        color: #475569;
+        font-size: 13px;
+        flex: 1 1 100%;
+        line-height: 1.6;
+    }
+
+    .action-panel-item {
+        flex: 1 1 220px;
+        min-width: 220px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 22px;
+        border-radius: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .btn-edit {
+        background: #0d428e;
+        color: #fff;
+    }
+
+    .btn-delete {
+        background: #ef4444;
+        color: #fff;
+    }
+
+    .action-btn.delete {
+        border: none;
+    }
 </style>
 @endpush
 
@@ -197,6 +255,26 @@
         <div style="margin-top: 30px;">
             <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 10px; font-weight: 600;">Bukti Foto</label>
             <img src="{{ asset('storage/' . $pengaduan->foto) }}" alt="Bukti Foto" class="image-preview">
+        </div>
+        @endif
+
+        @if(Auth::user()->role === 'mahasiswa' && $pengaduan->status === 'menunggu')
+        <div class="action-panel">
+            <p>Pengaduan dengan status <strong>Menunggu</strong> masih bisa diedit atau dihapus.</p>
+            <div class="action-panel-item">
+                <a href="{{ route('pengaduan.edit', $pengaduan->id) }}" class="action-btn btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Pengaduan
+                </a>
+            </div>
+            <div class="action-panel-item">
+                <form action="{{ route('pengaduan.destroy', $pengaduan->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengaduan ini?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="action-btn btn-delete delete">
+                        <i class="fa-solid fa-trash"></i> Hapus Pengaduan
+                    </button>
+                </form>
+            </div>
         </div>
         @endif
     </div>

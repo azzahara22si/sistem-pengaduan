@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
             ->get();
 
         $stats = [
+            'total' => Pengaduan::where('unit_id', $unit_id)->count(),
             'baru' => Pengaduan::where('unit_id', $unit_id)->where('status', 'menunggu')->count(),
             'proses' => Pengaduan::where('unit_id', $unit_id)->where('status', 'proses')->count(),
             'selesai' => Pengaduan::where('unit_id', $unit_id)->where('status', 'selesai')->count(),
@@ -114,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
         $pengaduans = Pengaduan::where('user_id', $user->id)->latest()->take(5)->get();
         $stats = [
             'total' => Pengaduan::where('user_id', $user->id)->count(),
+            'menunggu' => Pengaduan::where('user_id', $user->id)->where('status', 'menunggu')->count(),
             'proses' => Pengaduan::where('user_id', $user->id)->where('status', 'proses')->count(),
             'selesai' => Pengaduan::where('user_id', $user->id)->where('status', 'selesai')->count(),
         ];

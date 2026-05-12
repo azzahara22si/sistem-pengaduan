@@ -885,36 +885,6 @@
 
     <section id="about">
 
-                </div>
-
-                <div class="panduan-card">
-
-                    <i class="fa-solid fa-image panduan-icon"></i>
-
-                    <h3 class="panduan-title">Lampirkan Bukti Pendukung</h3>
-
-                    <p class="panduan-desc">Tambahkan foto atau dokumen pendukung agar laporan lebih valid dan memudahkan proses verifikasi oleh pihak terkait.</p>
-
-                </div>
-
-                <div class="panduan-card">
-
-                    <i class="fa-solid fa-handshake panduan-icon"></i>
-
-                    <h3 class="panduan-title">Bersama Tingkatkan Kualitas Layanan</h3>
-
-                    <p class="panduan-desc">Setiap laporan yang disampaikan akan membantu menciptakan lingkungan kampus yang lebih nyaman, responsif, dan berkualitas.</p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <section id="about">
-
         <div class="sec-label"><span>About</span></div>
 
         <div class="card fade-up">

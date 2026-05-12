@@ -363,6 +363,9 @@
                                 @endif
 
                                 @if(Auth::user()->role === 'mahasiswa' && $p->status === 'menunggu')
+                                    <a href="{{ route('pengaduan.edit', $p->id) }}" class="btn-action btn-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
                                     <button type="button" class="btn-action btn-hapus" onclick="openDeleteModal({{ $p->id }}, '{{ $p->judul }}')">
                                         <i class="fa-solid fa-trash"></i> Hapus
                                     </button>

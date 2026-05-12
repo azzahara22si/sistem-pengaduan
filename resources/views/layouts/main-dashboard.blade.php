@@ -194,7 +194,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -216,8 +216,11 @@
         }
 
         .stat-card.blue { background: #4a9eff; }
-        .stat-card.orange { background: #f5a623; }
-        .stat-card.green { background: #4caf50; }
+        .stat-card.purple { background: #7c3aed; }
+        .stat-card.light-blue { background: #60a5fa; }
+        .stat-card.yellow { background: #f59e0b; }
+        .stat-card.orange { background: #f97316; }
+        .stat-card.green { background: #22c55e; }
         .stat-card.gray { background: #94a3b8; }
 
         .stat-info h4 { font-size: 14px; margin-bottom: 10px; font-weight: 500; }
