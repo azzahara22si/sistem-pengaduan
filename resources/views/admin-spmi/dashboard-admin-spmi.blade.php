@@ -29,8 +29,10 @@
         </div>
     </div>
 
-    <div class="table-card" style="overflow-x: auto;">
-        <table>
+    <div class="table-card">
+        <div class="table-responsive">
+            <div style="min-width: 800px;">
+                <table>
             <thead>
                 <tr>
                     <th>No</th>
@@ -71,6 +73,8 @@
                 @endforelse
             </tbody>
         </table>
+            </div>
+        </div>
     </div>
 
     <div style="margin-top: 25px; display: flex; justify-content: center;">

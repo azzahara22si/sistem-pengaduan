@@ -244,9 +244,17 @@
             justify-content: space-between;
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 13px; }
-        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13.5px; color: #1e293b; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 12px; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #1e293b; }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 15px;
+            border-radius: 12px;
+        }
 
         .pagination {
             display: flex;
@@ -322,9 +330,9 @@
             body { position: relative; }
             .sidebar { 
                 position: fixed;
-                left: -200px;
+                left: -240px;
                 z-index: 2000;
-                width: 200px !important;
+                width: 240px !important;
                 height: 100vh;
                 transition: left 0.3s ease;
             }
@@ -332,16 +340,17 @@
                 left: 0;
             }
             .sidebar.collapsed {
-                left: -200px;
+                left: -240px;
             }
             .main-wrapper {
                 width: 100%;
+                margin-left: 0 !important;
             }
             .topbar {
                 justify-content: space-between;
                 padding: 0 15px;
             }
-            .content { padding: 20px 15px; }
+            .content { padding: 15px; }
 
             .sidebar-overlay {
                 display: none;
@@ -354,6 +363,18 @@
             .sidebar-overlay.active {
                 display: block;
             }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-info h4 { font-size: 11px; }
+            .stat-number { font-size: 18px; }
         }
 
         @media (max-width: 480px) {

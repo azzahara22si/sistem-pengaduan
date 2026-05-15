@@ -14,9 +14,10 @@
     </p>
 </div>
 
-<div class="table-card" style="overflow-x: auto;">
-    <div style="min-width: 900px;">
-        <table>
+<div class="table-card">
+    <div class="table-responsive">
+        <div style="min-width: 900px;">
+            <table>
             <thead>
                 <tr>
                     <th style="width: 60px;">No</th>
@@ -91,6 +92,7 @@
             </tbody>
         </table>
     </div>
+</div>
 </div>
 
 <div style="margin-top: 30px; display: flex; justify-content: center;">

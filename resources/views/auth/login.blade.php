@@ -92,12 +92,19 @@
         .forgot-link {
             display: block;
             text-align: right;
-            color: #2e6091;
+            color: #ffffff;
             font-size: 12px;
             text-decoration: none;
             margin-bottom: 30px;
             padding-right: 10px;
             font-weight: 500;
+            opacity: 0.9;
+            transition: all 0.3s;
+        }
+
+        .forgot-link:hover {
+            opacity: 1;
+            text-decoration: underline;
         }
 
         .login-btn {

@@ -145,6 +145,12 @@
         min-width: 220px;
     }
 
+    .action-panel-item form {
+        margin: 0;
+        display: block;
+        height: 100%;
+    }
+
     .action-btn {
         display: inline-flex;
         align-items: center;
@@ -157,6 +163,12 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
         width: 100%;
         white-space: nowrap;
+        border: none;
+        font-family: inherit;
+        font-size: 14px;
+        cursor: pointer;
+        line-height: 1.5;
+        box-sizing: border-box;
     }
 
     .action-btn:hover {
@@ -174,8 +186,34 @@
         color: #fff;
     }
 
-    .action-btn.delete {
-        border: none;
+    @media (max-width: 992px) {
+        .detail-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .detail-card {
+            padding: 20px;
+        }
+        .detail-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .action-panel {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 20px 15px;
+        }
+        .action-panel-item {
+            width: 100%;
+            min-width: 0;
+        }
     }
 </style>
 @endpush

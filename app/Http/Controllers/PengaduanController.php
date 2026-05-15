@@ -43,7 +43,10 @@ class PengaduanController extends Controller
             });
         }
 
-        $pengaduans = $query->latest()->paginate(10);
+        $pengaduans = $query->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
+            ->orderByRaw("CASE WHEN urgensi = 'tinggi' THEN 0 WHEN urgensi = 'sedang' THEN 1 ELSE 2 END ASC")
+            ->latest()
+            ->paginate(10);
 
         return view('pengaduan.index', compact('pengaduans', 'units'));
     }

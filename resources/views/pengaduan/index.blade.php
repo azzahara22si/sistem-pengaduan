@@ -116,6 +116,18 @@
     .klasifikasi-aspirasi { background: #fef3c7; color: #92400e; }
     .klasifikasi-permintaan_informasi { background: #dbeafe; color: #1e40af; }
 
+    .urgensi-badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .urgensi-tinggi { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .urgensi-sedang { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+    .urgensi-rendah { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
     .action-group {
         display: flex;
         align-items: center;
@@ -166,10 +178,12 @@
 
     .pagination {
         display: flex;
+        flex-wrap: wrap;
         list-style: none;
         padding: 0;
         gap: 8px;
         align-items: center;
+        justify-content: center;
     }
 
     .pagination li a, .pagination li span {
@@ -239,6 +253,69 @@
             padding: 20px !important;
         }
     }
+
+    /* Table Enhancements */
+    table {
+        border-collapse: separate !important;
+        border-spacing: 0;
+    }
+
+    th {
+        text-transform: uppercase;
+        font-size: 11.5px !important;
+        letter-spacing: 0.5px;
+        background-color: #f8fafc;
+        border-bottom: 2px solid #e2e8f0 !important;
+        padding: 14px 15px !important;
+        color: #475569 !important;
+    }
+    
+    th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+    th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
+    tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    tbody tr:hover {
+        background-color: #f8fafc;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    td {
+        padding: 16px 15px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        vertical-align: middle;
+    }
+
+    .table-card {
+        border-radius: 20px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+    
+    .filter-bar {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        border: 1px solid rgba(0,0,0,0.04);
+        margin-bottom: 20px;
+    }
+
+    .search-wrap {
+        border: 1.5px solid #e2e8f0;
+        transition: border-color 0.3s;
+    }
+
+    .search-wrap:focus-within {
+        border-color: #0d428e;
+    }
+    
+    .filter-select:focus, .filter-date:focus {
+        border-color: #0d428e;
+    }
 </style>
 @endpush
 
@@ -299,8 +376,8 @@
         </div>
     @endif
 
-    <div class="table-card" style="overflow-x: auto;">
-        <div style="min-width: 800px;">
+    <div class="table-card">
+        <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
@@ -310,7 +387,22 @@
                         <th>Pengirim</th>
                         @endif
                         <th>Klasifikasi</th>
-                        <th>
+                        <th>Urgensi</th>
+                        <th>Unit Tujuan</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($pengaduans as $index => $p)
+                    <tr>
+                        <td>{{ ($pengaduans->currentPage() - 1) * $pengaduans->perPage() + $index + 1 }}</td>
+                        <td style="font-weight: 600; color: #0d2d6e;">{{ $p->judul }}</td>
+                        @if(Auth::user()->role !== 'mahasiswa')
+                        <td style="font-size: 12px;">{{ $p->user->name ?? 'Mahasiswa' }}</td>
+                        @endif
+                        <td>
                             @php
                                 $klasifikasi = $p->klasifikasi ?? 'pengaduan';
                                 $icons = [
@@ -329,20 +421,11 @@
                                 {{ $labels[$klasifikasi] }}
                             </span>
                         </td>
-                        <td>Unit Tujuan</th>
-                        <th>Tanggal</th>
-                        <th>Status</th>
-                        <th style="text-align: center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($pengaduans as $index => $p)
-                    <tr>
-                        <td>{{ ($pengaduans->currentPage() - 1) * $pengaduans->perPage() + $index + 1 }}</td>
-                        <td style="font-weight: 600; color: #0d2d6e;">{{ $p->judul }}</td>
-                        @if(Auth::user()->role !== 'mahasiswa')
-                        <td style="font-size: 12px;">{{ $p->user->name ?? 'Mahasiswa' }}</td>
-                        @endif
+                        <td style="text-align: center;">
+                            <span class="urgensi-badge urgensi-{{ strtolower($p->urgensi ?? 'sedang') }}">
+                                {{ $p->urgensi ?? 'Sedang' }}
+                            </span>
+                        </td>
                         <td>{{ $p->unit_tujuan }}</td>
                         <td style="font-size: 12px;">{{ $p->created_at->format('d/m/Y') }}</td>
                         <td>
@@ -389,7 +472,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="{{ Auth::user()->role === 'mahasiswa' ? 6 : 7 }}" style="text-align: center; padding: 40px; color: #94a3b8;">
+                        <td colspan="{{ Auth::user()->role === 'mahasiswa' ? 8 : 9 }}" style="text-align: center; padding: 40px; color: #94a3b8;">
                             <i class="fa-solid fa-folder-open" style="font-size: 30px; display: block; margin-bottom: 10px;"></i>
                             Belum ada data pengaduan.
                         </td>
