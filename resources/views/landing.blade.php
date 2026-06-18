@@ -289,9 +289,9 @@
         </a>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
+            <li><a href="#panduan">Panduan</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#tujuan">Tujuan & Manfaat</a></li>
-            <li><a href="#panduan">Panduan</a></li>
             <li><a href="#statistik">Statistik</a></li>
             <li><a href="#kontak">Kontak</a></li>
             <li><a href="{{ route('login') }}" class="btn-login">Login</a></li>
@@ -377,9 +377,9 @@
         <div class="f-right">
             <span class="f-title">MEDIA SOSIAL</span>
             <div class="socials">
-                <a href="#" class="s-btn"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="s-btn"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#" class="s-btn"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://www.instagram.com/pcr_campus/" target="_blank" rel="noopener noreferrer" class="s-btn"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@PoliteknikCaltexRiauOfficial" target="_blank" rel="noopener noreferrer" class="s-btn"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://x.com/PolicaltexRiau" target="_blank" rel="noopener noreferrer" class="s-btn"><i class="fa-brands fa-twitter"></i></a>
             </div>
         </div>
     </footer>
@@ -420,9 +420,9 @@
             new Chart(document.getElementById('statusChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Menunggu', 'Proses', 'Selesai'],
+                    labels: ['Diajukan', 'Proses', 'Selesai'],
                     datasets: [{
-                        data: [stats.menunggu, stats.proses, stats.selesai],
+                        data: [stats.diajukan, stats.proses, stats.selesai],
                         backgroundColor: ['#f59e0b', '#3b82f6', '#10b981'],
                         borderRadius: 5
                     }]

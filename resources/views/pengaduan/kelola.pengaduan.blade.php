@@ -706,7 +706,10 @@
 
                         @if ($item->status !== 'Selesai')
 
-                            <a href="{{ route('pengaduan.salurkan', $item->id) }}" class="link-salurkan">Salurkan</a>
+                            <form action="{{ route('pengaduan.salurkan', $item->id) }}" method="POST" style="display:inline; margin:0; padding:0;">
+                                @csrf
+                                <button type="submit" class="link-salurkan" style="background:none; border:none; padding:0; cursor:pointer; font:inherit; color:#0d2d6e; font-weight:600;">Salurkan</button>
+                            </form>
 
                         @endif
 

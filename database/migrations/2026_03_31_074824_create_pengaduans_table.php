@@ -20,7 +20,7 @@ return new class extends Migration
         $table->text('deskripsi');
         $table->string('unit_tujuan');
         $table->string('urgensi');
-        $table->string('status')->default('menunggu');
+        $table->string('status')->default('diajukan');
         $table->foreignId('unit_id')->nullable()->constrained('unit_layanans')->onDelete('set null');
         $table->string('foto')->nullable();
         $table->timestamps();

@@ -98,7 +98,7 @@
         font-weight: 600;
         text-transform: capitalize;
     }
-    .status-menunggu { background: #fef3c7; color: #92400e; }
+    .status-diajukan { background: #fef3c7; color: #92400e; }
     .status-proses { background: #dbeafe; color: #1e40af; }
     .status-selesai { background: #dcfce7; color: #166534; }
 
@@ -344,7 +344,7 @@
 
             <select name="status" class="filter-select" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
-                <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                <option value="diajukan" {{ request('status') == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
                 <option value="proses" {{ request('status') == 'proses' ? 'selected' : '' }}>Proses</option>
                 <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
@@ -439,13 +439,12 @@
                                     <i class="fa-solid fa-eye"></i> Detail
                                 </a>
 
-                                @if(Auth::user()->role === 'admin_spmi' && $p->status === 'menunggu')
-                                    <button type="button" class="btn-action btn-salurkan" onclick="openSalurkanModal({{ $p->id }}, '{{ $p->judul }}')">
-                                        <i class="fa-solid fa-share-nodes"></i> Salurkan
+                                @if(Auth::user()->role === 'admin_spmi' && $p->status === 'diajukan')
+                                    <button type="button" class="btn-action btn-salurkan" onclick="openSalurkanModal({{ $p->id }}, {!! json_encode($p->judul) !!})">
                                     </button>
                                 @endif
 
-                                @if(Auth::user()->role === 'mahasiswa' && $p->status === 'menunggu')
+                                @if(Auth::user()->role === 'mahasiswa' && $p->status === 'diajukan')
                                     <a href="{{ route('pengaduan.edit', $p->id) }}" class="btn-action btn-edit">
                                         <i class="fa-solid fa-pen-to-square"></i> Edit
                                     </a>

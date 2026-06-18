@@ -116,7 +116,7 @@
 
         <div class="form-info">
             <i class="fa-solid fa-circle-info" style="font-size: 18px;"></i>
-            <span>Hanya pengaduan dengan status menunggu yang dapat diedit.</span>
+            <span>Hanya pengaduan dengan status diajukan yang dapat diedit.</span>
         </div>
 
         <form method="POST" action="{{ route('pengaduan.update', $pengaduan->id) }}" enctype="multipart/form-data">

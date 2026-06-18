@@ -18,7 +18,7 @@ use App\Http\Controllers\UnitLayananController;
 Route::get('/', function () {
     $stats = [
         'total' => Pengaduan::count(),
-        'menunggu' => Pengaduan::where('status', 'menunggu')->count(),
+        'diajukan' => Pengaduan::where('status', 'diajukan')->count(),
         'proses' => Pengaduan::where('status', 'proses')->count(),
         'selesai' => Pengaduan::where('status', 'selesai')->count(),
     ];
@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
 
         $stats = [
             'total' => Pengaduan::where('unit_id', $unit_id)->count(),
-            'baru' => Pengaduan::where('unit_id', $unit_id)->where('status', 'menunggu')->count(),
+            'baru' => Pengaduan::where('unit_id', $unit_id)->where('status', 'diajukan')->count(),
             'proses' => Pengaduan::where('unit_id', $unit_id)->where('status', 'proses')->count(),
             'selesai' => Pengaduan::where('unit_id', $unit_id)->where('status', 'selesai')->count(),
         ];
@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard-admin-spmi', function () {
         $pengaduans = Pengaduan::latest()->paginate(5);
+        $units = UnitLayanan::all();
         
         $unitStats = Pengaduan::select('unit_tujuan', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('unit_tujuan')
@@ -84,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
             ->groupBy('status')
             ->get();
 
-        return view('admin-spmi.dashboard-admin-spmi', compact('pengaduans', 'unitStats', 'statusStats'));
+        return view('admin-spmi.dashboard-admin-spmi', compact('pengaduans', 'unitStats', 'statusStats', 'units'));
     })->name('dashboard.admin_spmi');
 
     Route::resource('pengaduan', PengaduanController::class);
@@ -104,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
         $pengaduans = Pengaduan::where('user_id', $user->id)->latest()->take(5)->get();
         $stats = [
             'total' => Pengaduan::where('user_id', $user->id)->count(),
-            'menunggu' => Pengaduan::where('user_id', $user->id)->where('status', 'menunggu')->count(),
+            'diajukan' => Pengaduan::where('user_id', $user->id)->where('status', 'diajukan')->count(),
             'proses' => Pengaduan::where('user_id', $user->id)->where('status', 'proses')->count(),
             'selesai' => Pengaduan::where('user_id', $user->id)->where('status', 'selesai')->count(),
         ];

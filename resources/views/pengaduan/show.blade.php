@@ -38,7 +38,7 @@
         font-weight: 700;
         text-transform: capitalize;
     }
-    .status-menunggu { background: #fef3c7; color: #92400e; }
+    .status-diajukan { background: #fef3c7; color: #92400e; }
     .status-proses { background: #dbeafe; color: #1e40af; }
     .status-selesai { background: #dcfce7; color: #166534; }
 
@@ -296,9 +296,9 @@
         </div>
         @endif
 
-        @if(Auth::user()->role === 'mahasiswa' && $pengaduan->status === 'menunggu')
+        @if(Auth::user()->role === 'mahasiswa' && $pengaduan->status === 'diajukan')
         <div class="action-panel">
-            <p>Pengaduan dengan status <strong>Menunggu</strong> masih bisa diedit atau dihapus.</p>
+            <p>Pengaduan dengan status <strong>Diajukan</strong> masih bisa diedit atau dihapus.</p>
             <div class="action-panel-item">
                 <a href="{{ route('pengaduan.edit', $pengaduan->id) }}" class="action-btn btn-edit">
                     <i class="fa-solid fa-pen-to-square"></i> Edit Pengaduan

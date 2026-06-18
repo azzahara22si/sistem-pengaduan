@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Politeknik Caltex Riau</title>
+    <title>{{ __('messages.login_page_title') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -102,9 +102,18 @@
             transition: all 0.3s;
         }
 
-        .forgot-link:hover {
+        .forgot-link:hover,
+        .auth-link:hover {
             opacity: 1;
             text-decoration: underline;
+        }
+
+        .auth-link {
+            color: #ffffff;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+            opacity: 0.9;
         }
 
         .login-btn {
@@ -146,8 +155,8 @@
             <img src="{{ asset('images/logo.png') }}" alt="Politeknik Caltex Riau">
         </div>
 
-        <h2>Login</h2>
-        <p>WELCOME BACK!</p>
+        <h2>{{ __('messages.login') }}</h2>
+        <p>{{ __('messages.welcome_back') }}</p>
 
         @if (session('status'))
             <div style="color: #4ade80; font-size: 12px; margin-bottom: 20px;">
@@ -160,7 +169,7 @@
 
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required autofocus>
+                <input type="email" name="email" placeholder="{{ __('messages.email') }}" value="{{ old('email') }}" required autofocus>
             </div>
             @error('email')
                 <div class="error-msg">{{ $message }}</div>
@@ -168,7 +177,7 @@
 
             <div class="input-group">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" name="password" id="password" placeholder="Password" required>
+                <input type="password" name="password" id="password" placeholder="{{ __('messages.password') }}" required>
                 <i class="fa-solid fa-eye-slash toggle-password" style="margin-right: 0; margin-left: 10px; font-size: 16px; cursor: pointer; color: #888;"></i>
             </div>
             @error('password')
@@ -176,11 +185,13 @@
             @enderror
 
             @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" class="forgot-link">Forgot password?</a>
+                <a href="{{ route('password.request') }}" class="forgot-link">{{ __('messages.forgot_password') }}</a>
             @endif
 
-            <button type="submit" class="login-btn">Login</button>
+            <button type="submit" class="login-btn">{{ __('messages.login') }}</button>
         </form>
+
+        <p style="margin-top: 22px; font-size: 13px; opacity: 0.9;">{{ __('messages.no_account') }} <a href="{{ route('register') }}" class="auth-link">{{ __('messages.register') }}</a></p>
     </div>
 
     <script>

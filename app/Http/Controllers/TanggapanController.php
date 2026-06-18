@@ -12,7 +12,7 @@ class TanggapanController extends Controller
     {
         $request->validate([
             'isi_tanggapan' => 'required',
-            'status' => 'nullable|in:menunggu,proses,selesai'
+            'status' => 'nullable|in:diajukan,proses,selesai'
         ]);
 
         Tanggapan::create([

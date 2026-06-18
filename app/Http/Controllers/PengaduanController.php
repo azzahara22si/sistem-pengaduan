@@ -10,6 +10,15 @@ use Illuminate\Http\Request;
 
 class PengaduanController extends Controller
 {
+    public function dashboard()
+    {
+        $total = Pengaduan::count();
+        $diajukan = Pengaduan::where('status', 'diajukan')->count();
+        $diproses = Pengaduan::where('status', 'proses')->count();
+        $selesai = Pengaduan::where('status', 'selesai')->count();
+
+        return view('pengaduan.dashboard', compact('total', 'diajukan', 'diproses', 'selesai'));
+    }
 
     public function index(Request $request)
     {
@@ -96,7 +105,7 @@ class PengaduanController extends Controller
             'urgensi' => $request->urgensi,
             'klasifikasi' => $request->klasifikasi,
             'foto' => $fotoPath,
-            'status' => 'menunggu',
+            'status' => 'diajukan',
         ]);
 
         return redirect()->route('pengaduan.index')
@@ -114,8 +123,8 @@ class PengaduanController extends Controller
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit aduan ini.');
         }
 
-        if ($pengaduan->status !== 'menunggu') {
-            return redirect()->back()->with('error', 'Hanya pengaduan dengan status menunggu yang dapat diedit.');
+        if ($pengaduan->status !== 'diajukan') {
+            return redirect()->back()->with('error', 'Hanya pengaduan dengan status diajukan yang dapat diedit.');
         }
 
         $units = UnitLayanan::all();
@@ -128,8 +137,8 @@ class PengaduanController extends Controller
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit aduan ini.');
         }
 
-        if ($pengaduan->status !== 'menunggu') {
-            return redirect()->back()->with('error', 'Hanya pengaduan dengan status menunggu yang dapat diedit.');
+        if ($pengaduan->status !== 'diajukan') {
+            return redirect()->back()->with('error', 'Hanya pengaduan dengan status diajukan yang dapat diedit.');
         }
 
         $request->validate([
@@ -170,7 +179,7 @@ class PengaduanController extends Controller
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus aduan ini.');
         }
 
-        if (Auth::user()->role === 'mahasiswa' && $pengaduan->status !== 'menunggu') {
+        if (Auth::user()->role === 'mahasiswa' && $pengaduan->status !== 'diajukan') {
             return redirect()->back()->with('error', 'Pengaduan yang sudah diproses tidak dapat dihapus.');
         }
 
@@ -183,7 +192,7 @@ class PengaduanController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:menunggu,proses,selesai',
+            'status' => 'required|in:diajukan,proses,selesai',
         ]);
 
         $pengaduan = Pengaduan::findOrFail($id);

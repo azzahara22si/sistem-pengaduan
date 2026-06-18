@@ -105,8 +105,8 @@
 
         <div class="stat-card yellow">
             <div class="stat-info">
-                <h4>Menunggu</h4>
-                <div class="stat-number">{{ $stats['menunggu'] }}</div>
+                <h4>Diajukan</h4>
+                <div class="stat-number">{{ $stats['diajukan'] }}</div>
             </div>
             <div class="stat-icon"><i class="fa-solid fa-hourglass-start"></i></div>
         </div>

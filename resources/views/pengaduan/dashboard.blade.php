@@ -30,9 +30,9 @@
 
                 <div class="card-body">
 
-                    <h5>Menunggu</h5>
+                    <h5>Diajukan</h5>
 
-                    <h2>{{ $menunggu }}</h2>
+                    <h2>{{ $diajukan }}</h2>
 
                 </div>
 

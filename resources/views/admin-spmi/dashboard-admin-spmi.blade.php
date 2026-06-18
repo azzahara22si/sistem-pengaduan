@@ -62,7 +62,7 @@
                     <td>
                         <a href="{{ route('pengaduan.show', $item->id) }}" style="color: #0d2d6e; font-weight: 600; font-size: 11px;">Detail</a>
                         @if($item->status !== 'selesai')
-                        <a href="#" style="color: #0d2d6e; font-weight: 600; font-size: 11px; margin-left: 10px;">Salurkan</a>
+                        <a href="#" onclick="openSalurkanModal({{ $item->id }}, {!! json_encode($item->judul) !!}); return false;" style="color: #0d2d6e; font-weight: 600; font-size: 11px; margin-left: 10px;">Salurkan</a>
                         @endif
                     </td>
                 </tr>
@@ -79,6 +79,31 @@
 
     <div style="margin-top: 25px; display: flex; justify-content: center;">
         {{ $pengaduans->links() }}
+    </div>
+
+    <div id="modalSalurkan" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="modal-content" style="background: #fff; width: 420px; padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); animation: slideUp 0.3s ease;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #0d2d6e; margin-bottom: 10px;">Salurkan Pengaduan</h3>
+            <p id="salurkan_text" style="font-size: 13px; color: #64748b; margin-bottom: 25px;"></p>
+
+            <form id="formSalurkan" method="POST">
+                @csrf
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 8px;">Pilih Unit Layanan</label>
+                    <select name="unit_id" required style="width: 100%; height: 42px; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0 15px; font-family: 'Poppins'; outline: none; background: #f8fafc;">
+                        <option value="">-- Pilih Unit --</option>
+                        @foreach($units as $unit)
+                        <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="closeSalurkanModal()" style="flex: 1; height: 44px; border: none; border-radius: 10px; background: #f1f5f9; color: #64748b; font-weight: 600; cursor: pointer;">Batal</button>
+                    <button type="submit" style="flex: 1; height: 44px; border: none; border-radius: 10px; background: #0d428e; color: #fff; font-weight: 700; cursor: pointer;">Salurkan Sekarang</button>
+                </div>
+            </form>
+        </div>
     </div>
 
 @push('scripts')
@@ -110,12 +135,28 @@
             labels: {!! json_encode($statusStats->pluck('status')) !!},
             datasets: [{
                 data: {!! json_encode($statusStats->pluck('total')) !!},
-                backgroundColor: ['#f5a623', '#4caf50', '#ef4444', '#4a9eff']
+                backgroundColor: ['#f5a623', '#ef4444', '#4caf50', '#4a9eff']
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false
+        }
+    });
+
+    function openSalurkanModal(id, judul) {
+        document.getElementById('salurkan_text').innerHTML = `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
+        document.getElementById('formSalurkan').action = `/pengaduan/${id}/salurkan`;
+        document.getElementById('modalSalurkan').style.display = 'flex';
+    }
+
+    function closeSalurkanModal() {
+        document.getElementById('modalSalurkan').style.display = 'none';
+    }
+
+    window.addEventListener('click', function(event) {
+        if (event.target == document.getElementById('modalSalurkan')) {
+            closeSalurkanModal();
         }
     });
 </script>
