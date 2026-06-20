@@ -383,17 +383,19 @@
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: clamp(10px, 2vw, 12px);
+                gap: 12px;
             }
 
             .stat-card {
-                padding: clamp(10px, 2vw, 15px);
-                flex-direction: column;
+                min-height: 104px;
+                padding: 14px;
+                flex-direction: row;
+                gap: 10px;
             }
 
-            .stat-info h4 { font-size: clamp(10px, 1.8vw, 11px); }
-            .stat-number { font-size: clamp(16px, 4vw, 18px); }
-            .stat-icon { font-size: clamp(24px, 6vw, 30px); }
+            .stat-info h4 { font-size: 11px; margin-bottom: 6px; }
+            .stat-info .stat-number { font-size: 24px; }
+            .stat-icon { font-size: 28px; }
             
             .table-card {
                 padding: clamp(12px, 2vw, 15px);
@@ -413,26 +415,34 @@
                 color: #fff;
             }
             .welcome-card {
-                flex-direction: column;
-                text-align: center;
-                gap: clamp(10px, 2vw, 15px);
-                padding: clamp(12px, 2vw, 20px);
+                flex-direction: row;
+                text-align: left;
+                gap: 12px;
+                padding: 18px;
+                margin-bottom: 18px;
             }
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                margin-bottom: 18px;
             }
             .content {
-                padding: clamp(10px, 2vw, 12px);
+                padding: 14px;
             }
             
             .stat-card {
-                flex-direction: row;
-                padding: clamp(10px, 2vw, 15px);
+                flex-direction: column;
+                align-items: flex-start;
+                min-height: 112px;
+                padding: 14px;
             }
             
             .stat-info { flex: 1; text-align: left; }
             .stat-info h4 { text-align: left; }
             .stat-number { text-align: left; }
+            .stat-icon {
+                align-self: flex-end;
+                margin-top: -6px;
+            }
             
             .card-title {
                 font-size: clamp(13px, 2.5vw, 14px);
@@ -450,11 +460,24 @@
             }
             
             .content {
-                padding: clamp(8px, 2vw, 10px);
+                padding: 12px;
+            }
+
+            .welcome-card {
+                border-radius: 14px;
+                padding: 16px;
+            }
+
+            .welcome-text h3 {
+                font-size: 18px;
+            }
+
+            .welcome-text p {
+                font-size: 13px;
             }
             
             .welcome-icon {
-                font-size: clamp(30px, 8vw, 40px);
+                font-size: 34px;
             }
             
             table { font-size: 10px; }
@@ -462,23 +485,36 @@
             
             .stat-card {
                 flex-direction: column;
-                gap: 5px;
+                gap: 8px;
+                min-height: 108px;
             }
             
             .stat-info h4 { 
-                font-size: 9px;
-                text-align: center;
+                font-size: 10px;
+                text-align: left;
             }
             .stat-number { 
-                font-size: clamp(14px, 3vw, 16px);
-                text-align: center;
+                font-size: 24px;
+                text-align: left;
             }
             .stat-icon { 
-                font-size: clamp(20px, 5vw, 24px);
+                font-size: 26px;
             }
         }
-            .table-card {
-                padding: 15px;
+        @media (max-width: 360px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                min-height: 92px;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .welcome-card {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
