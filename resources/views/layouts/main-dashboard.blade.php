@@ -204,7 +204,7 @@
 
         .stat-card {
             border-radius: clamp(10px, 2vw, 15px);
-            padding: clamp(12px, 3vw, 25px);
+            padding: clamp(16px, 2vw, 22px);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -212,8 +212,8 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s;
             cursor: pointer;
-            flex-direction: column;
-            gap: 10px;
+            gap: 16px;
+            min-height: 118px;
         }
 
         .stat-card:hover {
@@ -228,9 +228,10 @@
         .stat-card.green { background: #22c55e; }
         .stat-card.gray { background: #94a3b8; }
 
-        .stat-info h4 { font-size: clamp(11px, 2vw, 14px); margin-bottom: 8px; font-weight: 500; text-align: center; }
-        .stat-info .stat-number { font-size: clamp(20px, 5vw, 30px); font-weight: 700; text-align: center; }
-        .stat-icon { font-size: clamp(30px, 7vw, 45px); opacity: 0.8; }
+        .stat-info { flex: 1; }
+        .stat-info h4 { font-size: clamp(11px, 2vw, 14px); margin-bottom: 8px; font-weight: 500; text-align: left; }
+        .stat-info .stat-number { font-size: clamp(24px, 4vw, 32px); font-weight: 700; text-align: left; }
+        .stat-icon { font-size: clamp(32px, 5vw, 44px); opacity: 0.8; flex-shrink: 0; }
 
         .table-card {
             background: white;

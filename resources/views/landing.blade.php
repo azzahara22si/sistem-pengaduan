@@ -389,17 +389,29 @@
             const nav = document.querySelector('nav');
             const mobileToggle = document.getElementById('mobileToggle');
             const navLinks = document.querySelector('.nav-links');
+            const mobileNavItems = document.querySelectorAll('.nav-links a');
 
             window.addEventListener('scroll', () => {
                 nav.classList.toggle('scrolled', window.scrollY > 20);
             });
 
             if (mobileToggle) {
+                const closeMobileMenu = () => {
+                    navLinks.classList.remove('active');
+                    const icon = mobileToggle.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-xmark');
+                };
+
                 mobileToggle.addEventListener('click', () => {
                     navLinks.classList.toggle('active');
                     const icon = mobileToggle.querySelector('i');
                     icon.classList.toggle('fa-bars');
                     icon.classList.toggle('fa-xmark');
+                });
+
+                mobileNavItems.forEach(item => {
+                    item.addEventListener('click', closeMobileMenu);
                 });
             }
 

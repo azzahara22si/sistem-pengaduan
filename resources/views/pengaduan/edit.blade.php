@@ -224,10 +224,11 @@
             <div class="form-group">
                 <label>Bukti Foto (Opsional)</label>
                 <div style="border: 2px dashed #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='#0d428e'" onmouseout="this.style.borderColor='#e2e8f0'" onclick="document.getElementById('foto_input').click()">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 30px; color: #94a3b8; margin-bottom: 10px;"></i>
-                    <p style="font-size: 13px; color: #64748b; margin: 0;">Klik untuk mengunggah atau seret file ke sini</p>
+                    <img id="foto_preview" src="{{ $pengaduan->foto ? asset('storage/' . $pengaduan->foto) : '' }}" alt="Preview bukti foto" style="{{ $pengaduan->foto ? 'display: block;' : 'display: none;' }} width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-bottom: 12px;">
+                    <i id="foto_icon" class="fa-solid fa-cloud-arrow-up" style="{{ $pengaduan->foto ? 'display: none;' : 'display: inline-block;' }} font-size: 30px; color: #94a3b8; margin-bottom: 10px;"></i>
+                    <p id="foto_file_name" style="font-size: 13px; color: {{ $pengaduan->foto ? '#0d2d6e' : '#64748b' }}; margin: 0;">{{ $pengaduan->foto ? basename($pengaduan->foto) : 'Klik untuk mengunggah atau seret file ke sini' }}</p>
                     <p style="font-size: 11px; color: #94a3b8; margin-top: 5px;">PNG, JPG atau JPEG (Max. 2MB)</p>
-                    <input type="file" name="foto" id="foto_input" style="display: none;" onchange="this.previousElementSibling.previousElementSibling.innerText = this.files[0].name; this.previousElementSibling.previousElementSibling.style.color='#0d2d6e';">
+                    <input type="file" name="foto" id="foto_input" accept="image/png,image/jpeg" style="display: none;" onchange="previewFoto(this)">
                 </div>
                 @if($pengaduan->foto)
                 <p style="margin-top: 12px; font-size: 13px; color: #64748b;">Foto saat ini: <strong>{{ basename($pengaduan->foto) }}</strong></p>
@@ -242,6 +243,28 @@
 </div>
 
 <script>
+    function previewFoto(input) {
+        const file = input.files && input.files[0];
+        const preview = document.getElementById('foto_preview');
+        const icon = document.getElementById('foto_icon');
+        const fileName = document.getElementById('foto_file_name');
+
+        if (!file) {
+            preview.style.display = 'none';
+            preview.removeAttribute('src');
+            icon.style.display = 'inline-block';
+            fileName.innerText = 'Klik untuk mengunggah atau seret file ke sini';
+            fileName.style.color = '#64748b';
+            return;
+        }
+
+        fileName.innerText = file.name;
+        fileName.style.color = '#0d2d6e';
+        icon.style.display = 'none';
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+    }
+
     function updateKlasifikasiStyle(label) {
         document.querySelectorAll('input[name="klasifikasi"]').forEach(radio => {
             radio.parentElement.style.borderColor = '#e2e8f0';

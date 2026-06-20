@@ -137,10 +137,11 @@
 
     .action-group {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: clamp(4px, 1vw, 8px);
-        flex-wrap: wrap;
+        min-width: 92px;
     }
 
     .btn-action {
@@ -516,6 +517,7 @@
 
                                 @if(Auth::user()->role === 'admin_spmi' && $p->status === 'diajukan')
                                     <button type="button" class="btn-action btn-salurkan" onclick="openSalurkanModal({{ $p->id }}, {!! json_encode($p->judul) !!})">
+                                        <i class="fa-solid fa-share-from-square"></i> Salurkan
                                     </button>
                                 @endif
 
