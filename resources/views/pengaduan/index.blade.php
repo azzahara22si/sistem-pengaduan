@@ -45,6 +45,52 @@
         outline: none;
     }
 
+    .date-filter {
+        position: relative;
+        height: clamp(32px, 8vh, 38px);
+        min-width: 155px;
+        border: 1px solid #e2e8f0;
+        border-radius: clamp(6px, 1vw, 10px);
+        padding: 0 clamp(10px, 2vw, 12px);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #64748b;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    .date-filter:focus-within {
+        border-color: #0d428e;
+    }
+
+    .date-filter i {
+        color: #0d428e;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .date-placeholder {
+        font-size: clamp(11px, 2vw, 13px);
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .date-placeholder.has-value {
+        color: #0d2d6e;
+        font-weight: 600;
+    }
+
+    .date-filter input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
     .search-wrap {
         display: flex;
         align-items: center;
@@ -313,6 +359,12 @@
             width: 100% !important;
         }
 
+        .date-filter {
+            width: 100%;
+            height: 48px;
+            border-radius: 10px;
+        }
+
         .search-wrap input {
             width: 100%;
             max-width: none;
@@ -374,11 +426,6 @@
             padding: 2px 6px;
         }
     }
-        border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        border: 1px solid rgba(0,0,0,0.04);
-        margin-bottom: 20px;
-    }
 
     .search-wrap {
         border: 1.5px solid #e2e8f0;
@@ -425,7 +472,13 @@
                 <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
 
-            <input type="date" name="date" class="filter-date" value="{{ request('date') }}" onchange="this.form.submit()">
+            <label class="date-filter">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span class="date-placeholder {{ request('date') ? 'has-value' : '' }}">
+                    {{ request('date') ? \Carbon\Carbon::parse(request('date'))->format('d/m/Y') : 'Pilih tanggal' }}
+                </span>
+                <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()" aria-label="Filter tanggal">
+            </label>
 
             <div class="search-wrap">
                 <input type="text" name="search" placeholder="Cari pengaduan..." value="{{ request('search') }}">
