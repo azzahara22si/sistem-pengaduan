@@ -292,7 +292,7 @@
         @if($pengaduan->foto)
         <div style="margin-top: 30px;">
             <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 10px; font-weight: 600;">Bukti Foto</label>
-            <img src="{{ asset('storage/' . $pengaduan->foto) }}" alt="Bukti Foto" class="image-preview">
+            <img src="{{ route('pengaduan.foto', $pengaduan->id) }}" alt="Bukti Foto" class="image-preview">
         </div>
         @endif
 

@@ -89,6 +89,8 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard.admin_spmi');
 
     Route::resource('pengaduan', PengaduanController::class);
+    Route::get('/pengaduan/{pengaduan}/foto', [PengaduanController::class, 'foto'])
+        ->name('pengaduan.foto');
 
     Route::get('/rekapitulasi', [PengaduanController::class, 'rekapitulasi'])
     ->name('rekapitulasi');

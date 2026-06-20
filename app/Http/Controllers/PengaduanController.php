@@ -117,6 +117,15 @@ class PengaduanController extends Controller
         return view('pengaduan.show', compact('pengaduan'));
     }
 
+    public function foto(Pengaduan $pengaduan)
+    {
+        if (!$pengaduan->foto || !Storage::disk('public')->exists($pengaduan->foto)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->response($pengaduan->foto);
+    }
+
     public function edit(Pengaduan $pengaduan)
     {
         if (Auth::user()->role === 'mahasiswa' && $pengaduan->user_id !== Auth::id()) {

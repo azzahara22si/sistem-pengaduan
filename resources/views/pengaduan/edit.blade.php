@@ -224,7 +224,7 @@
             <div class="form-group">
                 <label>Bukti Foto (Opsional)</label>
                 <div style="border: 2px dashed #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='#0d428e'" onmouseout="this.style.borderColor='#e2e8f0'" onclick="document.getElementById('foto_input').click()">
-                    <img id="foto_preview" src="{{ $pengaduan->foto ? asset('storage/' . $pengaduan->foto) : '' }}" alt="Preview bukti foto" style="{{ $pengaduan->foto ? 'display: block;' : 'display: none;' }} width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-bottom: 12px;">
+                    <img id="foto_preview" src="{{ $pengaduan->foto ? route('pengaduan.foto', $pengaduan->id) : '' }}" alt="Preview bukti foto" style="{{ $pengaduan->foto ? 'display: block;' : 'display: none;' }} width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-bottom: 12px;">
                     <i id="foto_icon" class="fa-solid fa-cloud-arrow-up" style="{{ $pengaduan->foto ? 'display: none;' : 'display: inline-block;' }} font-size: 30px; color: #94a3b8; margin-bottom: 10px;"></i>
                     <p id="foto_file_name" style="font-size: 13px; color: {{ $pengaduan->foto ? '#0d2d6e' : '#64748b' }}; margin: 0;">{{ $pengaduan->foto ? basename($pengaduan->foto) : 'Klik untuk mengunggah atau seret file ke sini' }}</p>
                     <p style="font-size: 11px; color: #94a3b8; margin-top: 5px;">PNG, JPG atau JPEG (Max. 2MB)</p>
