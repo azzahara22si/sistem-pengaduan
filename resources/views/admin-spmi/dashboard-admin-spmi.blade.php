@@ -60,10 +60,12 @@
                         </span>
                     </td>
                     <td>
-                        <a href="{{ route('pengaduan.show', $item->id) }}" style="color: #0d2d6e; font-weight: 600; font-size: 11px;">Detail</a>
-                        @if($item->status !== 'selesai')
-                        <a href="#" onclick="openSalurkanModal({{ $item->id }}, {!! json_encode($item->judul) !!}); return false;" style="color: #0d2d6e; font-weight: 600; font-size: 11px; margin-left: 10px;">Salurkan</a>
-                        @endif
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <a href="{{ route('pengaduan.show', $item->id) }}" style="color: #0d2d6e; font-weight: 600; font-size: 11px;">Detail</a>
+                            @if($item->status !== 'selesai')
+                            <a href="#" onclick="openSalurkanModal({{ $item->id }}, {!! json_encode($item->judul) !!}); return false;" style="color: #0d2d6e; font-weight: 600; font-size: 11px;">Salurkkan</a>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -77,20 +79,20 @@
         </div>
     </div>
 
-    <div style="margin-top: 25px; display: flex; justify-content: center;">
+    <div style="margin-top: clamp(15px, 3vw, 25px); display: flex; justify-content: center;">
         {{ $pengaduans->links() }}
     </div>
 
-    <div id="modalSalurkan" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div class="modal-content" style="background: #fff; width: 420px; padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); animation: slideUp 0.3s ease;">
-            <h3 style="font-size: 18px; font-weight: 700; color: #0d2d6e; margin-bottom: 10px;">Salurkan Pengaduan</h3>
-            <p id="salurkan_text" style="font-size: 13px; color: #64748b; margin-bottom: 25px;"></p>
+    <div id="modalSalurkan" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: clamp(10px, 2vw, 20px);">
+        <div class="modal-content" style="background: #fff; width: calc(100vw - 30px); max-width: 420px; padding: clamp(20px, 3vw, 30px); border-radius: clamp(12px, 2vw, 20px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); animation: slideUp 0.3s ease;">
+            <h3 style="font-size: clamp(16px, 4vw, 18px); font-weight: 700; color: #0d2d6e; margin-bottom: 10px;">Salurkan Pengaduan</h3>
+            <p id="salurkan_text" style="font-size: clamp(11px, 2vw, 13px); color: #64748b; margin-bottom: clamp(15px, 3vw, 25px);"></p>
 
             <form id="formSalurkan" method="POST">
                 @csrf
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 8px;">Pilih Unit Layanan</label>
-                    <select name="unit_id" required style="width: 100%; height: 42px; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0 15px; font-family: 'Poppins'; outline: none; background: #f8fafc;">
+                <div style="margin-bottom: clamp(15px, 3vw, 20px);">
+                    <label style="display: block; font-size: clamp(11px, 2vw, 12px); font-weight: 600; color: #334155; margin-bottom: 8px;">Pilih Unit Layanan</label>
+                    <select name="unit_id" required style="width: 100%; height: clamp(36px, 8vh, 42px); border: 1.5px solid #e2e8f0; border-radius: clamp(8px, 1.5vw, 12px); padding: 0 clamp(10px, 2vw, 15px); font-family: 'Poppins'; outline: none; background: #f8fafc; font-size: clamp(11px, 2vw, 13px);">
                         <option value="">-- Pilih Unit --</option>
                         @foreach($units as $unit)
                         <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
@@ -98,13 +100,21 @@
                     </select>
                 </div>
 
-                <div style="display: flex; gap: 10px;">
-                    <button type="button" onclick="closeSalurkanModal()" style="flex: 1; height: 44px; border: none; border-radius: 10px; background: #f1f5f9; color: #64748b; font-weight: 600; cursor: pointer;">Batal</button>
-                    <button type="submit" style="flex: 1; height: 44px; border: none; border-radius: 10px; background: #0d428e; color: #fff; font-weight: 700; cursor: pointer;">Salurkan Sekarang</button>
+                <div style="display: flex; gap: clamp(8px, 2vw, 10px); flex-wrap: wrap;">
+                    <button type="button" onclick="closeSalurkanModal()" style="flex: 1; min-width: 100px; height: clamp(36px, 8vh, 44px); border: none; border-radius: clamp(8px, 1.5vw, 10px); background: #f1f5f9; color: #64748b; font-weight: 600; cursor: pointer; font-size: clamp(11px, 2vw, 13px);">Batal</button>
+                    <button type="submit" style="flex: 1; min-width: 100px; height: clamp(36px, 8vh, 44px); border: none; border-radius: clamp(8px, 1.5vw, 10px); background: #0d428e; color: #fff; font-weight: 700; cursor: pointer; font-size: clamp(11px, 2vw, 13px);">Salurkan Sekarang</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 640px) {
+            .modal-content {
+                width: calc(100vw - 20px) !important;
+            }
+        }
+    </style>
 
 @push('scripts')
 <script>

@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -162,46 +163,48 @@
 
         .content {
             flex: 1;
-            padding: 35px 40px;
+            padding: clamp(15px, 5vw, 40px);
         }
 
         .welcome-card {
             background-color: #b0c4de;
-            border-radius: 15px;
-            padding: 25px 35px;
+            border-radius: clamp(10px, 2vw, 15px);
+            padding: clamp(15px, 3vw, 35px);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 40px;
+            margin-bottom: clamp(20px, 5vw, 40px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .welcome-text h3 {
-            font-size: 18px;
+            font-size: clamp(16px, 4vw, 18px);
             font-weight: 700;
             color: #1a2340;
         }
 
         .welcome-text p {
-            font-size: 14px;
+            font-size: clamp(12px, 2vw, 14px);
             color: #3a4a6b;
             margin-top: 5px;
         }
 
         .welcome-icon {
-            font-size: 50px;
+            font-size: clamp(35px, 10vw, 50px);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+            gap: clamp(12px, 3vw, 25px);
+            margin-bottom: clamp(20px, 5vw, 40px);
         }
 
         .stat-card {
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: clamp(10px, 2vw, 15px);
+            padding: clamp(12px, 3vw, 25px);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -209,6 +212,8 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s;
             cursor: pointer;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .stat-card:hover {
@@ -223,30 +228,35 @@
         .stat-card.green { background: #22c55e; }
         .stat-card.gray { background: #94a3b8; }
 
-        .stat-info h4 { font-size: 14px; margin-bottom: 10px; font-weight: 500; }
-        .stat-info .stat-number { font-size: 30px; font-weight: 700; }
-        .stat-icon { font-size: 45px; opacity: 0.8; }
+        .stat-info h4 { font-size: clamp(11px, 2vw, 14px); margin-bottom: 8px; font-weight: 500; text-align: center; }
+        .stat-info .stat-number { font-size: clamp(20px, 5vw, 30px); font-weight: 700; text-align: center; }
+        .stat-icon { font-size: clamp(30px, 7vw, 45px); opacity: 0.8; }
 
         .table-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: clamp(10px, 2vw, 15px);
+            padding: clamp(15px, 3vw, 25px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: clamp(15px, 3vw, 25px);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .card-title {
-            font-size: 16px;
+            font-size: clamp(14px, 3vw, 16px);
             font-weight: 700;
             color: #0d2d6e;
-            margin-bottom: 20px;
+            margin-bottom: clamp(12px, 3vw, 20px);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 12px; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #1e293b; }
+        table { width: 100%; border-collapse: collapse; min-width: 100%; }
+        th { text-align: left; padding: clamp(8px, 2vw, 12px); border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: clamp(10px, 1.8vw, 12px); }
+        td { padding: clamp(8px, 2vw, 12px); border-bottom: 1px solid #f1f5f9; font-size: clamp(11px, 2vw, 13px); color: #1e293b; }
 
         .table-responsive {
             width: 100%;
@@ -260,23 +270,25 @@
             display: flex;
             list-style: none;
             padding: 0;
-            gap: 8px;
+            gap: clamp(4px, 1vw, 8px);
             align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .pagination li a, .pagination li span {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 36px;
-            height: 36px;
-            padding: 0 10px;
-            border-radius: 10px;
+            min-width: clamp(28px, 6vw, 36px);
+            height: clamp(28px, 6vw, 36px);
+            padding: 0 clamp(4px, 1vw, 10px);
+            border-radius: clamp(6px, 1vw, 10px);
             background: #fff;
             border: 1.5px solid #e2e8f0;
             color: #64748b;
             text-decoration: none;
-            font-size: 13px;
+            font-size: clamp(11px, 2vw, 13px);
             font-weight: 600;
             transition: all 0.3s;
         }
@@ -322,8 +334,11 @@
         }
 
         @media (max-width: 992px) {
-            .content { padding: 25px; }
-            .topbar-title { font-size: 13px; }
+            .content { padding: clamp(15px, 4vw, 25px); }
+            .topbar-title { font-size: clamp(12px, 2vw, 13px); }
+            .stat-card { flex-direction: row; }
+            .stat-info h4 { text-align: left; }
+            .stat-number { text-align: left; }
         }
 
         @media (max-width: 768px) {
@@ -348,9 +363,10 @@
             }
             .topbar {
                 justify-content: space-between;
-                padding: 0 15px;
+                padding: 0 clamp(10px, 2vw, 15px);
+                height: clamp(44px, 10vh, 52px);
             }
-            .content { padding: 15px; }
+            .content { padding: clamp(12px, 3vw, 15px); }
 
             .sidebar-overlay {
                 display: none;
@@ -366,22 +382,31 @@
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
+                gap: clamp(10px, 2vw, 12px);
             }
 
             .stat-card {
-                padding: 15px;
+                padding: clamp(10px, 2vw, 15px);
+                flex-direction: column;
             }
 
-            .stat-info h4 { font-size: 11px; }
-            .stat-number { font-size: 18px; }
+            .stat-info h4 { font-size: clamp(10px, 1.8vw, 11px); }
+            .stat-number { font-size: clamp(16px, 4vw, 18px); }
+            .stat-icon { font-size: clamp(24px, 6vw, 30px); }
+            
+            .table-card {
+                padding: clamp(12px, 2vw, 15px);
+            }
+            
+            table { font-size: clamp(10px, 1.8vw, 12px); }
+            th, td { padding: clamp(6px, 1.5vw, 10px); }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
             .topbar-title { display: none; }
             .topbar::after {
-                content: 'SPM BERBASIS WEB';
-                font-size: 11px;
+                content: 'SPM WEB';
+                font-size: clamp(10px, 2vw, 11px);
                 font-weight: 800;
                 letter-spacing: 0.5px;
                 color: #fff;
@@ -389,15 +414,68 @@
             .welcome-card {
                 flex-direction: column;
                 text-align: center;
-                gap: 15px;
-                padding: 20px;
+                gap: clamp(10px, 2vw, 15px);
+                padding: clamp(12px, 2vw, 20px);
             }
             .stats-grid {
                 grid-template-columns: 1fr;
             }
             .content {
-                padding: 15px 10px;
+                padding: clamp(10px, 2vw, 12px);
             }
+            
+            .stat-card {
+                flex-direction: row;
+                padding: clamp(10px, 2vw, 15px);
+            }
+            
+            .stat-info { flex: 1; text-align: left; }
+            .stat-info h4 { text-align: left; }
+            .stat-number { text-align: left; }
+            
+            .card-title {
+                font-size: clamp(13px, 2.5vw, 14px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 90vw !important;
+                max-width: 240px;
+            }
+            
+            .sidebar-logo img {
+                width: clamp(100px, 20vw, 130px);
+            }
+            
+            .content {
+                padding: clamp(8px, 2vw, 10px);
+            }
+            
+            .welcome-icon {
+                font-size: clamp(30px, 8vw, 40px);
+            }
+            
+            table { font-size: 10px; }
+            th, td { padding: 4px; }
+            
+            .stat-card {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .stat-info h4 { 
+                font-size: 9px;
+                text-align: center;
+            }
+            .stat-number { 
+                font-size: clamp(14px, 3vw, 16px);
+                text-align: center;
+            }
+            .stat-icon { 
+                font-size: clamp(20px, 5vw, 24px);
+            }
+        }
             .table-card {
                 padding: 15px;
             }

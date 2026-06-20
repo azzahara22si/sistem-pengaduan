@@ -1,0 +1,181 @@
+/* Responsive Utility Classes */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.table-responsive table {
+    min-width: 100%;
+}
+
+/* Responsive Typography */
+.title-xl {
+    font-size: clamp(20px, 5vw, 28px);
+}
+
+.title-lg {
+    font-size: clamp(18px, 4.5vw, 24px);
+}
+
+.title-md {
+    font-size: clamp(16px, 4vw, 20px);
+}
+
+.text-base {
+    font-size: clamp(13px, 2vw, 15px);
+}
+
+.text-sm {
+    font-size: clamp(11px, 1.8vw, 13px);
+}
+
+/* Responsive Padding */
+.px-responsive {
+    padding-left: clamp(10px, 3vw, 40px);
+    padding-right: clamp(10px, 3vw, 40px);
+}
+
+.py-responsive {
+    padding-top: clamp(15px, 4vw, 35px);
+    padding-bottom: clamp(15px, 4vw, 35px);
+}
+
+.p-responsive {
+    padding: clamp(15px, 4vw, 35px);
+}
+
+/* Responsive Gap */
+.gap-responsive {
+    gap: clamp(10px, 3vw, 25px);
+}
+
+/* Responsive Modal */
+.modal-responsive {
+    width: calc(100vw - 30px);
+    max-width: 420px;
+}
+
+.modal-responsive-md {
+    width: calc(100vw - 30px);
+    max-width: 500px;
+}
+
+/* Responsive Input */
+.input-responsive {
+    width: 100%;
+    max-width: 200px;
+}
+
+@media (max-width: 640px) {
+    .input-responsive {
+        max-width: 100%;
+    }
+}
+
+/* Responsive Grid */
+.grid-auto-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: clamp(10px, 3vw, 25px);
+}
+
+/* Responsive Flex Wrap */
+.flex-wrap-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(8px, 2vw, 12px);
+}
+
+/* Touch-friendly sizes */
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.btn-touch {
+    min-height: 44px;
+    padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 20px);
+    font-size: clamp(12px, 2vw, 14px);
+}
+
+/* Responsive Cards */
+.card-responsive {
+    padding: clamp(15px, 4vw, 25px);
+    border-radius: clamp(10px, 2vw, 15px);
+}
+
+/* Sidebar Mobile Toggle */
+@media (max-width: 768px) {
+    .sidebar-visible-mobile {
+        display: none !important;
+    }
+    
+    .hamburger-btn {
+        display: flex !important;
+        flex-direction: column;
+        gap: 4px;
+        width: 24px;
+        height: 18px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+    
+    .hamburger-btn span {
+        display: block;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+}
+
+/* Chart Responsive */
+.chart-container {
+    position: relative;
+    height: clamp(200px, 50vw, 300px);
+    margin-bottom: 20px;
+}
+
+/* Responsive Navigation */
+.nav-responsive {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 3vw, 30px);
+    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+    .nav-responsive {
+        gap: clamp(8px, 2vw, 15px);
+    }
+}
+
+/* Form Responsive */
+.form-group-responsive {
+    margin-bottom: clamp(12px, 3vw, 20px);
+}
+
+.form-control-responsive {
+    width: 100%;
+    padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 15px);
+    font-size: clamp(12px, 2vw, 14px);
+    border-radius: clamp(6px, 1.5vw, 10px);
+}
+
+/* Responsive Logo */
+.logo-responsive {
+    max-width: 100%;
+    height: auto;
+    width: clamp(80px, 15vw, 140px);
+}
+
+@media (max-width: 640px) {
+    .logo-responsive {
+        width: clamp(60px, 12vw, 100px);
+    }
+}

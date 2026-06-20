@@ -7,35 +7,38 @@
     .page-header {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        margin-bottom: 25px;
+        gap: clamp(12px, 3vw, 20px);
+        margin-bottom: clamp(15px, 3vw, 25px);
     }
 
     .header-top {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
+        gap: clamp(10px, 2vw, 15px);
     }
 
     .page-title {
-        font-size: 20px;
+        font-size: clamp(16px, 4vw, 20px);
         font-weight: 700;
         color: #1a2340;
+        flex: 1;
     }
 
     .filter-bar {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: clamp(8px, 2vw, 12px);
         flex-wrap: wrap;
     }
 
     .filter-select, .filter-date {
-        height: 38px;
+        height: clamp(32px, 8vh, 38px);
         border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 0 12px;
-        font-size: 13px;
+        border-radius: clamp(6px, 1vw, 10px);
+        padding: 0 clamp(8px, 2vw, 12px);
+        font-size: clamp(11px, 2vw, 13px);
         font-family: 'Poppins', sans-serif;
         color: #64748b;
         background: #fff;
@@ -48,42 +51,45 @@
         border: 1px solid #e2e8f0;
         border-radius: 20px;
         overflow: hidden;
-        height: 38px;
+        height: clamp(32px, 8vh, 38px);
         background: #fff;
-        padding-left: 15px;
-        margin-left: auto;
+        padding-left: clamp(10px, 2vw, 15px);
     }
 
     .search-wrap input {
         border: none;
         outline: none;
-        padding: 0 10px;
-        font-size: 13px;
+        padding: 0 clamp(6px, 1vw, 10px);
+        font-size: clamp(11px, 2vw, 13px);
         font-family: 'Poppins', sans-serif;
-        width: 200px;
+        width: 100%;
+        max-width: 200px;
     }
 
     .search-wrap button {
         background: none;
         border: none;
-        padding: 0 15px;
+        padding: 0 clamp(8px, 2vw, 15px);
         color: #64748b;
         cursor: pointer;
+        font-size: clamp(12px, 2vw, 14px);
     }
 
     .btn-create {
         display: flex;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+        gap: clamp(6px, 1vw, 8px);
         background: #0d428e;
         color: #fff;
         border: none;
         border-radius: 20px;
-        padding: 8px 20px;
-        font-size: 13px;
+        padding: clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 20px);
+        font-size: clamp(11px, 2vw, 13px);
         font-weight: 600;
         text-decoration: none;
         transition: all 0.3s;
+        white-space: nowrap;
     }
 
     .btn-create:hover {
@@ -92,34 +98,35 @@
     }
 
     .status-badge {
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 11px;
+        padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
+        border-radius: clamp(8px, 1.5vw, 12px);
+        font-size: clamp(9px, 1.8vw, 11px);
         font-weight: 600;
         text-transform: capitalize;
+        display: inline-block;
     }
     .status-diajukan { background: #fef3c7; color: #92400e; }
     .status-proses { background: #dbeafe; color: #1e40af; }
     .status-selesai { background: #dcfce7; color: #166534; }
 
     .klasifikasi-badge {
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 11px;
+        padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
+        border-radius: clamp(8px, 1.5vw, 12px);
+        font-size: clamp(9px, 1.8vw, 11px);
         font-weight: 600;
         text-transform: capitalize;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: clamp(3px, 1vw, 5px);
     }
     .klasifikasi-pengaduan { background: #fee2e2; color: #991b1b; }
     .klasifikasi-aspirasi { background: #fef3c7; color: #92400e; }
     .klasifikasi-permintaan_informasi { background: #dbeafe; color: #1e40af; }
 
     .urgensi-badge {
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 10px;
+        padding: clamp(3px, 1vw, 4px) clamp(6px, 1.5vw, 10px);
+        border-radius: clamp(6px, 1.2vw, 8px);
+        font-size: clamp(8px, 1.5vw, 10px);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -132,21 +139,24 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: clamp(4px, 1vw, 8px);
+        flex-wrap: wrap;
     }
 
     .btn-action {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 11px;
+        padding: clamp(5px, 1.5vw, 6px) clamp(8px, 2vw, 12px);
+        border-radius: clamp(6px, 1vw, 8px);
+        font-size: clamp(9px, 1.8vw, 11px);
         font-weight: 700;
         text-decoration: none;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: clamp(3px, 1vw, 5px);
         border: none;
         cursor: pointer;
+        white-space: nowrap;
+        min-height: 32px;
     }
 
     .btn-detail {
@@ -181,7 +191,7 @@
         flex-wrap: wrap;
         list-style: none;
         padding: 0;
-        gap: 8px;
+        gap: clamp(4px, 1vw, 8px);
         align-items: center;
         justify-content: center;
     }
@@ -190,15 +200,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 36px;
-        height: 36px;
-        padding: 0 10px;
-        border-radius: 10px;
+        min-width: clamp(28px, 6vw, 36px);
+        height: clamp(28px, 6vw, 36px);
+        padding: 0 clamp(4px, 1vw, 10px);
+        border-radius: clamp(6px, 1vw, 10px);
         background: #fff;
         border: 1.5px solid #e2e8f0;
         color: #64748b;
         text-decoration: none;
-        font-size: 13px;
+        font-size: clamp(11px, 2vw, 13px);
         font-weight: 600;
         transition: all 0.3s;
     }
@@ -221,57 +231,26 @@
         cursor: not-allowed;
     }
 
-    @media (max-width: 768px) {
-        .header-top {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .btn-create {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .filter-bar {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 10px;
-        }
-
-        .filter-select, .filter-date, .search-wrap {
-            width: 100% !important;
-            margin-left: 0 !important;
-        }
-
-        .search-wrap input {
-            width: 100%;
-        }
-
-        .modal-content {
-            width: 90% !important;
-            padding: 20px !important;
-        }
-    }
-
     /* Table Enhancements */
     table {
         border-collapse: separate !important;
         border-spacing: 0;
+        width: 100%;
+        overflow-x: auto;
     }
 
     th {
         text-transform: uppercase;
-        font-size: 11.5px !important;
+        font-size: clamp(10px, 1.8vw, 11.5px) !important;
         letter-spacing: 0.5px;
         background-color: #f8fafc;
         border-bottom: 2px solid #e2e8f0 !important;
-        padding: 14px 15px !important;
+        padding: clamp(10px, 2vw, 14px) clamp(8px, 2vw, 15px) !important;
         color: #475569 !important;
     }
     
-    th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-    th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+    th:first-child { border-top-left-radius: clamp(6px, 1vw, 10px); }
+    th:last-child { border-top-right-radius: clamp(6px, 1vw, 10px); }
 
     tbody tr {
         transition: all 0.2s ease;
@@ -284,20 +263,116 @@
     }
 
     td {
-        padding: 16px 15px !important;
+        padding: clamp(10px, 2vw, 16px) clamp(8px, 2vw, 15px) !important;
         border-bottom: 1px solid #f1f5f9 !important;
         vertical-align: middle;
+        font-size: clamp(11px, 2vw, 13px);
     }
 
     .table-card {
-        border-radius: 20px !important;
+        border-radius: clamp(12px, 2vw, 20px) !important;
         box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
         border: 1px solid rgba(0,0,0,0.03);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .filter-bar {
         background: white;
-        padding: 15px 20px;
+        padding: clamp(10px, 2vw, 15px) clamp(10px, 2vw, 20px);
+        border-radius: clamp(10px, 2vw, 15px);
+    }
+
+    /* Modal Responsive */
+    .modal-content {
+        width: calc(100vw - 30px) !important;
+        max-width: 420px !important;
+        padding: clamp(15px, 3vw, 30px) !important;
+        border-radius: clamp(12px, 2vw, 20px) !important;
+    }
+
+    @media (max-width: 768px) {
+        .header-top {
+            flex-direction: column;
+            align-items: stretch;
+            gap: clamp(10px, 2vw, 15px);
+        }
+
+        .btn-create {
+            width: 100%;
+        }
+
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: clamp(8px, 2vw, 10px);
+        }
+
+        .filter-select, .filter-date, .search-wrap {
+            width: 100% !important;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            max-width: none;
+        }
+
+        .modal-content {
+            width: calc(100vw - 20px) !important;
+            max-width: 90vw !important;
+        }
+
+        .action-group {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+
+        table {
+            font-size: clamp(10px, 1.8vw, 12px);
+        }
+
+        td, th {
+            padding: clamp(8px, 1.5vw, 12px) clamp(6px, 1vw, 10px) !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-title {
+            width: 100%;
+        }
+
+        .search-wrap {
+            width: 100%;
+            max-width: none;
+        }
+
+        .action-group {
+            width: 100%;
+        }
+
+        .btn-action {
+            font-size: clamp(9px, 1.5vw, 10px);
+            padding: clamp(5px, 1vw, 6px) clamp(8px, 2vw, 10px);
+        }
+
+        table {
+            font-size: 10px;
+        }
+
+        td, th {
+            padding: 6px 5px !important;
+        }
+
+        .status-badge, .klasifikasi-badge {
+            font-size: 8px;
+            padding: 2px 6px;
+        }
+    }
         border-radius: 16px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         border: 1px solid rgba(0,0,0,0.04);
