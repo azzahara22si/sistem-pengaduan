@@ -5,8 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UnitLayanan;
 
+use Illuminate\Support\Facades\Auth;
+
 class UnitLayananController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('role:admin_spmi');
+    }
+
     public function index()
     {
         $units = UnitLayanan::latest()->get();

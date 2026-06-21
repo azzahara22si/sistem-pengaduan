@@ -7,11 +7,54 @@ use App\Models\UnitLayanan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PengaduanController extends Controller
 {
+    private function ensureAdminSpmi(): void
+    {
+        abort_unless(Auth::user()?->role === 'admin_spmi', 403);
+    }
+
+    private function ensureCanView(Pengaduan $pengaduan): void
+    {
+        $user = Auth::user();
+
+        abort_unless(
+            $user->role === 'admin_spmi'
+                || ($user->role === 'admin' && (int) $pengaduan->unit_id === (int) $user->unit_id)
+                || ($user->role === 'mahasiswa' && (int) $pengaduan->user_id === (int) $user->id),
+            403
+        );
+    }
+
+    private function ensureCanHandle(Pengaduan $pengaduan): void
+    {
+        $user = Auth::user();
+
+        abort_unless(
+            $user->role === 'admin_spmi'
+                || ($user->role === 'admin' && (int) $pengaduan->unit_id === (int) $user->unit_id),
+            403
+        );
+    }
+
+    private function ensureCanDelete(Pengaduan $pengaduan): void
+    {
+        $user = Auth::user();
+
+        abort_unless(
+            $user->role === 'mahasiswa'
+                && (int) $pengaduan->user_id === (int) $user->id
+                && $pengaduan->status === 'diajukan',
+            403
+        );
+    }
+
     public function dashboard()
     {
+        abort_unless(in_array(Auth::user()->role, ['admin', 'admin_spmi'], true), 403);
+
         $total = Pengaduan::count();
         $diajukan = Pengaduan::where('status', 'diajukan')->count();
         $diproses = Pengaduan::where('status', 'proses')->count();
@@ -22,6 +65,13 @@ class PengaduanController extends Controller
 
     public function index(Request $request)
     {
+        $validated = $request->validate([
+            'unit' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', Rule::in(['diajukan', 'proses', 'selesai'])],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $user = Auth::user();
         $units = UnitLayanan::all();
 
@@ -33,22 +83,27 @@ class PengaduanController extends Controller
             $query->where('unit_id', $user->unit_id)->where('status', '!=', 'selesai');
         }
 
-        if ($request->filled('unit')) {
-            $query->where('unit_tujuan', $request->unit);
+        if ($user->role !== 'admin_spmi') {
+            unset($validated['unit']);
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if (!empty($validated['unit'])) {
+            $query->where('unit_tujuan', $validated['unit']);
         }
 
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
+        if (!empty($validated['status'])) {
+            $query->where('status', $validated['status']);
         }
 
-        if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('judul', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('deskripsi', 'LIKE', '%' . $request->search . '%');
+        if (!empty($validated['date'])) {
+            $query->whereDate('created_at', $validated['date']);
+        }
+
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'LIKE', '%' . $search . '%')
+                  ->orWhere('deskripsi', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -62,13 +117,18 @@ class PengaduanController extends Controller
 
     public function salurkan(Request $request, $id)
     {
-        $request->validate([
+        $this->ensureAdminSpmi();
+
+        $validated = $request->validate([
             'unit_id' => 'required|exists:unit_layanans,id',
         ]);
 
         $pengaduan = Pengaduan::findOrFail($id);
+
+        abort_unless($pengaduan->status === 'diajukan', 403);
+
         $pengaduan->update([
-            'unit_id' => $request->unit_id,
+            'unit_id' => $validated['unit_id'],
             'status' => 'proses'
         ]);
 
@@ -77,19 +137,23 @@ class PengaduanController extends Controller
 
     public function create()
     {
+        abort_unless(Auth::user()->role === 'mahasiswa', 403);
+
         $units = UnitLayanan::all();
         return view('pengaduan.create', compact('units'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'judul' => 'required',
-            'deskripsi' => 'required',
-            'unit_tujuan' => 'required',
-            'urgensi' => 'required',
+        abort_unless(Auth::user()->role === 'mahasiswa', 403);
+
+        $validated = $request->validate([
+            'judul' => 'required|string|max:150',
+            'deskripsi' => 'required|string|max:5000',
+            'unit_tujuan' => ['required', 'string', 'max:255', Rule::exists('unit_layanans', 'nama_unit')],
+            'urgensi' => 'required|in:rendah,sedang,tinggi',
             'klasifikasi' => 'required|in:pengaduan,aspirasi,permintaan_informasi',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=4096,max_height=4096',
         ]);
 
         $fotoPath = null;
@@ -99,11 +163,11 @@ class PengaduanController extends Controller
 
         Pengaduan::create([
             'user_id' => Auth::id(),
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'unit_tujuan' => $request->unit_tujuan,
-            'urgensi' => $request->urgensi,
-            'klasifikasi' => $request->klasifikasi,
+            'judul' => $validated['judul'],
+            'deskripsi' => $validated['deskripsi'],
+            'unit_tujuan' => $validated['unit_tujuan'],
+            'urgensi' => $validated['urgensi'],
+            'klasifikasi' => $validated['klasifikasi'],
             'foto' => $fotoPath,
             'status' => 'diajukan',
         ]);
@@ -114,11 +178,15 @@ class PengaduanController extends Controller
 
     public function show(Pengaduan $pengaduan)
     {
+        $this->ensureCanView($pengaduan);
+
         return view('pengaduan.show', compact('pengaduan'));
     }
 
     public function foto(Pengaduan $pengaduan)
     {
+        $this->ensureCanView($pengaduan);
+
         if (!$pengaduan->foto || !Storage::disk('public')->exists($pengaduan->foto)) {
             abort(404);
         }
@@ -128,9 +196,8 @@ class PengaduanController extends Controller
 
     public function edit(Pengaduan $pengaduan)
     {
-        if (Auth::user()->role === 'mahasiswa' && $pengaduan->user_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit aduan ini.');
-        }
+        abort_unless(Auth::user()->role === 'mahasiswa', 403);
+        $this->ensureCanView($pengaduan);
 
         if ($pengaduan->status !== 'diajukan') {
             return redirect()->back()->with('error', 'Hanya pengaduan dengan status diajukan yang dapat diedit.');
@@ -142,29 +209,28 @@ class PengaduanController extends Controller
 
     public function update(Request $request, Pengaduan $pengaduan)
     {
-        if (Auth::user()->role === 'mahasiswa' && $pengaduan->user_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit aduan ini.');
-        }
+        abort_unless(Auth::user()->role === 'mahasiswa', 403);
+        $this->ensureCanView($pengaduan);
 
         if ($pengaduan->status !== 'diajukan') {
             return redirect()->back()->with('error', 'Hanya pengaduan dengan status diajukan yang dapat diedit.');
         }
 
-        $request->validate([
-            'judul' => 'required',
-            'deskripsi' => 'required',
-            'unit_tujuan' => 'required',
-            'urgensi' => 'required',
+        $validated = $request->validate([
+            'judul' => 'required|string|max:150',
+            'deskripsi' => 'required|string|max:5000',
+            'unit_tujuan' => ['required', 'string', 'max:255', Rule::exists('unit_layanans', 'nama_unit')],
+            'urgensi' => 'required|in:rendah,sedang,tinggi',
             'klasifikasi' => 'required|in:pengaduan,aspirasi,permintaan_informasi',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=4096,max_height=4096',
         ]);
 
         $data = [
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'unit_tujuan' => $request->unit_tujuan,
-            'urgensi' => $request->urgensi,
-            'klasifikasi' => $request->klasifikasi,
+            'judul' => $validated['judul'],
+            'deskripsi' => $validated['deskripsi'],
+            'unit_tujuan' => $validated['unit_tujuan'],
+            'urgensi' => $validated['urgensi'],
+            'klasifikasi' => $validated['klasifikasi'],
         ];
 
         if ($request->hasFile('foto')) {
@@ -183,14 +249,7 @@ class PengaduanController extends Controller
     public function destroy($id)
     {
         $pengaduan = Pengaduan::findOrFail($id);
-
-        if (Auth::user()->role === 'mahasiswa' && $pengaduan->user_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus aduan ini.');
-        }
-
-        if (Auth::user()->role === 'mahasiswa' && $pengaduan->status !== 'diajukan') {
-            return redirect()->back()->with('error', 'Pengaduan yang sudah diproses tidak dapat dihapus.');
-        }
+        $this->ensureCanDelete($pengaduan);
 
         $pengaduan->delete();
 
@@ -200,14 +259,16 @@ class PengaduanController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:diajukan,proses,selesai',
         ]);
 
         $pengaduan = Pengaduan::findOrFail($id);
-        $pengaduan->update(['status' => $request->status]);
+        $this->ensureCanHandle($pengaduan);
 
-        return redirect()->route('pengaduan.index')->with('success', 'Status pengaduan berhasil diperbarui menjadi ' . ucfirst($request->status));
+        $pengaduan->update(['status' => $validated['status']]);
+
+        return redirect()->route('pengaduan.index')->with('success', 'Status pengaduan berhasil diperbarui menjadi ' . ucfirst($validated['status']));
     }
 
     public function riwayat()
@@ -228,6 +289,8 @@ class PengaduanController extends Controller
 
     public function rekapitulasi(Request $request)
     {
+        $this->ensureAdminSpmi();
+
         $units = UnitLayanan::all()->map(function($unit) {
 
             $unit->pengaduans_count = Pengaduan::where('unit_id', $unit->id)
@@ -262,7 +325,7 @@ class PengaduanController extends Controller
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'feedback' => 'nullable|string'
+            'feedback' => 'nullable|string|max:2000'
         ]);
 
         $pengaduan = Pengaduan::findOrFail($id);
