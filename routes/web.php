@@ -79,8 +79,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard-admin-spmi', function () {
             $pengaduans = Pengaduan::latest()->paginate(5);
             $units = UnitLayanan::all();
+            $unitNames = $units->pluck('nama_unit')->toArray();
             
             $unitStats = Pengaduan::select('unit_tujuan', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+                ->whereIn('unit_tujuan', $unitNames)
                 ->groupBy('unit_tujuan')
                 ->get();
                 

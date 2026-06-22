@@ -299,6 +299,8 @@ class PengaduanController extends Controller
                 })
                 ->count();
             return $unit;
+        })->filter(function($unit) {
+            return $unit->pengaduans_count > 0;
         });
 
         $totalPengaduan = Pengaduan::count();
