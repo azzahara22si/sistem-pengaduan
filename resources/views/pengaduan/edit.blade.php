@@ -14,6 +14,20 @@
         border-radius: clamp(12px, 2vw, 20px);
         padding: clamp(15px, 4vw, 40px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .form-grid-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .klasifikasi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
     }
 
     .form-header {
@@ -104,6 +118,25 @@
         .form-card {
             padding: clamp(12px, 3vw, 20px);
         }
+
+        .form-grid-2col {
+            grid-template-columns: 1fr;
+        }
+
+        .klasifikasi-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+
+        .klasifikasi-grid label {
+            min-width: 190px;
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+        }
     }
 
     @media (max-width: 640px) {
@@ -121,6 +154,8 @@
             font-size: 14px;
         }
     }
+
+    .btn-submit {
         font-size: 15px;
         font-weight: 700;
         cursor: pointer;
@@ -173,7 +208,7 @@
 
             <div class="form-group">
                 <label><i class="fa-solid fa-list" style="margin-right: 5px;"></i> Klasifikasi</label>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                <div class="klasifikasi-grid">
                     <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff;" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
                         <input type="radio" name="klasifikasi" value="pengaduan" required style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;" {{ old('klasifikasi', $pengaduan->klasifikasi) === 'pengaduan' ? 'checked' : '' }}>
                         <span style="font-size: 13px; font-weight: 600; color: #334155;">
@@ -195,7 +230,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-grid-2col">
                 <div class="form-group">
                     <label><i class="fa-solid fa-building" style="margin-right: 5px;"></i> Unit Tujuan</label>
                     <select name="unit_tujuan" class="form-control" required>
