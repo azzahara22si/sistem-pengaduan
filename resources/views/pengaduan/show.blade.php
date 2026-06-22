@@ -267,7 +267,7 @@
             </div>
             <div class="info-item">
                 <label>Tingkat Urgensi</label>
-                <p style="color: {{ $pengaduan->urgensi === 'tinggi' ? '#ef4444' : ($pengaduan->urgensi === 'sedang' ? '#f59e0b' : '#64748b') }}">
+                <p style="color: {{ $pengaduan->urgensi === 'tinggi' ? '#ef4444' : ($pengaduan->urgensi === 'sedang' ? '#fbbf24' : '#64748b') }}">
                     <i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 5px;"></i>
                     {{ ucfirst($pengaduan->urgensi) }}
                 </p>
@@ -406,9 +406,9 @@
 
                 const target = input.nextElementSibling;
                 if (input.value === 'proses') {
-                    target.style.borderColor = '#3b82f6';
-                    target.style.background = '#eff6ff';
-                    target.style.color = '#1e40af';
+                    target.style.borderColor = '#f97316';
+                    target.style.background = '#fff7ed';
+                    target.style.color = '#92400e';
                 } else if (input.value === 'selesai') {
                     target.style.borderColor = '#10b981';
                     target.style.background = '#ecfdf5';
@@ -427,7 +427,7 @@
         @if(Auth::user()->role === 'mahasiswa' && $pengaduan->status === 'selesai' && is_null($pengaduan->rating))
         <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #f1f5f9; text-align: center;">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Pengaduan ini telah selesai. Silakan berikan penilaian Anda terhadap layanan kami.</p>
-            <button onclick="openFeedbackModal({{ $pengaduan->id }})" style="padding: 12px 24px; background: #f59e0b; color: white; border-radius: 12px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
+            <button onclick="openFeedbackModal({{ $pengaduan->id }})" style="padding: 12px 24px; background: #fbbf24; color: white; border-radius: 12px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
                 <i class="fa-solid fa-star"></i> Beri Penilaian
             </button>
         </div>
@@ -436,14 +436,14 @@
         @if(!is_null($pengaduan->rating))
         <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #f1f5f9;">
             <h4 style="font-size: 15px; font-weight: 700; color: #0d2d6e; margin-bottom: 20px;">
-                <i class="fa-solid fa-star" style="color: #f59e0b; margin-right: 8px;"></i> Penilaian & Ulasan Mahasiswa
+                <i class="fa-solid fa-star" style="color: #fbbf24; margin-right: 8px;"></i> Penilaian & Ulasan Mahasiswa
             </h4>
 
             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 20px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
                     <div style="display: flex; gap: 4px; font-size: 18px;">
                         @for($i = 1; $i <= 5; $i++)
-                            <i class="fa-solid fa-star" style="color: {{ $i <= $pengaduan->rating ? '#f59e0b' : '#fef3c7' }};"></i>
+                            <i class="fa-solid fa-star" style="color: {{ $i <= $pengaduan->rating ? '#fbbf24' : '#fef3c7' }};"></i>
                         @endfor
                     </div>
                     <span style="font-size: 11px; color: #92400e; font-weight: 600;">
@@ -474,7 +474,7 @@
 
         <div style="text-align: center; margin-bottom: 25px;">
             <div style="width: 60px; height: 60px; background: #fffbeb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                <i class="fa-solid fa-star" style="font-size: 28px; color: #f59e0b;"></i>
+                <i class="fa-solid fa-star" style="font-size: 28px; color: #fbbf24;"></i>
             </div>
             <h3 style="font-size: 20px; font-weight: 700; color: #0d2d6e; margin-bottom: 5px;">Beri Penilaian</h3>
             <p style="color: #64748b; font-size: 13px;">Seberapa puas Anda dengan penanganan pengaduan ini?</p>
@@ -519,7 +519,7 @@
     .star-rating:hover,
     .star-rating:hover ~ .star-rating,
     input[type="radio"]:checked ~ .star-rating {
-        color: #f59e0b;
+        color: #fbbf24;
     }
     @keyframes slideUp {
         from { opacity: 0; transform: translateY(20px); }

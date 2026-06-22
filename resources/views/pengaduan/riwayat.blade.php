@@ -48,7 +48,7 @@
                     <td>
                         <span style="padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; 
                                      background: {{ $item->urgensi === 'tinggi' ? '#fef2f2' : ($item->urgensi === 'sedang' ? '#fffbeb' : '#f0f9ff') }};
-                                     color: {{ $item->urgensi === 'tinggi' ? '#ef4444' : ($item->urgensi === 'sedang' ? '#f59e0b' : '#3b82f6') }};">
+                                     color: {{ $item->urgensi === 'tinggi' ? '#ef4444' : ($item->urgensi === 'sedang' ? '#fbbf24' : '#3b82f6') }};">
                             {{ ucfirst($item->urgensi) }}
                         </span>
                     </td>
@@ -64,13 +64,13 @@
                             </a>
                             @if(Auth::user()->role === 'mahasiswa')
                                 @if(is_null($item->rating))
-                                    <button onclick="openFeedbackModal({{ $item->id }})" style="padding: 6px 12px; background: #f59e0b; color: white; border-radius: 8px; font-size: 11px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s;">
+                                    <button onclick="openFeedbackModal({{ $item->id }})" style="padding: 6px 12px; background: #fbbf24; color: white; border-radius: 8px; font-size: 11px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s;">
                                         <i class="fa-solid fa-star" style="margin-right: 4px;"></i> Nilai
                                     </button>
                                 @else
-                                    <div style="color: #f59e0b; font-size: 12px; display: flex; gap: 2px;" title="Rating: {{ $item->rating }}/5">
+                                    <div style="color: #fbbf24; font-size: 12px; display: flex; gap: 2px;" title="Rating: {{ $item->rating }}/5">
                                         @for($i = 1; $i <= 5; $i++)
-                                            <i class="fa-solid fa-star" style="color: {{ $i <= $item->rating ? '#f59e0b' : '#e2e8f0' }};"></i>
+                                            <i class="fa-solid fa-star" style="color: {{ $i <= $item->rating ? '#fbbf24' : '#e2e8f0' }};"></i>
                                         @endfor
                                     </div>
                                 @endif
@@ -108,7 +108,7 @@
 
         <div style="text-align: center; margin-bottom: 25px;">
             <div style="width: 60px; height: 60px; background: #fffbeb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                <i class="fa-solid fa-star" style="font-size: 28px; color: #f59e0b;"></i>
+                <i class="fa-solid fa-star" style="font-size: 28px; color: #fbbf24;"></i>
             </div>
             <h3 style="font-size: 20px; font-weight: 700; color: #0d2d6e; margin-bottom: 5px;">Beri Penilaian</h3>
             <p style="color: #64748b; font-size: 13px;">Seberapa puas Anda dengan penanganan pengaduan ini?</p>
@@ -154,7 +154,7 @@
     .star-rating:hover,
     .star-rating:hover ~ .star-rating,
     input[type="radio"]:checked ~ .star-rating {
-        color: #f59e0b;
+        color: #fbbf24;
     }
     @keyframes slideUp {
         from { opacity: 0; transform: translateY(20px); }

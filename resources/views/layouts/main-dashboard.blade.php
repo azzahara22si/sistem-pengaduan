@@ -223,15 +223,16 @@
         .stat-card.blue { background: #4a9eff; }
         .stat-card.purple { background: #7c3aed; }
         .stat-card.light-blue { background: #60a5fa; }
-        .stat-card.yellow { background: #f59e0b; }
+        .stat-card.yellow { background: #fbbf24; }
         .stat-card.orange { background: #f97316; }
+        .stat-card.red { background: #ef4444; }
         .stat-card.green { background: #22c55e; }
         .stat-card.gray { background: #94a3b8; }
 
         .stat-info { flex: 1; }
         .stat-info h4 { font-size: clamp(11px, 2vw, 14px); margin-bottom: 8px; font-weight: 500; text-align: left; }
         .stat-info .stat-number { font-size: clamp(24px, 4vw, 32px); font-weight: 700; text-align: left; }
-        .stat-icon { font-size: clamp(32px, 5vw, 44px); opacity: 0.8; flex-shrink: 0; }
+        .stat-icon { font-size: clamp(32px, 5vw, 44px); opacity: 0.95; flex-shrink: 0; color: #ffffff; -webkit-font-smoothing: antialiased; text-shadow: 0 1px 0 rgba(0,0,0,0.12); }
 
         .table-card {
             background: white;
@@ -395,7 +396,7 @@
 
             .stat-info h4 { font-size: 11px; margin-bottom: 6px; }
             .stat-info .stat-number { font-size: 24px; }
-            .stat-icon { font-size: 28px; }
+            .stat-icon { font-size: 24px; opacity: 1; color: #ffffff; }
             
             .table-card {
                 padding: clamp(12px, 2vw, 15px);
@@ -442,6 +443,9 @@
             .stat-icon {
                 align-self: flex-end;
                 margin-top: -6px;
+                font-size: 20px;
+                opacity: 1;
+                color: #ffffff;
             }
             
             .card-title {
@@ -498,7 +502,9 @@
                 text-align: left;
             }
             .stat-icon { 
-                font-size: 26px;
+                font-size: 18px;
+                opacity: 1;
+                color: #ffffff;
             }
         }
         @media (max-width: 360px) {

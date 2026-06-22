@@ -100,7 +100,7 @@
                 <h4>Total Pengaduan</h4>
                 <div class="stat-number">{{ $stats['total'] }}</div>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
         </div>
 
         <div class="stat-card yellow">
@@ -108,7 +108,7 @@
                 <h4>Diajukan</h4>
                 <div class="stat-number">{{ $stats['diajukan'] }}</div>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-hourglass-start"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
         </div>
 
         <div class="stat-card orange">
@@ -116,7 +116,7 @@
                 <h4>Sedang Diproses</h4>
                 <div class="stat-number">{{ $stats['proses'] }}</div>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
         </div>
 
         <div class="stat-card green">
@@ -124,7 +124,7 @@
                 <h4>Selesai</h4>
                 <div class="stat-number">{{ $stats['selesai'] }}</div>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-square-check"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-check-double"></i></div>
         </div>
     </div>
 
@@ -143,7 +143,7 @@
                     <div>
                         <div class="activity-title">{{ $p->judul }}</div>
                         <div class="activity-meta">
-                            <span style="color: {{ $p->status === 'selesai' ? '#10b981' : ($p->status === 'proses' ? '#f59e0b' : '#94a3b8') }}; font-weight: 700; text-transform: capitalize;">{{ $p->status }}</span> 
+                            <span style="color: {{ $p->status === 'selesai' ? '#10b981' : ($p->status === 'proses' ? '#f97316' : '#fbbf24') }}; font-weight: 700; text-transform: capitalize;">{{ $p->status }}</span> 
                             • {{ $p->created_at->diffForHumans() }}
                         </div>
                     </div>

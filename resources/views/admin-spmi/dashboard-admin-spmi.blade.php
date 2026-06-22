@@ -139,13 +139,22 @@
     });
 
     const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const statusLabels = {!! json_encode($statusStats->pluck('status')) !!};
+    const statusTotals = {!! json_encode($statusStats->pluck('total')) !!};
+    const statusColorMap = {
+        'diajukan': '#fbbf24', // brighter yellow
+        'proses': '#f97316',   // orange
+        'selesai': '#10b981'   // green
+    };
+    const pieColors = statusLabels.map(s => statusColorMap[String(s).toLowerCase()] ?? '#4a9eff');
+
     new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: {!! json_encode($statusStats->pluck('status')) !!},
+            labels: statusLabels,
             datasets: [{
-                data: {!! json_encode($statusStats->pluck('total')) !!},
-                backgroundColor: ['#f5a623', '#ef4444', '#4caf50', '#4a9eff']
+                data: statusTotals,
+                backgroundColor: pieColors
             }]
         },
         options: {

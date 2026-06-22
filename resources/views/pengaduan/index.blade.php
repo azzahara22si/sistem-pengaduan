@@ -178,7 +178,7 @@
         letter-spacing: 0.5px;
     }
     .urgensi-tinggi { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
-    .urgensi-sedang { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+    .urgensi-sedang { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
     .urgensi-rendah { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
     .action-group {
@@ -585,13 +585,13 @@
 
                                 @if(Auth::user()->role === 'mahasiswa' && $p->status === 'selesai')
                                     @if(is_null($p->rating))
-                                        <button type="button" class="btn-action" style="background-color: #f59e0b; color: white; border-color: #f59e0b;" onclick="openFeedbackModal({{ $p->id }})">
+                                        <button type="button" class="btn-action" style="background-color: #fbbf24; color: white; border-color: #fbbf24;" onclick="openFeedbackModal({{ $p->id }})">
                                             <i class="fa-solid fa-star"></i> Nilai
                                         </button>
                                     @else
-                                        <div style="color: #f59e0b; font-size: 12px; display: flex; gap: 2px; padding: 6px 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb;" title="Rating: {{ $p->rating }}/5">
+                                        <div style="color: #fbbf24; font-size: 12px; display: flex; gap: 2px; padding: 6px 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb;" title="Rating: {{ $p->rating }}/5">
                                             @for($i = 1; $i <= 5; $i++)
-                                                <i class="fa-solid fa-star" style="color: {{ $i <= $p->rating ? '#f59e0b' : '#fcd34d' }};"></i>
+                                                <i class="fa-solid fa-star" style="color: {{ $i <= $p->rating ? '#fbbf24' : '#fcd34d' }};"></i>
                                             @endfor
                                         </div>
                                     @endif
@@ -674,7 +674,7 @@
 
             <div style="text-align: center; margin-bottom: 25px;">
                 <div style="width: 60px; height: 60px; background: #fffbeb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                    <i class="fa-solid fa-star" style="font-size: 28px; color: #f59e0b;"></i>
+                    <i class="fa-solid fa-star" style="font-size: 28px; color: #fbbf24;"></i>
                 </div>
                 <h3 style="font-size: 20px; font-weight: 700; color: #0d2d6e; margin-bottom: 5px;">Beri Penilaian</h3>
                 <p style="color: #64748b; font-size: 13px;">Seberapa puas Anda dengan penanganan pengaduan ini?</p>
@@ -718,7 +718,7 @@
         .star-rating:hover,
         .star-rating:hover ~ .star-rating,
         input[type="radio"]:checked ~ .star-rating {
-            color: #f59e0b;
+            color: #fbbf24;
         }
     </style>
     @endif

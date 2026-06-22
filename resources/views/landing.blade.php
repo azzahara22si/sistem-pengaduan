@@ -435,7 +435,7 @@
                     labels: ['Diajukan', 'Proses', 'Selesai'],
                     datasets: [{
                         data: [stats.diajukan, stats.proses, stats.selesai],
-                        backgroundColor: ['#f59e0b', '#3b82f6', '#10b981'],
+                        backgroundColor: ['#fbbf24', '#f97316', '#10b981'],
                         borderRadius: 5
                     }]
                 },

@@ -86,7 +86,7 @@
     </div>
 
     <div class="stats-grid">
-        <div class="stat-card purple">
+        <div class="stat-card blue">
             <div class="stat-info">
                 <h4>Total Pengaduan</h4>
                 <div class="stat-number">{{ $stats['total'] }}</div>
@@ -94,12 +94,12 @@
             <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
         </div>
 
-        <div class="stat-card light-blue">
+        <div class="stat-card yellow">
             <div class="stat-info">
                 <h4>Pengaduan Baru</h4>
                 <div class="stat-number">{{ $stats['baru'] }}</div>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
         </div>
 
         <div class="stat-card orange">
@@ -107,7 +107,7 @@
                 <h4>Sedang Diproses</h4>
                 <div class="stat-number">{{ $stats['proses'] }}</div>
             </div>
-            <div class="stat-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
         </div>
 
         <div class="stat-card green">

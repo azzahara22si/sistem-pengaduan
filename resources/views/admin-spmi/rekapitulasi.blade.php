@@ -38,12 +38,19 @@
     </div>
 
     @foreach($statusStats as $stat)
-    <div class="stat-card" style="background: #fff; padding: 25px; border-radius: 20px; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    @php
+        $icon = 'fa-chart-pie';
+        if (strtolower($stat->status) === 'diajukan') { $icon = 'fa-file-arrow-up'; }
+        elseif (strtolower($stat->status) === 'proses') { $icon = 'fa-hourglass-half'; }
+        elseif (strtolower($stat->status) === 'selesai') { $icon = 'fa-check-double'; }
+    @endphp
+    <div class="stat-card" style="background: #fff; padding: 25px; border-radius: 20px; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative;">
         <div style="font-size: 13px; color: #64748b; margin-bottom: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Status {{ ucfirst($stat->status) }}</div>
         <div style="display: flex; align-items: baseline; gap: 10px;">
             <div style="font-size: 28px; font-weight: 800; color: #0d2d6e;">{{ $stat->total }}</div>
             <div style="font-size: 12px; color: #10b981; font-weight: 600;">{{ number_format(($stat->total / max($totalPengaduan, 1)) * 100, 1) }}%</div>
         </div>
+        <i class="fa-solid {{ $icon }}" style="position: absolute; right: 25px; bottom: 25px; font-size: 40px; opacity: 0.08;"></i>
     </div>
     @endforeach
 </div>
@@ -105,8 +112,8 @@
                     <td style="padding: 18px 24px; font-size: 13px;">{{ $p->user->name }}</td>
                     <td style="padding: 18px 24px;">
                         <span style="padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; 
-                                     background: {{ $p->status === 'selesai' ? '#dcfce7' : ($p->status === 'proses' ? '#fffbeb' : '#f1f5f9') }};
-                                     color: {{ $p->status === 'selesai' ? '#166534' : ($p->status === 'proses' ? '#f59e0b' : '#64748b') }};">
+                                     background: {{ $p->status === 'selesai' ? '#dcfce7' : ($p->status === 'proses' ? '#fff7ed' : '#fffbeb') }};
+                                     color: {{ $p->status === 'selesai' ? '#166534' : ($p->status === 'proses' ? '#f97316' : '#92400e') }};">
                             {{ ucfirst($p->status) }}
                         </span>
                     </td>
