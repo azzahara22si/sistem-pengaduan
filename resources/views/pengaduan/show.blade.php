@@ -39,7 +39,7 @@
         text-transform: capitalize;
     }
     .status-diajukan { background: #fef3c7; color: #92400e; }
-    .status-proses { background: #dbeafe; color: #1e40af; }
+    .status-proses { background: #e0ffff; color: #0f5d5d; }
     .status-selesai { background: #dcfce7; color: #166534; }
 
     .klasifikasi-badge-detail {
@@ -406,9 +406,9 @@
 
                 const target = input.nextElementSibling;
                 if (input.value === 'proses') {
-                    target.style.borderColor = '#f97316';
-                    target.style.background = '#fff7ed';
-                    target.style.color = '#92400e';
+                    target.style.borderColor = '#00FFFF';
+                    target.style.background = '#e0ffff';
+                    target.style.color = '#0f5d5d';
                 } else if (input.value === 'selesai') {
                     target.style.borderColor = '#10b981';
                     target.style.background = '#ecfdf5';

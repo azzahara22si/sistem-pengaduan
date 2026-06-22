@@ -143,7 +143,7 @@
     const statusTotals = {!! json_encode($statusStats->pluck('total')) !!};
     const statusColorMap = {
         'diajukan': '#fbbf24', // brighter yellow
-        'proses': '#f97316',   // orange
+        'proses': '#00FFFF',   // cyan
         'selesai': '#10b981'   // green
     };
     const pieColors = statusLabels.map(s => statusColorMap[String(s).toLowerCase()] ?? '#4a9eff');

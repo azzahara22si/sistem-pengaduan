@@ -112,8 +112,8 @@
                     <td style="padding: 18px 24px; font-size: 13px;">{{ $p->user->name }}</td>
                     <td style="padding: 18px 24px;">
                         <span style="padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; 
-                                     background: {{ $p->status === 'selesai' ? '#dcfce7' : ($p->status === 'proses' ? '#fff7ed' : '#fffbeb') }};
-                                     color: {{ $p->status === 'selesai' ? '#166534' : ($p->status === 'proses' ? '#f97316' : '#92400e') }};">
+                                     background: {{ $p->status === 'selesai' ? '#dcfce7' : ($p->status === 'proses' ? '#e0ffff' : '#fffbeb') }};
+                                     color: {{ $p->status === 'selesai' ? '#166534' : ($p->status === 'proses' ? '#0f5d5d' : '#92400e') }};">
                             {{ ucfirst($p->status) }}
                         </span>
                     </td>

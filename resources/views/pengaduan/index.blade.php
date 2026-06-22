@@ -152,7 +152,7 @@
         display: inline-block;
     }
     .status-diajukan { background: #fef3c7; color: #92400e; }
-    .status-proses { background: #dbeafe; color: #1e40af; }
+    .status-proses { background: #e0ffff; color: #0f5d5d; }
     .status-selesai { background: #dcfce7; color: #166534; }
 
     .klasifikasi-badge {
