@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, string $roles)
+    public function handle(Request $request, Closure $next, string ...$roles)
     {
         $user = Auth::user();
 
@@ -16,7 +16,11 @@ class RoleMiddleware
             abort(403);
         }
 
-        $allowedRoles = array_map('trim', explode(',', $roles));
+        $allowedRoles = collect($roles)
+            ->flatMap(fn ($role) => explode(',', $role))
+            ->map(fn ($role) => trim($role))
+            ->filter()
+            ->all();
 
         if (!in_array($user->role, $allowedRoles, true)) {
             abort(403);

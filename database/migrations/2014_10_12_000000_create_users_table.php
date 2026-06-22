@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['mahasiswa', 'admin', 'admin_spmi'])->default('mahasiswa');
-            $table->foreignId('unit_id')->nullable()->constrained('unit_layanans')->onDelete('set null');
+            $table->unsignedBigInteger('unit_id')->nullable()->index();
             $table->rememberToken();
             $table->timestamps();
         });
