@@ -224,7 +224,7 @@
         .stat-card.purple { background: #7c3aed; }
         .stat-card.light-blue { background: #60a5fa; }
         .stat-card.yellow { background: #fbbf24; }
-        .stat-card.orange { background: #00FFFF; }
+        .stat-card.orange { background: #f97316; }
         .stat-card.red { background: #ef4444; }
         .stat-card.green { background: #22c55e; }
         .stat-card.gray { background: #94a3b8; }

@@ -143,7 +143,7 @@
                     <div>
                         <div class="activity-title">{{ $p->judul }}</div>
                         <div class="activity-meta">
-                            <span style="color: {{ $p->status === 'selesai' ? '#10b981' : ($p->status === 'proses' ? '#00FFFF' : '#fbbf24') }}; font-weight: 700; text-transform: capitalize;">{{ $p->status }}</span> 
+                            <span style="color: {{ $p->status === 'selesai' ? '#10b981' : ($p->status === 'proses' ? '#f97316' : '#fbbf24') }}; font-weight: 700; text-transform: capitalize;">{{ $p->status }}</span> 
                             • {{ $p->created_at->diffForHumans() }}
                         </div>
                     </div>

@@ -452,8 +452,8 @@
 
         .badge-proses {
 
-            background: #e0ffff;
-            color: #0f5d5d;
+            background: #fff7ed;
+            color: #f97316;
             font-size: 12px;
             padding: 2px 6px;
             border-radius: 8px;
