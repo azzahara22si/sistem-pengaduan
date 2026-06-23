@@ -654,7 +654,7 @@
                                 </a>
 
                                 @if(Auth::user()->role === 'admin_spmi' && $p->status === 'diajukan')
-                                    <button type="button" class="btn-action btn-salurkan" onclick="openSalurkanModal({{ $p->id }}, {!! json_encode($p->judul) !!})">
+                                    <button type="button" class="btn-action btn-salurkan" data-id="{{ $p->id }}" data-judul="{{ $p->judul }}">
                                         <i class="fa-solid fa-share-from-square"></i> Salurkan
                                     </button>
                                 @endif
@@ -812,23 +812,36 @@
     <script>
 
         function openFeedbackModal(id) {
-            document.getElementById('feedbackForm').action = '/pengaduan/' + id + '/feedback';
-            document.getElementById('feedbackModal').style.display = 'flex';
-            document.getElementById('feedbackForm').reset();
+            const form = document.getElementById('feedbackForm');
+            const modal = document.getElementById('feedbackModal');
+
+            if (!form || !modal) return;
+
+            form.action = `{{ url('pengaduan') }}/${id}/feedback`;
+            modal.style.display = 'flex';
+            form.reset();
         }
 
         function closeFeedbackModal() {
-            document.getElementById('feedbackModal').style.display = 'none';
+            const modal = document.getElementById('feedbackModal');
+            if (modal) modal.style.display = 'none';
         }
 
         function openSalurkanModal(id, judul) {
-            document.getElementById('salurkan_text').innerHTML = `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
-            document.getElementById('formSalurkan').action = `/pengaduan/${id}/salurkan`;
-            document.getElementById('modalSalurkan').style.display = 'flex';
+            const text = document.getElementById('salurkan_text');
+            const form = document.getElementById('formSalurkan');
+            const modal = document.getElementById('modalSalurkan');
+
+            if (!text || !form || !modal) return;
+
+            text.innerHTML = `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
+            form.action = `{{ url('pengaduan') }}/${id}/salurkan`;
+            modal.style.display = 'flex';
         }
 
         function closeSalurkanModal() {
-            document.getElementById('modalSalurkan').style.display = 'none';
+            const modal = document.getElementById('modalSalurkan');
+            if (modal) modal.style.display = 'none';
         }
 
         function openDeleteModal(id, judul) {
@@ -838,8 +851,17 @@
         }
 
         function closeDeleteModal() {
-            document.getElementById('modalDelete').style.display = 'none';
+            const modal = document.getElementById('modalDelete');
+            if (modal) modal.style.display = 'none';
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn-salurkan[data-id]').forEach(button => {
+                button.addEventListener('click', function() {
+                    openSalurkanModal(this.dataset.id, this.dataset.judul);
+                });
+            });
+        });
 
         window.addEventListener('click', function(event) {
             if (event.target == document.getElementById('modalSalurkan')) {
