@@ -356,10 +356,17 @@
     <div class="page-header">
         <h2 class="page-title">Kelola User</h2>
         <div class="header-right">
-            <div class="search-wrap">
-                <input type="text" placeholder="Cari nama atau email...">
-                <button><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
+            <form action="{{ route('user.index') }}" method="GET" class="search-form" style="display: flex; gap: 10px; align-items: center;">
+                <div class="search-wrap">
+                    <input type="text" name="search" placeholder="Cari nama, NIM, email, atau role..." value="{{ request('search') }}">
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                @if(request('search'))
+                    <a href="{{ route('user.index') }}" style="font-size: 12px; color: #ef4444; text-decoration: none; font-weight: 600; white-space: nowrap;">
+                        <i class="fa-solid fa-xmark"></i> Reset
+                    </a>
+                @endif
+            </form>
             <button class="btn-tambah" onclick="document.getElementById('modalTambah').classList.add('show')">
                 <span>Tambah User</span>
                 <span class="plus-icon">+</span>
@@ -374,6 +381,7 @@
                 <tr>
                     <th style="width: 60px;">No</th>
                     <th>Nama Lengkap</th>
+                    <th>NIM</th>
                     <th>Email</th>
                     <th>Unit</th>
                     <th>Role</th>
@@ -386,6 +394,7 @@
                 <tr>
                     <td>{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
                     <td style="font-weight: 600;">{{ $user->name }}</td>
+                    <td>{{ $user->nim ?? '-' }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
                         {{ $user->unit->nama_unit ?? '-' }}
@@ -415,12 +424,24 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">Belum ada data user.</td>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #94a3b8;">
+                        @if(request('search'))
+                            Tidak ada hasil pencarian untuk "<strong>{{ request('search') }}</strong>"
+                        @else
+                            Belum ada data user.
+                        @endif
+                    </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
+
+    @if($users instanceof \Illuminate\Pagination\Paginator)
+    <div style="margin-top: 25px; display: flex; justify-content: center;">
+        {{ $users->links() }}
+    </div>
+    @endif
 
     <div class="modal-overlay {{ $errors->any() ? 'show' : '' }}" id="modalTambah" onclick="if(event.target===this) this.classList.remove('show')">
         <form action="{{ route('user.store') }}" method="POST" class="modal-box">
@@ -441,6 +462,15 @@
                     <input type="text" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
                 </div>
                 @error('name') <span style="color: #ef4444; font-size: 10px; margin-top: 4px;">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="form-group">
+                <label class="form-label"><i class="fa-solid fa-id-badge"></i> NIM</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-barcode input-icon"></i>
+                    <input type="text" name="nim" value="{{ old('nim') }}" placeholder="Masukkan NIM" required>
+                </div>
+                @error('nim') <span style="color: #ef4444; font-size: 10px; margin-top: 4px;">{{ $message }}</span> @enderror
             </div>
 
             <div class="form-group">
@@ -521,6 +551,14 @@
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user input-icon"></i>
                     <input type="text" name="name" id="edit_name" placeholder="Masukkan nama lengkap" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label"><i class="fa-solid fa-id-badge"></i> NIM</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-barcode input-icon"></i>
+                    <input type="text" name="nim" id="edit_nim" placeholder="Masukkan NIM" required>
                 </div>
             </div>
 
@@ -626,6 +664,7 @@
             const form = document.getElementById('formEdit');
             form.action = `/user/${user.id}`;
             document.getElementById('edit_name').value = user.name;
+            document.getElementById('edit_nim').value = user.nim || '';
             document.getElementById('edit_email').value = user.email;
 
             const roleRadios = {
@@ -654,7 +693,7 @@
             const text = document.getElementById('delete_text');
 
             form.action = `/user/${id}`;
-            text.innerHTML = `Apakah Anda yakin ingin menghapus user <strong>${name}</strong>? <br> Tindakan ini tidak dapat dibatalkan.`;
+            text.innerHTML = `Data pengguna yang dihapus tidak dapat dikembalikan kembali.`;
 
             modal.classList.add('show');
         }

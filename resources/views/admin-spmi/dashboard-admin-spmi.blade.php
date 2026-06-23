@@ -14,6 +14,61 @@
         </div>
     </div>
 
+    <style>
+        .status-badge {
+            padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
+            border-radius: clamp(8px, 1.5vw, 12px);
+            font-size: clamp(9px, 1.8vw, 11px);
+            font-weight: 600;
+            text-transform: capitalize;
+            display: inline-block;
+        }
+        .status-diajukan { background: #fef3c7; color: #92400e; }
+        .status-proses { background: #fff7ed; color: #f97316; }
+        .status-selesai { background: #dcfce7; color: #166534; }
+
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: clamp(8px, 1vw, 12px);
+            min-width: 120px;
+        }
+
+        .btn-action {
+            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px);
+            border-radius: clamp(8px, 1vw, 10px);
+            font-size: clamp(11px, 2vw, 12px);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: clamp(6px, 1vw, 8px);
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            background: #eff6ff;
+            color: #1e40af;
+        }
+        .btn-action:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-detail {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+        .btn-salurkan {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+        .btn-salurkan:hover {
+            background: #d1fae5;
+        }
+    </style>
+
     <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px;">
         <div class="table-card">
             <h4 class="card-title">Jumlah pengaduan per unit layanan</h4>
@@ -37,9 +92,8 @@
                 <tr>
                     <th>No</th>
                     <th>Judul Aduan</th>
-                    <th>Kategori Aduan</th>
+                    <th>Unit Tujuan</th>
                     <th>Tanggal</th>
-                    <th>Solusi</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -51,26 +105,34 @@
                     <td style="font-weight: 600;">{{ $item->judul }}</td>
                     <td>{{ $item->unit_tujuan }}</td>
                     <td>{{ $item->created_at->format('d/m/Y') }}</td>
-                    <td><a href="{{ route('pengaduan.show', $item->id) }}" style="color: #0d2d6e; font-weight: 600;">Detail</a></td>
                     <td>
-                        <span style="background: {{ $item->status === 'selesai' ? '#dcfce7' : '#e2e8f0' }}; 
-                                     color: {{ $item->status === 'selesai' ? '#166534' : '#64748b' }}; 
-                                     padding: 4px 10px; border-radius: 10px; font-size: 11px; text-transform: capitalize;">
-                            {{ $item->status }}
-                        </span>
+                        @php
+                            $statusClass = 'status-diajukan';
+                            $statusValue = strtolower($item->status ?? 'diajukan');
+                            if ($statusValue === 'proses') {
+                                $statusClass = 'status-proses';
+                            } elseif ($statusValue === 'selesai') {
+                                $statusClass = 'status-selesai';
+                            }
+                        @endphp
+                        <span class="status-badge {{ $statusClass }}">{{ ucfirst($statusValue) }}</span>
                     </td>
                     <td>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <a href="{{ route('pengaduan.show', $item->id) }}" style="color: #0d2d6e; font-weight: 600; font-size: 11px;">Detail</a>
-                            @if($item->status !== 'selesai')
-                            <a href="#" onclick="openSalurkanModal({{ $item->id }}, {!! json_encode($item->judul) !!}); return false;" style="color: #0d2d6e; font-weight: 600; font-size: 11px;">Salurkkan</a>
+                        <div class="action-group">
+                            <a href="{{ route('pengaduan.show', $item->id) }}" class="btn-action btn-detail">
+                                <i class="fa-solid fa-eye"></i> Detail
+                            </a>
+                            @if(strtolower($item->status ?? '') === 'diajukan')
+                                <button type="button" class="btn-action btn-salurkan" data-id="{{ $item->id }}" data-judul="{{ $item->judul }}" title="Salurkan pengaduan">
+                                    <i class="fa-solid fa-share-from-square"></i> Salurkan
+                                </button>
                             @endif
                         </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 20px; color: #94a3b8;">Belum ada pengaduan masuk.</td>
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #94a3b8;">Belum ada pengaduan masuk.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -91,13 +153,14 @@
             <form id="formSalurkan" method="POST">
                 @csrf
                 <div style="margin-bottom: clamp(15px, 3vw, 20px);">
-                    <label style="display: block; font-size: clamp(11px, 2vw, 12px); font-weight: 600; color: #334155; margin-bottom: 8px;">Pilih Unit Layanan</label>
+                    <label style="display: block; font-size: clamp(11px, 2vw, 12px); font-weight: 600; color: #334155; margin-bottom: 8px;">Unit tujuan untuk pelimpahan</label>
                     <select name="unit_id" required style="width: 100%; height: clamp(36px, 8vh, 42px); border: 1.5px solid #e2e8f0; border-radius: clamp(8px, 1.5vw, 12px); padding: 0 clamp(10px, 2vw, 15px); font-family: 'Poppins'; outline: none; background: #f8fafc; font-size: clamp(11px, 2vw, 13px);">
                         <option value="">-- Pilih Unit --</option>
                         @foreach($units as $unit)
                         <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
                         @endforeach
                     </select>
+                    <p style="margin-top: 10px; color: #475569; font-size: 12px; line-height: 1.5;">Pilih unit yang akan menerima pengaduan ini untuk proses lebih lanjut.</p>
                 </div>
 
                 <div style="display: flex; gap: clamp(8px, 2vw, 10px); flex-wrap: wrap;">
@@ -165,13 +228,24 @@
 
     function openSalurkanModal(id, judul) {
         document.getElementById('salurkan_text').innerHTML = `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
-        document.getElementById('formSalurkan').action = `/pengaduan/${id}/salurkan`;
+        document.getElementById('formSalurkan').action = `{{ url('pengaduan') }}/${id}/salurkan`;
         document.getElementById('modalSalurkan').style.display = 'flex';
     }
 
     function closeSalurkanModal() {
         document.getElementById('modalSalurkan').style.display = 'none';
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const salurkanButtons = document.querySelectorAll('.btn-salurkan');
+        salurkanButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const judul = this.getAttribute('data-judul');
+                openSalurkanModal(id, judul);
+            });
+        });
+    });
 
     window.addEventListener('click', function(event) {
         if (event.target == document.getElementById('modalSalurkan')) {

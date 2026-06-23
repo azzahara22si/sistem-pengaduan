@@ -105,15 +105,22 @@
         .forgot-link:hover,
         .auth-link:hover {
             opacity: 1;
+            color: #eaf4ff;
             text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
         }
 
         .auth-link {
             color: #ffffff;
             font-size: 13px;
-            text-decoration: none;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
             font-weight: 500;
             opacity: 0.9;
+            transition: color 0.2s ease, opacity 0.2s ease, text-shadow 0.2s ease;
         }
 
         .login-btn {

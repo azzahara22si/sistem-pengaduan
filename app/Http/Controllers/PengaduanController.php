@@ -69,6 +69,7 @@ class PengaduanController extends Controller
             'unit' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', Rule::in(['diajukan', 'proses', 'selesai'])],
             'date' => ['nullable', 'date_format:Y-m-d'],
+            'tanggal' => ['nullable', 'date_format:Y-m-d'],
             'search' => ['nullable', 'string', 'max:100'],
         ]);
 
@@ -95,22 +96,21 @@ class PengaduanController extends Controller
             $query->where('status', $validated['status']);
         }
 
-        if (!empty($validated['date'])) {
-            $query->whereDate('created_at', $validated['date']);
+        $selectedDate = $validated['date'] ?? $validated['tanggal'] ?? null;
+        if (!empty($selectedDate)) {
+            $query->whereDate('created_at', $selectedDate);
         }
 
         if (!empty($validated['search'])) {
             $search = $validated['search'];
-            $query->where(function($q) use ($search) {
-                $q->where('judul', 'LIKE', '%' . $search . '%')
-                  ->orWhere('deskripsi', 'LIKE', '%' . $search . '%');
-            });
+            $query->where('judul', 'LIKE', '%' . $search . '%');
         }
 
         $pengaduans = $query->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
             ->orderByRaw("CASE WHEN urgensi = 'tinggi' THEN 0 WHEN urgensi = 'sedang' THEN 1 ELSE 2 END ASC")
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('pengaduan.index', compact('pengaduans', 'units'));
     }
@@ -127,12 +127,15 @@ class PengaduanController extends Controller
 
         abort_unless($pengaduan->status === 'diajukan', 403);
 
+        $unit = UnitLayanan::findOrFail($validated['unit_id']);
+
         $pengaduan->update([
-            'unit_id' => $validated['unit_id'],
+            'unit_id' => $unit->id,
+            'unit_tujuan' => $unit->nama_unit,
             'status' => 'proses'
         ]);
 
-        return redirect()->back()->with('success', 'Pengaduan Berhasil Disalurkan!Pengaduan telah diteruskan ke unit layanan terkait untuk ditindaklanjuti.');
+        return redirect()->back()->with('success', 'Pengaduan telah diteruskan ke unit layanan terkait untuk ditindaklanjuti.');
     }
 
     public function create()
@@ -173,7 +176,7 @@ class PengaduanController extends Controller
         ]);
 
         return redirect()->route('pengaduan.index')
-            ->with('success', 'Pengaduan Berhasil Dikirim!Pengaduan Anda telah berhasil dikirim dan akan segera diproses.');
+            ->with('success', 'Data berhasil ditambahkan.');
     }
 
     public function show(Pengaduan $pengaduan)
@@ -243,7 +246,7 @@ class PengaduanController extends Controller
         $pengaduan->update($data);
 
         return redirect()->route('pengaduan.show', $pengaduan->id)
-            ->with('success', 'Pengaduan Berhasil Diperbarui!Perubahan data pengaduan telah berhasil disimpan.');
+            ->with('success', 'Data berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -254,7 +257,7 @@ class PengaduanController extends Controller
         $pengaduan->delete();
 
         return redirect()->route('pengaduan.index')
-            ->with('success', 'Pengaduan Berhasil Dihapus!Data pengaduan telah berhasil dihapus dari sistem.');
+            ->with('success', 'Data berhasil dihapus.');
     }
 
     public function updateStatus(Request $request, $id)
@@ -268,7 +271,7 @@ class PengaduanController extends Controller
 
         $pengaduan->update(['status' => $validated['status']]);
 
-        return redirect()->route('pengaduan.index')->with('success', 'Status pengaduan berhasil diperbarui menjadi ' . ucfirst($validated['status']));
+        return redirect()->route('pengaduan.index')->with('success', 'Status pengaduan berhasil diperbarui menjadi ' . ucfirst($validated['status']) . '.');
     }
 
     public function riwayat()
@@ -345,6 +348,6 @@ class PengaduanController extends Controller
             'feedback' => $request->feedback
         ]);
 
-        return back()->with('success', 'Terima kasih atas penilaian Anda!');
+        return back()->with('success', 'Terima kasih atas penilaian Anda.');
     }
 }

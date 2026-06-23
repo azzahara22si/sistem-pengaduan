@@ -89,28 +89,7 @@
         font-size: 18px;
     }
 
-    .action-btns {
-        display: flex;
-        gap: 8px;
-    }
 
-    .btn-icon {
-        width: 35px;
-        height: 35px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .btn-edit { background: #f0f9ff; color: #0369a1; }
-    .btn-edit:hover { background: #0369a1; color: white; }
-
-    .btn-delete { background: #fff1f2; color: #be123c; }
-    .btn-delete:hover { background: #be123c; color: white; }
 
     .modal {
         display: none;
@@ -238,15 +217,18 @@
                 </td>
                 <td>{{ $unit->email_unit }}</td>
                 <td style="max-width: 300px; color: #64748b; font-size: 13px;">{{ Str::limit($unit->deskripsi_unit, 100) }}</td>
-                <td>
-                    <div class="action-btns" style="justify-content: center;">
-                        <button class="btn-icon btn-edit" onclick="editUnit({{ $unit }})" title="Edit Unit">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button class="btn-icon btn-delete" onclick="confirmDelete({{ $unit->id }})" title="Hapus Unit">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
+                <td style="text-align: center;">
+                    <button type="button" 
+                            onclick="editUnit({{ $unit }})"
+                            style="background: none; border: none; color: #64748b; cursor: pointer; margin: 0 5px;">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+
+                    <button type="button" 
+                            onclick="confirmDelete({{ $unit->id }})"
+                            style="background: none; border: none; color: #ef4444; cursor: pointer; margin: 0 5px;">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </td>
             </tr>
             @empty
@@ -322,8 +304,8 @@
         <div style="width: 70px; height: 70px; background: #fff1f2; color: #be123c; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;">
             <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
-        <h3 class="modal-title" style="margin-bottom: 10px;">Hapus Unit?</h3>
-        <p style="color: #64748b; font-size: 14px; line-height: 1.5;">Tindakan ini tidak dapat dibatalkan. Seluruh data terkait unit ini akan hilang.</p>
+        <h3 class="modal-title" style="margin-bottom: 10px;">Hapus Unit Layanan?</h3>
+        <p style="color: #64748b; font-size: 14px; line-height: 1.5;">Data unit layanan yang dihapus tidak dapat dikembalikan kembali.</p>
 
         <form id="formDelete" method="POST">
             @csrf

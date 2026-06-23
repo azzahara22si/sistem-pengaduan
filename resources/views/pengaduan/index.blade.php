@@ -48,7 +48,7 @@
     .date-filter {
         position: relative;
         height: clamp(32px, 8vh, 38px);
-        min-width: 155px;
+        min-width: 185px;
         border: 1px solid #e2e8f0;
         border-radius: clamp(6px, 1vw, 10px);
         padding: 0 clamp(10px, 2vw, 12px);
@@ -57,7 +57,6 @@
         gap: 8px;
         color: #64748b;
         background: #fff;
-        cursor: pointer;
         transition: border-color 0.3s;
     }
 
@@ -69,26 +68,24 @@
         color: #0d428e;
         font-size: 13px;
         flex-shrink: 0;
-    }
-
-    .date-placeholder {
-        font-size: clamp(11px, 2vw, 13px);
-        font-weight: 500;
-        white-space: nowrap;
-    }
-
-    .date-placeholder.has-value {
-        color: #0d2d6e;
-        font-weight: 600;
+        pointer-events: none;
     }
 
     .date-filter input {
-        position: absolute;
-        inset: 0;
         width: 100%;
         height: 100%;
-        opacity: 0;
+        border: none;
+        background: transparent;
+        padding: 0 0 0 2px;
+        font-size: clamp(11px, 2vw, 13px);
+        color: #0d2d6e;
+        outline: none;
         cursor: pointer;
+    }
+
+    .date-filter input::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.8;
     }
 
     .search-wrap {
@@ -472,13 +469,10 @@
                 <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
 
-            <label class="date-filter">
+            <div class="date-filter">
                 <i class="fa-solid fa-calendar-days"></i>
-                <span class="date-placeholder {{ request('date') ? 'has-value' : '' }}">
-                    {{ request('date') ? \Carbon\Carbon::parse(request('date'))->format('d/m/Y') : 'Pilih tanggal' }}
-                </span>
-                <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()" aria-label="Filter tanggal">
-            </label>
+                <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()" aria-label="Filter tanggal" placeholder="Pilih tanggal">
+            </div>
 
             <div class="search-wrap">
                 <input type="text" name="search" placeholder="Cari pengaduan..." value="{{ request('search') }}">
@@ -492,18 +486,6 @@
             @endif
         </form>
     </div>
-
-    @if(session('success'))
-        <div style="background: #dcfce7; color: #166534; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; font-weight: 600;">
-            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div style="background: #fef2f2; color: #b91c1c; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; font-weight: 600;">
-            <i class="fa-solid fa-circle-xmark"></i> {{ session('error') }}
-        </div>
-    @endif
 
     <div class="table-card">
         <div class="table-responsive">

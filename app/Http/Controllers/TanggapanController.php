@@ -40,6 +40,6 @@ class TanggapanController extends Controller
             $pengaduan->update(['status' => $request->status]);
         }
 
-        return redirect()->route('pengaduan.index')->with('success', 'Tanggapan dan status berhasil diperbarui');
+        return redirect()->route('pengaduan.index')->with('success', 'Tanggapan dan status berhasil diperbarui.');
     }
 }

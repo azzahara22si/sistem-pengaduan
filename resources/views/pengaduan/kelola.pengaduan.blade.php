@@ -606,39 +606,39 @@
 
         <div class="main-title">Kelola pengaduan masuk</div>
 
-        <div class="filter-bar">
+        <form action="{{ route('pengaduan.index') }}" method="GET" class="filter-bar">
 
-            <select name="kategori">
+            <select name="kategori" onchange="this.form.submit()">
 
                 <option value="">Kategori</option>
 
-                <option>Sarana dan prasarana</option>
+                <option value="sarana dan prasarana" {{ request('kategori') == 'sarana dan prasarana' ? 'selected' : '' }}>Sarana dan prasarana</option>
 
-                <option>Akademik</option>
+                <option value="akademik" {{ request('kategori') == 'akademik' ? 'selected' : '' }}>Akademik</option>
 
-                <option>Kemahasiswaan</option>
+                <option value="kemahasiswaan" {{ request('kategori') == 'kemahasiswaan' ? 'selected' : '' }}>Kemahasiswaan</option>
 
             </select>
 
-            <select name="status">
+            <select name="status" onchange="this.form.submit()">
 
                 <option value="">Status</option>
 
-                <option>Proses</option>
+                <option value="proses" {{ request('status') == 'proses' ? 'selected' : '' }}>Proses</option>
 
-                <option>Selesai</option>
+                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
 
             </select>
 
-            <input type="date" name="tanggal" placeholder="Tanggal">
+            <input type="date" name="tanggal" value="{{ request('tanggal') }}" onchange="this.form.submit()" placeholder="Tanggal">
 
             <div class="filter-spacer"></div>
 
             <div class="search-wrap">
 
-                <input type="text" placeholder="Search">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search">
 
-                <button type="button">
+                <button type="submit">
 
                     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16a6.47 6.47 0 004.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 115 9.5 4.5 4.5 0 019.5 14z"/></svg>
 
@@ -646,7 +646,7 @@
 
             </div>
 
-        </div>
+        </form>
 
         <table>
 
