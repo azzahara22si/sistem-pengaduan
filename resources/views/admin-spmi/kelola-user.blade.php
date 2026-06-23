@@ -356,11 +356,6 @@
     <div class="page-header">
         <h2 class="page-title">Kelola User</h2>
         <div class="header-right">
-            @if(session('success'))
-                <div style="background: #dcfce7; color: #166534; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-                </div>
-            @endif
             <div class="search-wrap">
                 <input type="text" placeholder="Cari nama atau email...">
                 <button><i class="fa-solid fa-magnifying-glass"></i></button>
