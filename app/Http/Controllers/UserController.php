@@ -43,7 +43,7 @@ class UserController extends Controller
             'unit_id' => $request->role === 'admin' ? $request->unit_id : null,
         ]);
 
-        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
+        return redirect()->route('user.index')->with('success', 'Berhasil!Data pengguna berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -70,7 +70,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('user.index')->with('warning', 'User berhasil diperbarui!');
+        return redirect()->route('user.index')->with('warning', 'Berhasil Diperbarui!Data pengguna berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -78,6 +78,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
+        return redirect()->route('user.index')->with('success', 'Berhasil Dihapus!Data pengguna berhasil dihapus.');
     }
 }

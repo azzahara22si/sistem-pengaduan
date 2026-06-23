@@ -31,7 +31,7 @@ class UnitLayananController extends Controller
 
         UnitLayanan::create($request->all());
 
-        return redirect()->back()->with('success', 'Unit Layanan berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Berhasil!Data unit layanan berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -46,7 +46,7 @@ class UnitLayananController extends Controller
 
         $unit->update($request->all());
 
-        return redirect()->back()->with('success', 'Unit Layanan berhasil diperbarui');
+        return redirect()->back()->with('warning', 'Berhasil Diperbarui!Data unit layanan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -54,6 +54,6 @@ class UnitLayananController extends Controller
         $unit = UnitLayanan::findOrFail($id);
         $unit->delete();
 
-        return redirect()->back()->with('success', 'Unit Layanan berhasil dihapus');
+        return redirect()->back()->with('success', 'Berhasil Dihapus!Data unit layanan berhasil dihapus.');
     }
 }

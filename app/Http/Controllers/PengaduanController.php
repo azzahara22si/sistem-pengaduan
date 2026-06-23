@@ -132,7 +132,7 @@ class PengaduanController extends Controller
             'status' => 'proses'
         ]);
 
-        return redirect()->back()->with('success', 'Pengaduan berhasil disalurkan ke unit terkait.');
+        return redirect()->back()->with('success', 'Pengaduan Berhasil Disalurkan!Pengaduan telah diteruskan ke unit layanan terkait untuk ditindaklanjuti.');
     }
 
     public function create()
@@ -173,7 +173,7 @@ class PengaduanController extends Controller
         ]);
 
         return redirect()->route('pengaduan.index')
-            ->with('success', 'Pengaduan berhasil dikirim');
+            ->with('success', 'Pengaduan Berhasil Dikirim!Pengaduan Anda telah berhasil dikirim dan akan segera diproses.');
     }
 
     public function show(Pengaduan $pengaduan)
@@ -243,7 +243,7 @@ class PengaduanController extends Controller
         $pengaduan->update($data);
 
         return redirect()->route('pengaduan.show', $pengaduan->id)
-            ->with('success', 'Pengaduan berhasil diperbarui.');
+            ->with('success', 'Pengaduan Berhasil Diperbarui!Perubahan data pengaduan telah berhasil disimpan.');
     }
 
     public function destroy($id)
@@ -254,7 +254,7 @@ class PengaduanController extends Controller
         $pengaduan->delete();
 
         return redirect()->route('pengaduan.index')
-            ->with('success', 'Pengaduan berhasil dihapus');
+            ->with('success', 'Pengaduan Berhasil Dihapus!Data pengaduan telah berhasil dihapus dari sistem.');
     }
 
     public function updateStatus(Request $request, $id)
