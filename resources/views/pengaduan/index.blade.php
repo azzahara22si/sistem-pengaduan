@@ -140,6 +140,15 @@
         transform: translateY(-2px);
     }
 
+    .reset-filter {
+        font-size: 12px;
+        color: #ef4444;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+
     .status-badge {
         padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
         border-radius: clamp(8px, 1.5vw, 12px);
@@ -281,6 +290,7 @@
         border-spacing: 0;
         width: 100%;
         overflow-x: auto;
+        min-width: 900px;
     }
 
     th {
@@ -333,6 +343,8 @@
         max-width: 420px !important;
         padding: clamp(15px, 3vw, 30px) !important;
         border-radius: clamp(12px, 2vw, 20px) !important;
+        max-height: calc(100vh - 30px);
+        overflow-y: auto;
     }
 
     @media (max-width: 768px) {
@@ -382,6 +394,17 @@
             justify-content: center;
         }
 
+        .reset-filter {
+            width: 100%;
+            margin-left: 0;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #fef2f2;
+        }
+
         table {
             font-size: clamp(10px, 1.8vw, 12px);
         }
@@ -410,17 +433,97 @@
             padding: clamp(5px, 1vw, 6px) clamp(8px, 2vw, 10px);
         }
 
-        table {
-            font-size: 10px;
+        .table-card {
+            background: transparent;
+            border: 0;
+            box-shadow: none !important;
+            padding: 0;
+            overflow: visible;
         }
 
-        td, th {
-            padding: 6px 5px !important;
+        .table-responsive {
+            overflow: visible;
+            margin-bottom: 0;
+        }
+
+        table,
+        thead,
+        tbody,
+        tr,
+        td {
+            display: block;
+            width: 100%;
+            min-width: 0;
+        }
+
+        thead {
+            display: none;
+        }
+
+        tbody tr {
+            background: #fff;
+            border: 1px solid #edf2f7;
+            border-radius: 14px;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        tbody tr:hover {
+            transform: none;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+        }
+
+        td {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 12px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            font-size: 12px;
+            text-align: right !important;
+            word-break: break-word;
+        }
+
+        td::before {
+            content: attr(data-label);
+            flex: 0 0 92px;
+            color: #64748b;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        td:last-child {
+            border-bottom: 0 !important;
+        }
+
+        td[data-label="Aksi"] {
+            display: block;
+            text-align: left !important;
+        }
+
+        td[data-label="Aksi"]::before {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .empty-table-cell {
+            display: block;
+            text-align: center !important;
+        }
+
+        .empty-table-cell::before {
+            display: none;
         }
 
         .status-badge, .klasifikasi-badge {
-            font-size: 8px;
-            padding: 2px 6px;
+            font-size: 10px;
+            padding: 4px 8px;
+        }
+
+        .star-rating {
+            font-size: 30px !important;
         }
     }
 
@@ -480,7 +583,7 @@
             </div>
 
             @if(request()->anyFilled(['unit', 'status', 'date', 'search']))
-                <a href="{{ route('pengaduan.index') }}" style="font-size: 12px; color: #ef4444; text-decoration: none; font-weight: 600; margin-left: 10px;">
+                <a href="{{ route('pengaduan.index') }}" class="reset-filter">
                     <i class="fa-solid fa-xmark"></i> Reset
                 </a>
             @endif
@@ -508,12 +611,12 @@
                 <tbody>
                     @forelse($pengaduans as $index => $p)
                     <tr>
-                        <td>{{ ($pengaduans->currentPage() - 1) * $pengaduans->perPage() + $index + 1 }}</td>
-                        <td style="font-weight: 600; color: #0d2d6e;">{{ $p->judul }}</td>
+                        <td data-label="No">{{ ($pengaduans->currentPage() - 1) * $pengaduans->perPage() + $index + 1 }}</td>
+                        <td data-label="Judul" style="font-weight: 600; color: #0d2d6e;">{{ $p->judul }}</td>
                         @if(Auth::user()->role !== 'mahasiswa')
-                        <td style="font-size: 12px;">{{ $p->user->name ?? 'Mahasiswa' }}</td>
+                        <td data-label="Pengirim" style="font-size: 12px;">{{ $p->user->name ?? 'Mahasiswa' }}</td>
                         @endif
-                        <td>
+                        <td data-label="Klasifikasi">
                             @php
                                 $klasifikasi = $p->klasifikasi ?? 'pengaduan';
                                 $icons = [
@@ -532,19 +635,19 @@
                                 {{ $labels[$klasifikasi] }}
                             </span>
                         </td>
-                        <td style="text-align: center;">
+                        <td data-label="Urgensi" style="text-align: center;">
                             <span class="urgensi-badge urgensi-{{ strtolower($p->urgensi ?? 'sedang') }}">
                                 {{ $p->urgensi ?? 'Sedang' }}
                             </span>
                         </td>
-                        <td>{{ $p->unit_tujuan }}</td>
-                        <td style="font-size: 12px;">{{ $p->created_at->format('d/m/Y') }}</td>
-                        <td>
+                        <td data-label="Unit">{{ $p->unit_tujuan }}</td>
+                        <td data-label="Tanggal" style="font-size: 12px;">{{ $p->created_at->format('d/m/Y') }}</td>
+                        <td data-label="Status">
                             <span class="status-badge status-{{ strtolower($p->status) }}">
                                 {{ $p->status }}
                             </span>
                         </td>
-                        <td style="text-align: center;">
+                        <td data-label="Aksi" style="text-align: center;">
                             <div class="action-group">
                                 <a href="{{ route('pengaduan.show', $p->id) }}" class="btn-action btn-detail">
                                     <i class="fa-solid fa-eye"></i> Detail
@@ -583,7 +686,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="{{ Auth::user()->role === 'mahasiswa' ? 8 : 9 }}" style="text-align: center; padding: 40px; color: #94a3b8;">
+                        <td class="empty-table-cell" colspan="{{ Auth::user()->role === 'mahasiswa' ? 8 : 9 }}" style="text-align: center; padding: 40px; color: #94a3b8;">
                             <i class="fa-solid fa-folder-open" style="font-size: 30px; display: block; margin-bottom: 10px;"></i>
                             Belum ada data pengaduan.
                         </td>
@@ -648,7 +751,7 @@
 
     @if(Auth::user()->role === 'mahasiswa')
     <div id="feedbackModal" class="sidebar-overlay" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div style="background: white; width: 100%; max-width: 500px; border-radius: 16px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); position: relative; animation: slideUp 0.3s ease;">
+        <div class="modal-content" style="background: white; max-width: 500px !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); position: relative; animation: slideUp 0.3s ease;">
 
             <button type="button" onclick="closeFeedbackModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; transition: color 0.2s;">
                 <i class="fa-solid fa-xmark"></i>

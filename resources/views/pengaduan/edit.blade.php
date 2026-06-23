@@ -155,6 +155,18 @@
         }
     }
 
+    @media (max-width: 480px) {
+        .klasifikasi-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            overflow: visible;
+        }
+
+        .klasifikasi-grid label {
+            min-width: 0;
+        }
+    }
+
     .btn-submit {
         font-size: 15px;
         font-weight: 700;
@@ -177,9 +189,10 @@
         margin-bottom: 25px;
         display: flex;
         gap: 12px;
-        align-items: center;
+        align-items: flex-start;
         color: #1e40af;
         font-size: 13px;
+        line-height: 1.6;
     }
 </style>
 @endpush

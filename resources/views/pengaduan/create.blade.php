@@ -116,8 +116,11 @@
         padding: clamp(12px, 2vw, 15px);
         margin-bottom: clamp(15px, 3vw, 25px);
         display: flex;
-        flex-direction: column;
-        gap: clamp(8px, 1.5vw, 10px);
+        align-items: flex-start;
+        gap: 12px;
+        color: #1e40af;
+        font-size: clamp(12px, 2vw, 13px);
+        line-height: 1.6;
     }
 
     .form-info-item {
@@ -175,6 +178,18 @@
             padding: 12px 20px;
             min-height: 48px;
             font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .klasifikasi-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            overflow: visible;
+        }
+
+        .klasifikasi-grid label {
+            min-width: 0;
         }
     }
 </style>

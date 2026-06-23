@@ -19,6 +19,12 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .activity-content {
+        min-width: 0;
     }
 
     .activity-icon {
@@ -51,6 +57,9 @@
     }
 
     .activity-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-size: 12px;
         color: #0d428e;
         text-decoration: none;
@@ -61,18 +70,58 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         white-space: nowrap;
         border: 1px solid #e2e8f0;
+        min-height: 38px;
+    }
+
+    .dashboard-card-link {
+        font-size: 11px;
+        color: #4a9eff;
+        text-decoration: none;
+        border: 1px solid #4a9eff;
+        padding: 2px 8px;
+        border-radius: 10px;
+        white-space: nowrap;
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
 
     @media (max-width: 600px) {
+        .dashboard-card-link {
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .activity-list {
+            gap: 12px;
+        }
+
         .activity-item {
             flex-direction: column;
             align-items: flex-start;
-            gap: 15px;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .activity-info {
+            align-items: flex-start;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
         }
 
         .activity-btn {
             width: 100%;
             text-align: center;
+            min-height: 42px;
         }
 
         .activity-title {
@@ -90,7 +139,7 @@
             <p>Halo, {{ Auth::user()->name }}</p>
         </div>
         <div class="welcome-icon">
-            <span>😊</span>
+            <i class="fa-solid fa-face-smile"></i>
         </div>
     </div>
 
@@ -131,20 +180,20 @@
     <div class="table-card">
         <div class="card-title">
             <span>Aktivitas Pengaduan Anda</span>
-            <a href="{{ route('pengaduan.index') }}" style="font-size: 11px; color: #4a9eff; text-decoration: none; border: 1px solid #4a9eff; padding: 2px 8px; border-radius: 10px;">Lihat Semua</a>
+            <a href="{{ route('pengaduan.index') }}" class="dashboard-card-link">Lihat Semua</a>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="activity-list">
             @forelse($pengaduans as $p)
             <div class="activity-item">
                 <div class="activity-info">
                     <div class="activity-icon">
                         <i class="fa-solid fa-file-invoice"></i>
                     </div>
-                    <div>
+                    <div class="activity-content">
                         <div class="activity-title">{{ $p->judul }}</div>
                         <div class="activity-meta">
                             <span style="color: {{ $p->status === 'selesai' ? '#10b981' : ($p->status === 'proses' ? '#f97316' : '#fbbf24') }}; font-weight: 700; text-transform: capitalize;">{{ $p->status }}</span> 
-                            • {{ $p->created_at->diffForHumans() }}
+                            &bull; {{ $p->created_at->diffForHumans() }}
                         </div>
                     </div>
                 </div>

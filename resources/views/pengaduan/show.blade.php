@@ -26,8 +26,17 @@
         padding-bottom: 20px;
     }
 
+    .detail-title {
+        font-size: clamp(18px, 5vw, 22px);
+        color: #0d2d6e;
+        font-weight: 700;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
     .badge-group {
         display: flex;
+        flex-wrap: wrap;
         gap: 10px;
     }
 
@@ -74,6 +83,7 @@
         font-size: 14px;
         color: #1e293b;
         font-weight: 600;
+        overflow-wrap: anywhere;
     }
 
     .description-box {
@@ -83,6 +93,7 @@
         line-height: 1.8;
         color: #475569;
         font-size: 14px;
+        overflow-wrap: anywhere;
     }
 
     .image-preview {
@@ -104,6 +115,29 @@
         padding: 20px;
         border-radius: 0 15px 15px 0;
         margin-bottom: 15px;
+    }
+
+    .tanggapan-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .status-choice-grid {
+        display: flex;
+        gap: 15px;
+    }
+
+    .feedback-modal-card {
+        background: white;
+        width: calc(100vw - 30px);
+        max-width: 500px;
+        border-radius: 16px;
+        padding: clamp(18px, 5vw, 30px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        position: relative;
+        animation: slideUp 0.3s ease;
     }
 
     .btn-back {
@@ -214,6 +248,64 @@
             width: 100%;
             min-width: 0;
         }
+
+        .status-choice-grid {
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .detail-container {
+            gap: 14px;
+        }
+
+        .detail-card {
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .detail-header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+        }
+
+        .badge-group,
+        .status-badge,
+        .klasifikasi-badge-detail {
+            width: 100%;
+        }
+
+        .status-badge,
+        .klasifikasi-badge-detail {
+            display: inline-flex;
+            justify-content: center;
+            min-height: 34px;
+            align-items: center;
+        }
+
+        .description-box,
+        .tanggapan-card {
+            padding: 14px;
+            border-radius: 12px;
+        }
+
+        .tanggapan-meta {
+            flex-direction: column;
+        }
+
+        .tanggapan-meta span {
+            white-space: normal !important;
+        }
+
+        .status-choice-grid {
+            flex-direction: column;
+        }
+
+        .feedback-modal-card {
+            width: calc(100vw - 24px);
+            max-height: calc(100vh - 24px);
+            overflow-y: auto;
+        }
     }
 </style>
 @endpush
@@ -228,7 +320,7 @@
     <div class="detail-card">
         <div class="detail-header">
             <div>
-                <h2 style="font-size: 22px; color: #0d2d6e; font-weight: 700;">{{ $pengaduan->judul }}</h2>
+                <h2 class="detail-title">{{ $pengaduan->judul }}</h2>
                 <p style="font-size: 13px; color: #94a3b8; margin-top: 5px;">ID Pengaduan: #ADU-{{ str_pad($pengaduan->id, 5, '0', STR_PAD_LEFT) }}</p>
             </div>
             <div class="badge-group">
@@ -325,7 +417,7 @@
             <div class="tanggapan-card">
                 <p style="font-size: 13px; color: #334155; line-height: 1.6;">{{ $t->isi_tanggapan }}</p>
                 <div style="margin-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="tanggapan-meta">
                         <div>
                             <div style="font-size: 11px; font-weight: 700; color: #0d428e; margin-bottom: 4px;">
                                 <i class="fa-solid fa-user-tie" style="margin-right: 4px;"></i> {{ $t->user->name ?? 'Admin' }} 
@@ -366,7 +458,7 @@
 
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 10px;">Update Status Pengaduan:</label>
-                    <div style="display: flex; gap: 15px;">
+                    <div class="status-choice-grid">
                         <label style="flex: 1; cursor: pointer;">
                             <input type="radio" name="status" value="proses" {{ $pengaduan->status === 'proses' ? 'checked' : '' }} style="display: none;" onchange="updateStatusStyle(this)">
                             <div class="status-option {{ $pengaduan->status === 'proses' ? 'active-proses' : '' }}" style="padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; color: #64748b; transition: all 0.2s;">
@@ -466,7 +558,7 @@
 
 @if(Auth::user()->role === 'mahasiswa')
 <div id="feedbackModal" class="sidebar-overlay" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div style="background: white; width: 100%; max-width: 500px; border-radius: 16px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); position: relative; animation: slideUp 0.3s ease;">
+    <div class="feedback-modal-card">
 
         <button type="button" onclick="closeFeedbackModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; transition: color 0.2s;">
             <i class="fa-solid fa-xmark"></i>
