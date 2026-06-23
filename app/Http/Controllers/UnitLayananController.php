@@ -54,6 +54,6 @@ class UnitLayananController extends Controller
         $unit = UnitLayanan::findOrFail($id);
         $unit->delete();
 
-        return redirect()->back()->with('success', 'Berhasil Dihapus!Data unit layanan berhasil dihapus.');
+        return redirect()->back()->with('error', 'Berhasil Dihapus!Data unit layanan berhasil dihapus.');
     }
 }

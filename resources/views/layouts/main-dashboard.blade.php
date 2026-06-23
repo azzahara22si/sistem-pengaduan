@@ -650,7 +650,7 @@
             @if(session('warning'))
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Perhatian',
+                    title: 'Berhasil Diperbarui!',
                     text: {!! json_encode(session('warning')) !!},
                     timer: 5000,
                     showConfirmButton: false
@@ -658,10 +658,14 @@
             @endif
 
             @if(session('error'))
+                @php
+                    $errorText = session('error');
+                    $errorTitle = str_starts_with($errorText, 'Berhasil Dihapus!') ? 'Berhasil Dihapus!' : 'Gagal';
+                @endphp
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal',
-                    text: {!! json_encode(session('error')) !!},
+                    title: {!! json_encode($errorTitle) !!},
+                    text: {!! json_encode($errorText) !!},
                     timer: 5000,
                     showConfirmButton: false
                 });
