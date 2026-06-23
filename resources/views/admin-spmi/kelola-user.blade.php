@@ -311,6 +311,25 @@
     .select-custom option {
         padding: 10px;
         font-family: 'Poppins', sans-serif;
+    }
+
+    .conditional-field[hidden] {
+        display: none !important;
+    }
+
+    .user-pagination {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .pagination-summary {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 500;
+    }
 
     @media (max-width: 768px) {
         .page-header {
@@ -346,6 +365,11 @@
             width: 95% !important;
             padding: 25px 20px !important;
             margin: 20px !important;
+        }
+
+        .user-pagination {
+            align-items: stretch;
+            text-align: center;
         }
     }
 </style>
@@ -392,7 +416,7 @@
             <tbody>
                 @forelse ($users ?? [] as $index => $user)
                 <tr>
-                    <td>{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
+                    <td>{{ str_pad(($users->firstItem() ?? 1) + $index, 2, '0', STR_PAD_LEFT) }}</td>
                     <td style="font-weight: 600;">{{ $user->name }}</td>
                     <td>{{ $user->nim ?? '-' }}</td>
                     <td>{{ $user->email }}</td>
@@ -436,10 +460,16 @@
             </tbody>
         </table>
     </div>
+    </div>
 
-    @if($users instanceof \Illuminate\Pagination\Paginator)
-    <div style="margin-top: 25px; display: flex; justify-content: center;">
-        {{ $users->links() }}
+    @if(method_exists($users, 'hasPages') && $users->hasPages())
+    <div class="user-pagination">
+        <div class="pagination-summary">
+            Menampilkan {{ $users->firstItem() }}-{{ $users->lastItem() }} dari {{ $users->total() }} user
+        </div>
+        <div>
+            {{ $users->links() }}
+        </div>
     </div>
     @endif
 
@@ -464,11 +494,11 @@
                 @error('name') <span style="color: #ef4444; font-size: 10px; margin-top: 4px;">{{ $message }}</span> @enderror
             </div>
 
-            <div class="form-group">
+            <div class="form-group conditional-field" id="nimFieldTambah" hidden>
                 <label class="form-label"><i class="fa-solid fa-id-badge"></i> NIM</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-barcode input-icon"></i>
-                    <input type="text" name="nim" value="{{ old('nim') }}" placeholder="Masukkan NIM" required>
+                    <input type="text" name="nim" id="nimTambah" value="{{ old('nim') }}" placeholder="Masukkan NIM" disabled>
                 </div>
                 @error('nim') <span style="color: #ef4444; font-size: 10px; margin-top: 4px;">{{ $message }}</span> @enderror
             </div>
@@ -487,17 +517,17 @@
                 <div class="radio-group">
                     <label class="radio-option">
                         <i class="fa-solid fa-graduation-cap"></i>
-                        <input type="radio" name="role" value="mahasiswa" {{ old('role') == 'mahasiswa' ? 'checked' : '' }} required onchange="toggleUnitField(this, 'unitFieldTambah')"> 
+                        <input type="radio" name="role" value="mahasiswa" {{ old('role') == 'mahasiswa' ? 'checked' : '' }} required onchange="toggleRoleFields(this, 'unitFieldTambah', 'nimFieldTambah')"> 
                         Mahasiswa
                     </label>
                     <label class="radio-option">
                         <i class="fa-solid fa-user-tie"></i>
-                        <input type="radio" name="role" value="admin" {{ old('role') == 'admin' ? 'checked' : '' }} onchange="toggleUnitField(this, 'unitFieldTambah')"> 
+                        <input type="radio" name="role" value="admin" {{ old('role') == 'admin' ? 'checked' : '' }} onchange="toggleRoleFields(this, 'unitFieldTambah', 'nimFieldTambah')"> 
                         Admin Unit
                     </label>
                     <label class="radio-option">
                         <i class="fa-solid fa-user-shield"></i>
-                        <input type="radio" name="role" value="admin_spmi" {{ old('role') == 'admin_spmi' ? 'checked' : '' }} onchange="toggleUnitField(this, 'unitFieldTambah')"> 
+                        <input type="radio" name="role" value="admin_spmi" {{ old('role') == 'admin_spmi' ? 'checked' : '' }} onchange="toggleRoleFields(this, 'unitFieldTambah', 'nimFieldTambah')"> 
                         Admin SPMI
                     </label>
                 </div>
@@ -554,11 +584,11 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group conditional-field" id="nimFieldEdit" hidden>
                 <label class="form-label"><i class="fa-solid fa-id-badge"></i> NIM</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-barcode input-icon"></i>
-                    <input type="text" name="nim" id="edit_nim" placeholder="Masukkan NIM" required>
+                    <input type="text" name="nim" id="edit_nim" placeholder="Masukkan NIM" disabled>
                 </div>
             </div>
 
@@ -575,17 +605,17 @@
                 <div class="radio-group">
                     <label class="radio-option">
                         <i class="fa-solid fa-graduation-cap"></i>
-                        <input type="radio" name="role" value="mahasiswa" id="edit_role_mahasiswa" required onchange="toggleUnitField(this, 'unitFieldEdit')"> 
+                        <input type="radio" name="role" value="mahasiswa" id="edit_role_mahasiswa" required onchange="toggleRoleFields(this, 'unitFieldEdit', 'nimFieldEdit')"> 
                         Mahasiswa
                     </label>
                     <label class="radio-option">
                         <i class="fa-solid fa-user-tie"></i>
-                        <input type="radio" name="role" value="admin" id="edit_role_admin" onchange="toggleUnitField(this, 'unitFieldEdit')"> 
+                        <input type="radio" name="role" value="admin" id="edit_role_admin" onchange="toggleRoleFields(this, 'unitFieldEdit', 'nimFieldEdit')"> 
                         Admin Unit
                     </label>
                     <label class="radio-option">
                         <i class="fa-solid fa-user-shield"></i>
-                        <input type="radio" name="role" value="admin_spmi" id="edit_role_admin_spmi" onchange="toggleUnitField(this, 'unitFieldEdit')"> 
+                        <input type="radio" name="role" value="admin_spmi" id="edit_role_admin_spmi" onchange="toggleRoleFields(this, 'unitFieldEdit', 'nimFieldEdit')"> 
                         Admin SPMI
                     </label>
                 </div>
@@ -648,6 +678,43 @@
 
     @push('scripts')
     <script>
+        function setFieldState(field, shouldShow) {
+            if (!field) return;
+
+            const control = field.querySelector('input, select');
+            field.hidden = !shouldShow;
+            field.style.display = shouldShow ? 'flex' : 'none';
+
+            if (control) {
+                control.required = shouldShow;
+                control.disabled = !shouldShow;
+                if (!shouldShow) {
+                    control.value = '';
+                }
+            }
+        }
+
+        function toggleRoleFields(radio, unitFieldId, nimFieldId) {
+            const unitField = document.getElementById(unitFieldId);
+            const nimField = document.getElementById(nimFieldId);
+
+            setFieldState(unitField, radio.value === 'admin');
+            setFieldState(nimField, radio.value === 'mahasiswa');
+        }
+
+        function initializeRoleFields(formSelector, unitFieldId, nimFieldId) {
+            const checkedRole = document.querySelector(`${formSelector} input[name="role"]:checked`);
+            const unitField = document.getElementById(unitFieldId);
+            const nimField = document.getElementById(nimFieldId);
+
+            if (checkedRole) {
+                toggleRoleFields(checkedRole, unitFieldId, nimFieldId);
+            } else {
+                setFieldState(unitField, false);
+                setFieldState(nimField, false);
+            }
+        }
+
         function toggleUnitField(radio, fieldId) {
             const field = document.getElementById(fieldId);
             if (radio.value === 'admin') {
@@ -675,7 +742,7 @@
 
             if (roleRadios[user.role]) {
                 roleRadios[user.role].checked = true;
-                toggleUnitField(roleRadios[user.role], 'unitFieldEdit');
+                toggleRoleFields(roleRadios[user.role], 'unitFieldEdit', 'nimFieldEdit');
             }
 
             if (user.role === 'admin' && user.unit_id) {
@@ -697,6 +764,10 @@
 
             modal.classList.add('show');
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRoleFields('#modalTambah', 'unitFieldTambah', 'nimFieldTambah');
+        });
     </script>
     @endpush
 @endsection

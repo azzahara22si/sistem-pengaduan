@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UnitLayanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -42,7 +43,13 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'nim' => 'required|string|max:50|unique:users',
+            'nim' => [
+                'required_if:role,mahasiswa',
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('users', 'nim'),
+            ],
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:mahasiswa,admin,admin_spmi',
@@ -51,7 +58,7 @@ class UserController extends Controller
 
         User::create([
             'name' => $request->name,
-            'nim' => $request->nim,
+            'nim' => $request->role === 'mahasiswa' ? $request->nim : null,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
@@ -67,7 +74,13 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'nim' => 'required|string|max:50|unique:users,nim,'.$id,
+            'nim' => [
+                'required_if:role,mahasiswa',
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('users', 'nim')->ignore($id),
+            ],
             'email' => 'required|string|email|max:255|unique:users,email,'.$id,
             'role' => 'required|in:mahasiswa,admin,admin_spmi',
             'unit_id' => 'required_if:role,admin|nullable|exists:unit_layanans,id',
@@ -75,7 +88,7 @@ class UserController extends Controller
 
         $data = [
             'name' => $request->name,
-            'nim' => $request->nim,
+            'nim' => $request->role === 'mahasiswa' ? $request->nim : null,
             'email' => $request->email,
             'role' => $request->role,
             'unit_id' => $request->role === 'admin' ? $request->unit_id : null,
