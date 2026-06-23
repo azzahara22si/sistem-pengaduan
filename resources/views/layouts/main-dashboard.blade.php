@@ -642,7 +642,7 @@
                     icon: 'success',
                     title: 'Sukses',
                     text: {!! json_encode(session('success')) !!},
-                    timer: 2500,
+                    timer: 5000,
                     showConfirmButton: false
                 });
             @endif
@@ -652,7 +652,7 @@
                     icon: 'warning',
                     title: 'Perhatian',
                     text: {!! json_encode(session('warning')) !!},
-                    timer: 2500,
+                    timer: 5000,
                     showConfirmButton: false
                 });
             @endif
@@ -662,7 +662,7 @@
                     icon: 'error',
                     title: 'Gagal',
                     text: {!! json_encode(session('error')) !!},
-                    timer: 2500,
+                    timer: 5000,
                     showConfirmButton: false
                 });
             @endif
