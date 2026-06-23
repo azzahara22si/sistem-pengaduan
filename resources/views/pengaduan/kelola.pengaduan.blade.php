@@ -594,7 +594,7 @@
 
                 @csrf
 
-                <button type="submit" class="btn-logout">Logout</button>
+                <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket" style="margin-right:8px;"></i>Logout</button>
 
             </form>
 

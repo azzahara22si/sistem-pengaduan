@@ -111,6 +111,15 @@
             transition: all 0.3s;
         }
 
+        .logout-btn .nav-icon {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            margin-right: 8px;
+            font-size: 16px;
+            vertical-align: middle;
+        }
+
         .logout-btn:hover {
             background-color: #fff;
             color: #0d2d6e;
@@ -580,7 +589,10 @@
         <div class="sidebar-footer">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="logout-btn">Logout</button>
+                <button type="submit" class="logout-btn">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </button>
             </form>
         </div>
     </aside>

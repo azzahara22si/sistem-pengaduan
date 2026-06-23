@@ -48,7 +48,10 @@
                             @csrf
                             <x-dropdown-link :href="route('logout')"
                                 onclick="event.preventDefault(); this.closest('form').submit();">
-                                Logout
+                                <span style="display:inline-flex;align-items:center;">
+                                    <i class="fa-solid fa-right-from-bracket" style="width:20px;text-align:center;margin-right:8px;font-size:16px;"></i>
+                                    <span>Logout</span>
+                                </span>
                             </x-dropdown-link>
                         </form>
                     </x-slot>
