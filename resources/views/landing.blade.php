@@ -70,17 +70,18 @@
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 30px;
+        gap: clamp(18px, 2.2vw, 30px);
         list-style: none;
     }
 
     .nav-links a {
         color: rgba(255, 255, 255, 0.85);
         text-decoration: none;
-        font-size: 14px;
+        font-size: clamp(12px, 1.2vw, 14px);
         font-weight: 500;
         transition: var(--transition);
         position: relative;
+        white-space: nowrap;
     }
 
     .nav-links a:not(.btn-login)::after {
@@ -254,18 +255,27 @@
         .tujuan-img { width: 100%; max-width: 400px; }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1100px) {
         .mobile-toggle { display: block; }
+        nav {
+            padding: 0 4%;
+        }
+        .nav-brand {
+            padding: 8px 18px;
+        }
         .nav-links {
             position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
             background: var(--primary); flex-direction: column; padding: 40px 5%; gap: 20px;
-            transition: var(--transition); z-index: 999;
+            transition: var(--transition); z-index: 999; overflow-y: auto;
         }
         .nav-links.active { left: 0; }
         .nav-links li { width: 100%; text-align: center; }
         .nav-links a { display: block; font-size: 18px; padding: 10px 0; }
         .btn-login { width: 100%; margin-top: 20px; }
-        
+    }
+
+    @media (max-width: 768px) {
+        .nav-brand img { height: 20px; }
         section { padding: 60px 5%; }
         .card, .tujuan-card { padding: 30px 20px; }
         footer { flex-direction: column; text-align: center; }
@@ -275,6 +285,30 @@
     }
 
     @media (max-width: 480px) {
+        nav {
+            height: 64px;
+        }
+        nav.scrolled {
+            height: 60px;
+        }
+        .nav-brand {
+            padding: 7px 14px;
+        }
+        .nav-brand img {
+            height: 18px;
+        }
+        .nav-links {
+            top: 64px;
+            height: calc(100vh - 64px);
+            padding: 28px 5%;
+        }
+        nav.scrolled .nav-links {
+            top: 60px;
+            height: calc(100vh - 60px);
+        }
+        .hero-wrapper {
+            padding: 46px 5% 72px;
+        }
         .hero-buttons { flex-direction: column; }
         .btn-oval, .btn-outline { width: 100%; justify-content: center; }
         .hero-stats { flex-direction: column; align-items: center; gap: 15px; }
