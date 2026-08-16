@@ -21,9 +21,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->query('search', '');
-        
+        $role = $request->query('role', '');
+        $unitId = $request->query('unit', '');
+
         $query = User::with('unit');
-        
+
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%')
@@ -32,11 +34,19 @@ class UserController extends Controller
                   ->orWhere('role', 'LIKE', '%' . $search . '%');
             });
         }
-        
-        $users = $query->paginate(15)->withQueryString();
+
+        if (!empty($role)) {
+            $query->where('role', $role);
+        }
+
+        if (!empty($unitId)) {
+            $query->where('unit_id', $unitId);
+        }
+
+        $users = $query->orderBy('name')->paginate(15)->withQueryString();
         $units = UnitLayanan::all();
 
-        return view('admin-spmi.kelola-user', compact('users', 'units', 'search'));
+        return view('admin-spmi.kelola-user', compact('users', 'units', 'search', 'role', 'unitId'));
     }
 
     public function store(Request $request)

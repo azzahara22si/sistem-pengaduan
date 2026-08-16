@@ -162,8 +162,8 @@
             <img src="{{ asset('images/logo.png') }}" alt="Politeknik Caltex Riau">
         </div>
 
-        <h2>{{ __('messages.login') }}</h2>
-        <p>{{ __('messages.welcome_back') }}</p>
+        <h2>Masuk</h2>
+        <p>Selamat datang kembali!</p>
 
         @if (session('status'))
             <div style="color: #4ade80; font-size: 12px; margin-bottom: 20px;">
@@ -192,13 +192,13 @@
             @enderror
 
             @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" class="forgot-link">{{ __('messages.forgot_password') }}</a>
+                <a href="{{ route('password.request') }}" class="forgot-link">Lupa kata sandi?</a>
             @endif
 
-            <button type="submit" class="login-btn">{{ __('messages.login') }}</button>
+            <button type="submit" class="login-btn">Masuk</button>
         </form>
 
-        <p style="margin-top: 22px; font-size: 13px; opacity: 0.9;">{{ __('messages.no_account') }} <a href="{{ route('register') }}" class="auth-link">{{ __('messages.register') }}</a></p>
+        <p style="margin-top: 22px; font-size: 13px; opacity: 0.9;">Belum memiliki akun? <a href="{{ route('register') }}" class="auth-link">Daftar</a></p>
     </div>
 
     <script>

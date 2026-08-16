@@ -64,6 +64,19 @@
     .klasifikasi-aspirasi { background: #fef3c7; color: #92400e; }
     .klasifikasi-permintaan_informasi { background: #dbeafe; color: #1e40af; }
 
+    .urgensi-badge-detail {
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .urgensi-rendah { background: #f1f5f9; color: #475569; }
+    .urgensi-sedang { background: #fef3c7; color: #92400e; }
+    .urgensi-tinggi { background: #fee2e2; color: #b91c1c; }
+
     .info-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -359,10 +372,9 @@
             </div>
             <div class="info-item">
                 <label>Tingkat Urgensi</label>
-                <p style="color: {{ $pengaduan->urgensi === 'tinggi' ? '#ef4444' : ($pengaduan->urgensi === 'sedang' ? '#fbbf24' : '#64748b') }}">
-                    <i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 5px;"></i>
-                    {{ ucfirst($pengaduan->urgensi) }}
-                </p>
+                <span class="urgensi-badge-detail urgensi-{{ strtolower($pengaduan->urgensi ?? 'sedang') }}">
+                    {{ ucfirst($pengaduan->urgensi ?? 'sedang') }}
+                </span>
             </div>
             <div class="info-item">
                 <label>Tanggal Pengaduan</label>
@@ -373,6 +385,30 @@
                 <p>{{ $pengaduan->user->name }} ({{ ucfirst($pengaduan->user->role) }})</p>
             </div>
         </div>
+
+        @if($pengaduan->penyaluranHistory->isNotEmpty())
+            <div class="history-card" style="margin-top: 20px; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; background: #f8fafc;">
+                <h3 style="font-size: 15px; font-weight: 700; color: #0d2d6e; margin-bottom: 14px;">Riwayat Penyaluran</h3>
+                <div style="display: grid; gap: 12px;">
+                    @foreach($pengaduan->penyaluranHistory as $riwayat)
+                        <div style="padding: 14px; border-radius: 14px; background: #ffffff; border: 1px solid #e2e8f0;">
+                            <div style="display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 13px; font-weight: 700; color: #0d428e;">{{ $riwayat->created_at->format('d M Y H:i') }}</span>
+                                <span style="font-size: 12px; color: #64748b;">oleh {{ $riwayat->user->name ?? 'Admin' }}</span>
+                            </div>
+                            <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.6;">
+                                @if($riwayat->from_unit_tujuan)
+                                    Dari: <strong>{{ $riwayat->from_unit_tujuan }}</strong><br>
+                                @else
+                                    Dari: <strong>Pengajuan awal</strong><br>
+                                @endif
+                                Ke: <strong>{{ $riwayat->to_unit_tujuan }}</strong>
+                            </p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         <div class="form-group">
             <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 10px; font-weight: 600;">Deskripsi Pengaduan</label>
@@ -565,18 +601,15 @@
         </button>
 
         <div style="text-align: center; margin-bottom: 25px;">
-            <div style="width: 60px; height: 60px; background: #fffbeb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                <i class="fa-solid fa-star" style="font-size: 28px; color: #fbbf24;"></i>
-            </div>
             <h3 style="font-size: 20px; font-weight: 700; color: #0d2d6e; margin-bottom: 5px;">Beri Penilaian</h3>
             <p style="color: #64748b; font-size: 13px;">Seberapa puas Anda dengan penanganan pengaduan ini?</p>
         </div>
 
-        <form id="feedbackForm" method="POST" action="">
+        <form id="feedbackForm" method="POST" action="" onsubmit="return validateRating(this);">
             @csrf
 
             <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; direction: rtl;">
-                <input type="radio" id="show_star5" name="rating" value="5" style="display: none;" required/>
+                <input type="radio" id="show_star5" name="rating" value="5" style="display: none;" />
                 <label for="show_star5" class="star-rating"><i class="fa-solid fa-star"></i></label>
                 <input type="radio" id="show_star4" name="rating" value="4" style="display: none;" />
                 <label for="show_star4" class="star-rating"><i class="fa-solid fa-star"></i></label>
@@ -638,6 +671,24 @@
             closeFeedbackModal();
         }
     });
+
+    function validateRating(form) {
+        const checked = form.querySelector('input[name="rating"]:checked');
+        if (!checked) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Isi Penilaian',
+                    text: 'Silakan pilih penilaian (bintang) sebelum mengirim.',
+                    confirmButtonColor: '#0d428e'
+                });
+            } else {
+                alert('Silakan pilih penilaian (bintang) sebelum mengirim.');
+            }
+            return false;
+        }
+        return true;
+    }
 </script>
 @endpush
 @endif

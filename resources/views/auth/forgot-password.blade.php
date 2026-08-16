@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - Politeknik Caltex Riau</title>
+    <title>Lupa Password - Politeknik Caltex Riau</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -146,8 +146,8 @@
             <img src="{{ asset('images/logo.png') }}" alt="Politeknik Caltex Riau">
         </div>
 
-        <h2>Lupa Password</h2>
-        <p>Masukkan email Anda dan kami akan mengirimkan tautan untuk mereset password ke email tersebut.</p>
+        <h2>Lupa Kata Sandi</h2>
+        <p>Masukkan email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi ke email tersebut.</p>
 
         @if (session('status'))
             <div class="message">{{ session('status') }}</div>
@@ -158,13 +158,13 @@
 
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required autofocus>
+                <input type="email" name="email" placeholder="Alamat Email" value="{{ old('email') }}" required autofocus>
             </div>
             @error('email')
                 <div class="error-msg">{{ $message }}</div>
             @enderror
 
-            <button type="submit" class="auth-btn">Kirim Tautan Reset</button>
+            <button type="submit" class="auth-btn">Kirim Tautan</button>
         </form>
 
         <a href="{{ route('login') }}" class="auth-link">Kembali ke Login</a>

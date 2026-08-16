@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengaduan;
+use App\Models\PenyaluranPengaduan;
 use App\Models\UnitLayanan;
+use App\Models\User;
+use App\Mail\PengaduanNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -63,6 +68,14 @@ class PengaduanController extends Controller
         return view('pengaduan.dashboard', compact('total', 'diajukan', 'diproses', 'selesai'));
     }
 
+    public function pantau()
+    {
+        abort_unless(Auth::user()->role === 'admin_spmi', 403);
+
+        $pengaduans = Pengaduan::latest()->paginate(10);
+        return view('pengaduan.kelola.pengaduan', compact('pengaduans'));
+    }
+
     public function index(Request $request)
     {
         $validated = $request->validate([
@@ -76,7 +89,15 @@ class PengaduanController extends Controller
         $user = Auth::user();
         $units = UnitLayanan::all();
 
-        $query = Pengaduan::query();
+        $query = Pengaduan::query()
+            ->with(['user', 'unit'])
+            ->withCount([
+                'tanggapan as unit_responses_count' => function ($query) {
+                    $query->whereHas('user', function ($userQuery) {
+                        $userQuery->where('role', 'admin');
+                    });
+                },
+            ]);
 
         if ($user->role === 'mahasiswa') {
             $query->where('user_id', $user->id)->where('status', '!=', 'selesai');
@@ -106,11 +127,19 @@ class PengaduanController extends Controller
             $query->where('judul', 'LIKE', '%' . $search . '%');
         }
 
-        $pengaduans = $query->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
-            ->orderByRaw("CASE WHEN urgensi = 'tinggi' THEN 0 WHEN urgensi = 'sedang' THEN 1 ELSE 2 END ASC")
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        if (Auth::user()->role === 'admin_spmi') {
+            $pengaduans = $query
+                ->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+        } else {
+            $pengaduans = $query->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
+                ->orderByRaw("CASE WHEN urgensi = 'tinggi' THEN 0 WHEN urgensi = 'sedang' THEN 1 ELSE 2 END ASC")
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+        }
 
         return view('pengaduan.index', compact('pengaduans', 'units'));
     }
@@ -124,18 +153,138 @@ class PengaduanController extends Controller
         ]);
 
         $pengaduan = Pengaduan::findOrFail($id);
-
-        abort_unless($pengaduan->status === 'diajukan', 403);
-
         $unit = UnitLayanan::findOrFail($validated['unit_id']);
 
-        $pengaduan->update([
-            'unit_id' => $unit->id,
-            'unit_tujuan' => $unit->nama_unit,
-            'status' => 'proses'
+        $isInitialDistribution = $pengaduan->status === 'diajukan';
+
+        DB::transaction(function () use ($pengaduan, $unit) {
+            $pengaduan->refresh();
+            abort_unless($pengaduan->canBeReassigned(), 403);
+
+            $fromUnitId = $pengaduan->unit_id;
+            $fromUnitTujuan = $pengaduan->unit_tujuan;
+
+            $pengaduan->update([
+                'unit_id' => $unit->id,
+                'unit_tujuan' => $unit->nama_unit,
+                'status' => 'proses',
+            ]);
+
+            PenyaluranPengaduan::create([
+                'pengaduan_id' => $pengaduan->id,
+                'from_unit_id' => $fromUnitId,
+                'from_unit_tujuan' => $fromUnitTujuan,
+                'to_unit_id' => $unit->id,
+                'to_unit_tujuan' => $unit->nama_unit,
+                'user_id' => Auth::id(),
+            ]);
+        });
+
+        $message = $isInitialDistribution
+            ? 'Pengaduan telah diteruskan ke unit layanan terkait untuk ditindaklanjuti.'
+            : 'Penyaluran pengaduan berhasil diperbarui.';
+
+        // Notify unit admins that a pengaduan has been forwarded to their unit
+        try {
+            $unitAdmins = User::where('role', 'admin')->where('unit_id', $unit->id)->whereNotNull('email')->get();
+            foreach ($unitAdmins as $unitAdmin) {
+                $note = 'Pengaduan Diteruskan ke Unit ' . $unit->nama_unit;
+                Mail::to($unitAdmin->email)->send(new PengaduanNotification($pengaduan, $note));
+            }
+        } catch (\Exception $e) {
+            report($e);
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function export(Request $request)
+    {
+        $this->ensureAdminSpmi();
+
+        $validated = $request->validate([
+            'unit' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', Rule::in(['diajukan', 'proses', 'selesai'])],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'search' => ['nullable', 'string', 'max:100'],
         ]);
 
-        return redirect()->back()->with('success', 'Pengaduan telah diteruskan ke unit layanan terkait untuk ditindaklanjuti.');
+        $query = Pengaduan::with('user');
+
+        if (!empty($validated['unit'])) {
+            $query->where('unit_tujuan', $validated['unit']);
+        }
+        if (!empty($validated['status'])) {
+            $query->where('status', $validated['status']);
+        }
+        if (!empty($validated['date'])) {
+            $query->whereDate('created_at', $validated['date']);
+        }
+        if (!empty($validated['search'])) {
+            $query->where('judul', 'LIKE', '%' . $validated['search'] . '%');
+        }
+
+        $pengaduans = $query
+            ->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
+            ->latest()
+            ->get();
+
+        $rows = $pengaduans->map(function ($pengaduan) {
+            return '<tr>'
+                . '<td>' . e($pengaduan->created_at->format('d/m/Y H:i')) . '</td>'
+                . '<td>' . e($pengaduan->judul) . '</td>'
+                . '<td>' . e($pengaduan->unit_tujuan_awal ?: $pengaduan->unit_tujuan) . '</td>'
+                . '<td>' . e($pengaduan->unit_id ? $pengaduan->unit_tujuan : 'Belum ditetapkan') . '</td>'
+                . '<td>' . e($pengaduan->user->name ?? '-') . '</td>'
+                . '<td>' . e(ucfirst($pengaduan->urgensi)) . '</td>'
+                . '<td>' . e(ucfirst($pengaduan->status)) . '</td>'
+                . '</tr>';
+        })->implode('');
+
+        $html = '<html><head><meta charset="utf-8"><style>'
+            . 'table{border-collapse:collapse;width:100%}th,td{border:1px solid #cbd5e1;padding:7px;text-align:left}th{background:#0d428e;color:#fff}.title{font-size:18px;font-weight:bold;text-align:center}'
+            . '</style></head><body>'
+            . '<div class="title">LAPORAN KELOLA PENGADUAN</div>'
+            . '<p style="text-align:center">Diekspor pada ' . e(now()->format('d/m/Y H:i')) . ' WIB</p>'
+            . '<table><thead><tr><th>Waktu</th><th>Judul</th><th>Unit Tujuan</th><th>Unit Penanganan</th><th>Pelapor</th><th>Urgensi</th><th>Status</th></tr></thead><tbody>'
+            . $rows . '</tbody></table></body></html>';
+
+        return response($html, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="kelola_pengaduan_' . now()->format('Y-m-d') . '.xls"',
+        ]);
+    }
+
+    public function print(Request $request)
+    {
+        $this->ensureAdminSpmi();
+
+        $params = $request->only(['unit', 'status', 'date', 'search', 'klasifikasi', 'tanggal']);
+
+        $query = Pengaduan::with('user');
+
+        if (!empty($params['klasifikasi'])) {
+            $query->where('klasifikasi', $params['klasifikasi']);
+        }
+        if (!empty($params['unit'])) {
+            $query->where('unit_tujuan', $params['unit']);
+        }
+        if (!empty($params['status'])) {
+            $query->where('status', $params['status']);
+        }
+        $date = $params['date'] ?? $params['tanggal'] ?? null;
+        if (!empty($date)) {
+            $query->whereDate('created_at', $date);
+        }
+        if (!empty($params['search'])) {
+            $query->where('judul', 'LIKE', '%' . $params['search'] . '%');
+        }
+
+        $pengaduans = $query->orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
+            ->latest()
+            ->get();
+
+        return view('pengaduan.print', compact('pengaduans'));
     }
 
     public function create()
@@ -164,16 +313,27 @@ class PengaduanController extends Controller
             $fotoPath = $request->file('foto')->store('pengaduan', 'public');
         }
 
-        Pengaduan::create([
+        $pengaduan = Pengaduan::create([
             'user_id' => Auth::id(),
             'judul' => $validated['judul'],
             'deskripsi' => $validated['deskripsi'],
             'unit_tujuan' => $validated['unit_tujuan'],
+            'unit_tujuan_awal' => $validated['unit_tujuan'],
             'urgensi' => $validated['urgensi'],
             'klasifikasi' => $validated['klasifikasi'],
             'foto' => $fotoPath,
             'status' => 'diajukan',
         ]);
+
+        // Notify admin SPMI about new pengaduan
+        try {
+            $adminSpmiUsers = User::where('role', 'admin_spmi')->whereNotNull('email')->get();
+            foreach ($adminSpmiUsers as $adminSpmi) {
+                Mail::to($adminSpmi->email)->send(new PengaduanNotification($pengaduan, 'Pengaduan Baru Masuk'));
+            }
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         return redirect()->route('pengaduan.index')
             ->with('success', 'Data berhasil ditambahkan.');
@@ -232,6 +392,7 @@ class PengaduanController extends Controller
             'judul' => $validated['judul'],
             'deskripsi' => $validated['deskripsi'],
             'unit_tujuan' => $validated['unit_tujuan'],
+            'unit_tujuan_awal' => $validated['unit_tujuan'],
             'urgensi' => $validated['urgensi'],
             'klasifikasi' => $validated['klasifikasi'],
         ];
@@ -271,6 +432,21 @@ class PengaduanController extends Controller
 
         $pengaduan->update(['status' => $validated['status']]);
 
+        try {
+            $recipient = $pengaduan->user?->email;
+            if ($recipient) {
+                $note = match ($validated['status']) {
+                    'proses' => 'Pengaduan Sedang Diproses',
+                    'selesai' => 'Pengaduan Telah Selesai',
+                    default => 'Status Pengaduan Diperbarui',
+                };
+
+                Mail::to($recipient)->send(new PengaduanNotification($pengaduan, $note));
+            }
+        } catch (\Exception $e) {
+            report($e);
+        }
+
         return redirect()->route('pengaduan.index')->with('success', 'Status pengaduan berhasil diperbarui menjadi ' . ucfirst($validated['status']) . '.');
     }
 
@@ -294,36 +470,103 @@ class PengaduanController extends Controller
     {
         $this->ensureAdminSpmi();
 
-        $units = UnitLayanan::all()->map(function($unit) {
+        $validated = $request->validate([
+            'periode' => ['nullable', Rule::in(['today', '7days', 'monthly', 'year', 'custom'])],
+            'bulan' => ['nullable', 'date_format:Y-m'],
+            'tanggal_mulai' => ['nullable', 'date'],
+            'tanggal_selesai' => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
+        ]);
 
-            $unit->pengaduans_count = Pengaduan::where('unit_id', $unit->id)
-                ->orWhere(function($query) use ($unit) {
-                    $query->whereNull('unit_id')->where('unit_tujuan', $unit->nama_unit);
-                })
-                ->count();
+        $periode = $validated['periode'] ?? 'year';
+        $now = now();
+
+        [$tanggalMulai, $tanggalSelesai, $labelPeriode] = match ($periode) {
+            'today' => [$now->copy()->startOfDay(), $now->copy()->endOfDay(), 'Hari ini'],
+            '7days' => [$now->copy()->subDays(6)->startOfDay(), $now->copy()->endOfDay(), '7 hari terakhir'],
+            'year' => [$now->copy()->startOfYear(), $now->copy()->endOfYear(), 'Tahun ' . $now->year],
+            'monthly' => [
+                isset($validated['bulan']) ? \Carbon\Carbon::createFromFormat('Y-m', $validated['bulan'])->startOfMonth() : $now->copy()->startOfMonth(),
+                isset($validated['bulan']) ? \Carbon\Carbon::createFromFormat('Y-m', $validated['bulan'])->endOfMonth() : $now->copy()->endOfMonth(),
+                isset($validated['bulan']) ? \Carbon\Carbon::createFromFormat('Y-m', $validated['bulan'])->translatedFormat('F Y') : $now->translatedFormat('F Y'),
+            ],
+            'custom' => [
+                isset($validated['tanggal_mulai']) ? \Carbon\Carbon::parse($validated['tanggal_mulai'])->startOfDay() : $now->copy()->startOfMonth(),
+                isset($validated['tanggal_selesai']) ? \Carbon\Carbon::parse($validated['tanggal_selesai'])->endOfDay() : $now->copy()->endOfDay(),
+                'Periode pilihan',
+            ],
+            default => [$now->copy()->startOfYear(), $now->copy()->endOfYear(), 'Tahun ' . $now->year],
+        };
+
+        $baseQuery = Pengaduan::query()->whereBetween('created_at', [$tanggalMulai, $tanggalSelesai]);
+
+        $units = UnitLayanan::all()->map(function($unit) use ($baseQuery) {
+            $unitQuery = (clone $baseQuery)->where(function ($query) use ($unit) {
+                $query->where('unit_id', $unit->id)
+                    ->orWhere(function($query) use ($unit) {
+                        $query->whereNull('unit_id')->where('unit_tujuan', $unit->nama_unit);
+                    });
+            });
+
+            $unit->pengaduans_count = (clone $unitQuery)->count();
+            $unit->selesai_count = (clone $unitQuery)->where('status', 'selesai')->count();
+            $unit->proses_count = (clone $unitQuery)->where('status', 'proses')->count();
+
             return $unit;
         })->filter(function($unit) {
             return $unit->pengaduans_count > 0;
         });
 
-        $totalPengaduan = Pengaduan::count();
-        $statusStats = Pengaduan::select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        $totalPengaduan = (clone $baseQuery)->count();
+        $statusStats = (clone $baseQuery)->select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->get();
 
-        $monthlyStats = Pengaduan::select(
-                \Illuminate\Support\Facades\DB::raw('MONTH(created_at) as month'), 
-                \Illuminate\Support\Facades\DB::raw('count(*) as total')
+        $monthlyStats = (clone $baseQuery)->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('count(*) as total')
             )
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        $allPengaduans = Pengaduan::with('user')->latest()->paginate(15);
+        $categoryStats = (clone $baseQuery)->select('klasifikasi', DB::raw('count(*) as total'))
+            ->groupBy('klasifikasi')
+            ->get();
 
-        $exportData = Pengaduan::with('user')->latest()->get();
+        $urgencyStats = (clone $baseQuery)->select('urgensi', DB::raw('count(*) as total'))
+            ->groupBy('urgensi')
+            ->get();
 
-        return view('admin-spmi.rekapitulasi', compact('units', 'totalPengaduan', 'statusStats', 'monthlyStats', 'allPengaduans', 'exportData'));
+        $selesaiPengaduans = (clone $baseQuery)->where('status', 'selesai')->with('tanggapan')->get();
+        $durasiPenyelesaian = $selesaiPengaduans
+            ->map(function ($pengaduan) {
+                $waktuSelesai = $pengaduan->tanggapan->max('created_at') ?? $pengaduan->updated_at;
+
+                return $pengaduan->created_at->diffInHours($waktuSelesai);
+            })
+            ->filter(fn ($jam) => $jam >= 0);
+
+        $rataRataPenyelesaianJam = round($durasiPenyelesaian->avg() ?? 0, 1);
+        $selesaiSesuaiSla = $durasiPenyelesaian->filter(fn ($jam) => $jam <= 168)->count();
+        $slaPersentase = $selesaiPengaduans->isNotEmpty()
+            ? round(($selesaiSesuaiSla / $selesaiPengaduans->count()) * 100, 1)
+            : 0;
+        $pengaduanTerlambat = (clone $baseQuery)
+            ->where('status', 'proses')
+            ->where('created_at', '<', $now->copy()->subDays(7))
+            ->count();
+        $rataRataRating = round((float) ((clone $baseQuery)->whereNotNull('rating')->avg('rating') ?? 0), 1);
+        $jumlahRating = (clone $baseQuery)->whereNotNull('rating')->count();
+
+        $jumlahHari = max($tanggalMulai->copy()->startOfDay()->diffInDays($tanggalSelesai->copy()->startOfDay()) + 1, 1);
+        $periodeSebelumnyaSelesai = $tanggalMulai->copy()->subSecond();
+        $periodeSebelumnyaMulai = $periodeSebelumnyaSelesai->copy()->subDays($jumlahHari - 1)->startOfDay();
+        $totalPeriodeSebelumnya = Pengaduan::whereBetween('created_at', [$periodeSebelumnyaMulai, $periodeSebelumnyaSelesai])->count();
+        $perubahanPersentase = $totalPeriodeSebelumnya > 0
+            ? round((($totalPengaduan - $totalPeriodeSebelumnya) / $totalPeriodeSebelumnya) * 100, 1)
+            : null;
+
+        return view('admin-spmi.rekapitulasi', compact('units', 'totalPengaduan', 'statusStats', 'monthlyStats', 'categoryStats', 'urgencyStats', 'periode', 'tanggalMulai', 'tanggalSelesai', 'labelPeriode', 'rataRataPenyelesaianJam', 'slaPersentase', 'pengaduanTerlambat', 'rataRataRating', 'jumlahRating', 'perubahanPersentase'));
     }
 
     public function storeFeedback(Request $request, $id)

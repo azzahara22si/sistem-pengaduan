@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PenyaluranPengaduan;
 
 class Pengaduan extends Model
 {
@@ -14,6 +15,7 @@ class Pengaduan extends Model
         'judul',
         'deskripsi',
         'unit_tujuan',
+        'unit_tujuan_awal',
         'urgensi',
         'klasifikasi',
         'foto',
@@ -34,9 +36,38 @@ class Pengaduan extends Model
         return $this->belongsTo(UnitLayanan::class, 'unit_id');
     }
 
-    // Relasi ke tanggapan (1 pengaduan = 1 tanggapan)
-   public function tanggapan()
-{
-    return $this->hasMany(Tanggapan::class);
-}
+    public function penyaluranHistory()
+    {
+        return $this->hasMany(PenyaluranPengaduan::class)->orderBy('created_at', 'desc');
+    }
+
+    // Relasi ke tanggapan (1 pengaduan = banyak tanggapan)
+    public function tanggapan()
+    {
+        return $this->hasMany(Tanggapan::class);
+    }
+
+    public function unitResponses()
+    {
+        return $this->tanggapan()->whereHas('user', function ($query) {
+            $query->where('role', 'admin');
+        });
+    }
+
+    public function hasUnitResponse(): bool
+    {
+        if (array_key_exists('unit_responses_count', $this->attributes)) {
+            return (int) $this->attributes['unit_responses_count'] > 0;
+        }
+
+        return $this->unitResponses()->exists();
+    }
+
+    public function canBeReassigned(): bool
+    {
+        $status = strtolower($this->status ?? '');
+
+        return in_array($status, ['diajukan', 'proses'], true)
+            && !$this->hasUnitResponse();
+    }
 }

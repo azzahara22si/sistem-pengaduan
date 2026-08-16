@@ -30,7 +30,10 @@
         display: flex;
         align-items: center;
         gap: clamp(8px, 2vw, 12px);
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-right: 36px;
+        -webkit-overflow-scrolling: touch;
     }
 
     .filter-select, .filter-date {
@@ -43,12 +46,14 @@
         color: #64748b;
         background: #fff;
         outline: none;
+        flex: 0 0 auto;
+        min-width: 150px;
     }
 
     .date-filter {
         position: relative;
         height: clamp(32px, 8vh, 38px);
-        min-width: 185px;
+        min-width: 150px;
         border: 1px solid #e2e8f0;
         border-radius: clamp(6px, 1vw, 10px);
         padding: 0 clamp(10px, 2vw, 12px);
@@ -88,25 +93,29 @@
         opacity: 0.8;
     }
 
+    /* Make search a normal fixed-width input on desktop, full-width on small screens */
     .search-wrap {
         display: flex;
         align-items: center;
         border: 1px solid #e2e8f0;
-        border-radius: 20px;
+        border-radius: 12px;
         overflow: hidden;
         height: clamp(32px, 8vh, 38px);
         background: #fff;
-        padding-left: clamp(10px, 2vw, 15px);
+        padding: 0 8px;
+        flex: 0 0 auto;
+        width: 260px;
+        max-width: 32%;
     }
 
     .search-wrap input {
         border: none;
         outline: none;
-        padding: 0 clamp(6px, 1vw, 10px);
+        padding: 0 8px;
         font-size: clamp(11px, 2vw, 13px);
         font-family: 'Poppins', sans-serif;
         width: 100%;
-        max-width: 200px;
+        max-width: none;
     }
 
     .search-wrap button {
@@ -138,6 +147,77 @@
     .btn-create:hover {
         background: #093470;
         transform: translateY(-2px);
+    }
+
+    .btn-export, .btn-print {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 14px;
+        text-decoration: none;
+        transition: transform .12s;
+    }
+    .btn-export { background: #10b981; }
+    .btn-export:hover { background: #059669; transform: translateY(-2px); }
+    .btn-print { background: #0d428e; }
+    .btn-print:hover { background: #093470; transform: translateY(-2px); }
+
+    .btn-action-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        min-width: 110px;
+        height: 38px;
+        border-radius: 12px;
+        font-weight: 600;
+        color: #fff;
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid transparent;
+        transition: background .12s, transform .08s, box-shadow .08s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .btn-action-label .fa-solid { font-size: 14px; color: inherit; }
+    .btn-action-label .btn-label { font-size: 13px; line-height: 1; color: inherit; }
+
+    .btn-action-label:focus, .btn-action-label:active { outline: none; box-shadow: none; transform: translateY(0); }
+
+    .btn-export { background:#10b981; color:#fff; border-color: transparent; }
+    .btn-export:hover { background:#0ea46b; }
+    .btn-print { background:#0d428e; color:#fff; border-color: transparent; }
+    .btn-print:hover { background:#093470; }
+
+    /* responsive: hide label on small screens to prevent overflow */
+    @media (max-width: 767px) {
+        .filter-actions { gap: 6px; }
+        .btn-action-label { padding: 0; width: 36px; height: 36px; border-radius: 50%; border-color: transparent; }
+        .btn-action-label .btn-label { display: none; }
+        .btn-action-label .fa-solid { margin: 0; }
+    }
+
+    /* When .btn-action-label is used together with .btn-export/.btn-print, keep pill layout */
+    .btn-action-label.btn-export,
+    .btn-action-label.btn-print {
+        width: auto !important;
+        height: 38px !important;
+        padding: 6px 12px !important;
+        border-radius: 12px !important;
+        display: inline-flex !important;
+        gap: 8px !important;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+        .filter-bar { flex-wrap: wrap; }
+        .filter-select, .filter-date { min-width: 140px; flex: 0 0 auto; }
+        .search-wrap { min-width: 100%; flex: 1 1 100%; width: auto; }
+        .filter-actions { margin-left: 0; }
     }
 
     .reset-filter {
@@ -189,27 +269,32 @@
 
     .action-group {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
-        gap: clamp(4px, 1vw, 8px);
-        min-width: 92px;
+        gap: 8px;
+        width: 76px;
+        margin: 0 auto;
+    }
+
+    .action-group--completed {
+        justify-content: flex-start;
     }
 
     .btn-action {
-        padding: clamp(5px, 1.5vw, 6px) clamp(8px, 2vw, 12px);
-        border-radius: clamp(6px, 1vw, 8px);
-        font-size: clamp(9px, 1.8vw, 11px);
-        font-weight: 700;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 13px;
         text-decoration: none;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
-        gap: clamp(3px, 1vw, 5px);
+        justify-content: center;
         border: none;
         cursor: pointer;
         white-space: nowrap;
-        min-height: 32px;
     }
 
     .btn-detail {
@@ -230,6 +315,15 @@
         transform: translateY(-1px);
     }
 
+    .btn-ubah-saluran {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+    .btn-ubah-saluran:hover {
+        background: #ffedd5;
+        transform: translateY(-1px);
+    }
+
     .btn-hapus {
         background: #fef2f2;
         color: #991b1b;
@@ -237,6 +331,23 @@
     .btn-hapus:hover {
         background: #fee2e2;
         transform: translateY(-1px);
+    }
+
+    .unit-tujuan-label {
+        color: #475569;
+        line-height: 1.35;
+    }
+
+    .unit-penanganan-label {
+        color: #0d428e;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .unit-belum-ditetapkan {
+        color: #94a3b8;
+        font-style: italic;
+        font-weight: 500;
     }
 
     .pagination {
@@ -387,6 +498,10 @@
         .action-group {
             flex-direction: column;
             gap: 6px;
+        }
+
+        .action-group--completed {
+            justify-content: center;
         }
 
         .btn-action {
@@ -551,6 +666,9 @@
                 <i class="fa-solid fa-plus"></i> Buat Pengaduan
             </a>
             @endif
+            @if(Auth::user()->role === 'admin_spmi')
+            <!-- buttons moved into filter bar for better alignment -->
+            @endif
         </div>
 
         <form action="{{ route('pengaduan.index') }}" method="GET" class="filter-bar">
@@ -581,12 +699,24 @@
                 <input type="text" name="search" placeholder="Cari pengaduan..." value="{{ request('search') }}">
                 <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
-
+            @if(Auth::user()->role === 'admin_spmi')
+            <div class="filter-actions" style="display:flex; gap:8px; align-items:center; margin-left:auto;">
+                <a href="{{ route('pengaduan.export', request()->query()) }}" class="btn-action-label btn-export" title="Export Excel">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span class="btn-label">Export Excel</span>
+                </a>
+                <a href="{{ route('pengaduan.print', request()->query()) }}" target="_blank" class="btn-action-label btn-print" title="Cetak Laporan">
+                    <i class="fa-solid fa-print"></i>
+                    <span class="btn-label">Cetak Laporan</span>
+                </a>
+            </div>
+            @endif
             @if(request()->anyFilled(['unit', 'status', 'date', 'search']))
                 <a href="{{ route('pengaduan.index') }}" class="reset-filter">
-                    <i class="fa-solid fa-xmark"></i> Reset
+                    <i class="fa-solid fa-xmark"></i> Atur Ulang
                 </a>
             @endif
+            
         </form>
     </div>
 
@@ -603,6 +733,7 @@
                         <th>Klasifikasi</th>
                         <th>Urgensi</th>
                         <th>Unit Tujuan</th>
+                        <th>Unit Penanganan</th>
                         <th>Tanggal</th>
                         <th>Status</th>
                         <th style="text-align: center;">Aksi</th>
@@ -640,7 +771,16 @@
                                 {{ $p->urgensi ?? 'Sedang' }}
                             </span>
                         </td>
-                        <td data-label="Unit">{{ $p->unit_tujuan }}</td>
+                        <td data-label="Unit Tujuan">
+                            <span class="unit-tujuan-label">{{ $p->unit_tujuan_awal ?: $p->unit_tujuan }}</span>
+                        </td>
+                        <td data-label="Unit Penanganan">
+                            @if($p->unit_id)
+                                <span class="unit-penanganan-label">{{ $p->unit_tujuan }}</span>
+                            @else
+                                <span class="unit-belum-ditetapkan">Belum ditetapkan</span>
+                            @endif
+                        </td>
                         <td data-label="Tanggal" style="font-size: 12px;">{{ $p->created_at->format('d/m/Y') }}</td>
                         <td data-label="Status">
                             <span class="status-badge status-{{ strtolower($p->status) }}">
@@ -648,30 +788,31 @@
                             </span>
                         </td>
                         <td data-label="Aksi" style="text-align: center;">
-                            <div class="action-group">
-                                <a href="{{ route('pengaduan.show', $p->id) }}" class="btn-action btn-detail">
-                                    <i class="fa-solid fa-eye"></i> Detail
+                            <div class="action-group {{ $p->status === 'selesai' ? 'action-group--completed' : '' }}">
+                                <a href="{{ route('pengaduan.show', $p->id) }}" class="btn-action btn-detail" title="Detail">
+                                    <i class="fa-solid fa-eye"></i>
                                 </a>
 
-                                @if(Auth::user()->role === 'admin_spmi' && $p->status === 'diajukan')
-                                    <button type="button" class="btn-action btn-salurkan" data-id="{{ $p->id }}" data-judul="{{ $p->judul }}">
-                                        <i class="fa-solid fa-share-from-square"></i> Salurkan
+                                @if(Auth::user()->role === 'admin_spmi' && $p->canBeReassigned())
+                                    @php($isInitialDistribution = strtolower($p->status) === 'diajukan')
+                                    <button type="button" class="btn-action {{ $isInitialDistribution ? 'btn-salurkan' : 'btn-ubah-saluran' }}" data-id="{{ $p->id }}" data-judul="{{ $p->judul }}" data-status="{{ strtolower($p->status) }}" title="{{ $isInitialDistribution ? 'Salurkan' : 'Ubah saluran' }}">
+                                        <i class="fa-solid {{ $isInitialDistribution ? 'fa-paper-plane' : 'fa-right-left' }}"></i>
                                     </button>
                                 @endif
 
                                 @if(Auth::user()->role === 'mahasiswa' && $p->status === 'diajukan')
-                                    <a href="{{ route('pengaduan.edit', $p->id) }}" class="btn-action btn-edit">
-                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    <a href="{{ route('pengaduan.edit', $p->id) }}" class="btn-action btn-edit" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <button type="button" class="btn-action btn-hapus" onclick="openDeleteModal({{ $p->id }}, '{{ $p->judul }}')">
-                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    <button type="button" class="btn-action btn-hapus" onclick="openDeleteModal({{ $p->id }}, '{{ $p->judul }}')" title="Hapus">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
                                 @endif
 
                                 @if(Auth::user()->role === 'mahasiswa' && $p->status === 'selesai')
                                     @if(is_null($p->rating))
-                                        <button type="button" class="btn-action" style="background-color: #fbbf24; color: white; border-color: #fbbf24;" onclick="openFeedbackModal({{ $p->id }})">
-                                            <i class="fa-solid fa-star"></i> Nilai
+                                        <button type="button" class="btn-action btn-rating" style="background-color: #fbbf24; color: white; border-color: #fbbf24;" onclick="openFeedbackModal({{ $p->id }})" title="Nilai">
+                                            <i class="fa-solid fa-star"></i>
                                         </button>
                                     @else
                                         <div style="color: #fbbf24; font-size: 12px; display: flex; gap: 2px; padding: 6px 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb;" title="Rating: {{ $p->rating }}/5">
@@ -686,7 +827,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td class="empty-table-cell" colspan="{{ Auth::user()->role === 'mahasiswa' ? 8 : 9 }}" style="text-align: center; padding: 40px; color: #94a3b8;">
+                        <td class="empty-table-cell" colspan="{{ Auth::user()->role === 'mahasiswa' ? 9 : 10 }}" style="text-align: center; padding: 40px; color: #94a3b8;">
                             <i class="fa-solid fa-folder-open" style="font-size: 30px; display: block; margin-bottom: 10px;"></i>
                             Belum ada data pengaduan.
                         </td>
@@ -765,11 +906,11 @@
                 <p style="color: #64748b; font-size: 13px;">Seberapa puas Anda dengan penanganan pengaduan ini?</p>
             </div>
 
-            <form id="feedbackForm" method="POST" action="">
+            <form id="feedbackForm" method="POST" action="" onsubmit="return validateRating(this);">
                 @csrf
 
                 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; direction: rtl;">
-                    <input type="radio" id="idx_star5" name="rating" value="5" style="display: none;" required/>
+                    <input type="radio" id="idx_star5" name="rating" value="5" style="display: none;" />
                     <label for="idx_star5" class="star-rating"><i class="fa-solid fa-star"></i></label>
                     <input type="radio" id="idx_star4" name="rating" value="4" style="display: none;" />
                     <label for="idx_star4" class="star-rating"><i class="fa-solid fa-star"></i></label>
@@ -827,14 +968,18 @@
             if (modal) modal.style.display = 'none';
         }
 
-        function openSalurkanModal(id, judul) {
+        function openSalurkanModal(id, judul, status) {
             const text = document.getElementById('salurkan_text');
             const form = document.getElementById('formSalurkan');
             const modal = document.getElementById('modalSalurkan');
 
             if (!text || !form || !modal) return;
 
-            text.innerHTML = `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
+            const message = status === 'proses'
+                ? `Ubah penyaluran untuk pengaduan <strong>"${judul}"</strong>. Pastikan unit tujuan sudah benar sebelum melanjutkan.`
+                : `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
+
+            text.innerHTML = message;
             form.action = `{{ url('pengaduan') }}/${id}/salurkan`;
             modal.style.display = 'flex';
         }
@@ -856,9 +1001,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.btn-salurkan[data-id]').forEach(button => {
+            document.querySelectorAll('[data-id][data-status]').forEach(button => {
                 button.addEventListener('click', function() {
-                    openSalurkanModal(this.dataset.id, this.dataset.judul);
+                    const status = this.dataset.status || 'diajukan';
+                    openSalurkanModal(this.dataset.id, this.dataset.judul, status);
                 });
             });
         });
@@ -874,6 +1020,24 @@
                 closeFeedbackModal();
             }
         });
+
+        function validateRating(form) {
+            const checked = form.querySelector('input[name="rating"]:checked');
+            if (!checked) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Isi Penilaian',
+                        text: 'Silakan pilih penilaian (bintang) sebelum mengirim.',
+                        confirmButtonColor: '#0d428e'
+                    });
+                } else {
+                    alert('Silakan pilih penilaian (bintang) sebelum mengirim.');
+                }
+                return false;
+            }
+            return true;
+        }
     </script>
     <style>
         @keyframes slideUp {

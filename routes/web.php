@@ -8,6 +8,7 @@ use App\Models\Pengaduan;
 use App\Models\UnitLayanan;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UnitLayananController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,17 +59,26 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard-admin', function () {
             $user = Auth::user();
             $unit_id = $user->unit_id;
-            
-            $pengaduans = Pengaduan::where('unit_id', $unit_id)
+            $unit = UnitLayanan::findOrFail($unit_id);
+
+            $unitScope = function ($query) use ($unit_id, $unit) {
+                $query->where('unit_id', $unit_id)
+                    ->orWhere(function ($query) use ($unit) {
+                        $query->whereNull('unit_id')
+                            ->where('unit_tujuan', $unit->nama_unit);
+                    });
+            };
+
+            $pengaduans = Pengaduan::where($unitScope)
                 ->latest()
                 ->take(5)
                 ->get();
 
             $stats = [
-                'total' => Pengaduan::where('unit_id', $unit_id)->count(),
-                'baru' => Pengaduan::where('unit_id', $unit_id)->where('status', 'diajukan')->count(),
-                'proses' => Pengaduan::where('unit_id', $unit_id)->where('status', 'proses')->count(),
-                'selesai' => Pengaduan::where('unit_id', $unit_id)->where('status', 'selesai')->count(),
+                'total' => Pengaduan::where($unitScope)->count(),
+                'baru' => Pengaduan::where($unitScope)->where('status', 'diajukan')->count(),
+                'proses' => Pengaduan::where($unitScope)->where('status', 'proses')->count(),
+                'selesai' => Pengaduan::where($unitScope)->where('status', 'selesai')->count(),
             ];
             
             return view('admin.dashboard-admin', compact('pengaduans', 'stats'));
@@ -77,7 +87,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware('role:admin_spmi')->group(function () {
         Route::get('/dashboard-admin-spmi', function () {
-            $pengaduans = Pengaduan::latest()->paginate(5);
+            $pengaduans = Pengaduan::orderByRaw("CASE WHEN status = 'selesai' THEN 1 ELSE 0 END ASC")
+                ->orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->paginate(5);
             $units = UnitLayanan::all();
             $unitNames = $units->pluck('nama_unit')->toArray();
             
@@ -93,13 +106,25 @@ Route::middleware(['auth'])->group(function () {
             return view('admin-spmi.dashboard-admin-spmi', compact('pengaduans', 'unitStats', 'statusStats', 'units'));
         })->name('dashboard.admin_spmi');
 
+        Route::get('/pengaduan/pantau', [PengaduanController::class, 'pantau'])
+            ->name('pengaduan.pantau');
+
+        Route::get('/pengaduan/{pengaduan}/detail', [PengaduanController::class, 'show'])
+            ->name('pengaduan.detail');
+
         Route::get('/rekapitulasi', [PengaduanController::class, 'rekapitulasi'])
             ->name('rekapitulasi');
 
         Route::resource('user', UserController::class);
         Route::resource('unit', UnitLayananController::class);
+        Route::get('/unit/export', [UnitLayananController::class, 'export'])->name('unit.export');
+        Route::get('/unit/print', [UnitLayananController::class, 'print'])->name('unit.print');
         Route::post('/pengaduan/{id}/salurkan', [PengaduanController::class, 'salurkan'])
             ->name('pengaduan.salurkan');
+        Route::get('/pengaduan/export', [PengaduanController::class, 'export'])
+            ->name('pengaduan.export');
+        Route::get('/pengaduan/print', [PengaduanController::class, 'print'])
+            ->name('pengaduan.print');
     });
 
     Route::middleware('role:admin,admin_spmi')->group(function () {
@@ -134,6 +159,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])
+        ->name('notifications.read');
 });
 
 

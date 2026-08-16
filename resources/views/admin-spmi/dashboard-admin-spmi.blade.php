@@ -1,6 +1,6 @@
 @extends('layouts.main-dashboard')
 
-@section('title', 'Dashboard Admin SPMI')
+@section('title', 'Beranda Admin SPMI')
 
 @section('content')
 
@@ -29,28 +29,45 @@
 
         .action-group {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row;
+            align-items: center;
             justify-content: center;
-            gap: clamp(8px, 1vw, 12px);
-            min-width: 120px;
+            gap: 8px;
+            width: 76px;
+            margin: 0 auto;
+        }
+
+        .action-group--completed {
+            justify-content: flex-start;
+        }
+
+        .table-card table th,
+        .table-card table td {
+            vertical-align: middle !important;
+        }
+
+        .table-card table th:last-child,
+        .table-card table td:last-child {
+            width: 100px;
+            text-align: center;
         }
 
         .btn-action {
-            padding: clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px);
-            border-radius: clamp(8px, 1vw, 10px);
-            font-size: clamp(11px, 2vw, 12px);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 13px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: clamp(6px, 1vw, 8px);
+            justify-content: center;
             border: none;
             cursor: pointer;
-            white-space: nowrap;
             background: #eff6ff;
             color: #1e40af;
+            padding: 0;
         }
         .btn-action:hover {
             transform: translateY(-1px);
@@ -66,6 +83,13 @@
         }
         .btn-salurkan:hover {
             background: #d1fae5;
+        }
+        .btn-ubah-saluran {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+        .btn-ubah-saluran:hover {
+            background: #ffedd5;
         }
     </style>
 
@@ -118,13 +142,14 @@
                         <span class="status-badge {{ $statusClass }}">{{ ucfirst($statusValue) }}</span>
                     </td>
                     <td>
-                        <div class="action-group">
-                            <a href="{{ route('pengaduan.show', $item->id) }}" class="btn-action btn-detail">
-                                <i class="fa-solid fa-eye"></i> Detail
+                        <div class="action-group {{ $item->status === 'selesai' ? 'action-group--completed' : '' }}">
+                            <a href="{{ route('pengaduan.show', $item->id) }}" class="btn-action btn-detail" title="Detail">
+                                <i class="fa-solid fa-eye"></i>
                             </a>
-                            @if(strtolower($item->status ?? '') === 'diajukan')
-                                <button type="button" class="btn-action btn-salurkan" data-id="{{ $item->id }}" data-judul="{{ $item->judul }}" title="Salurkan pengaduan">
-                                    <i class="fa-solid fa-share-from-square"></i> Salurkan
+                            @if($item->canBeReassigned())
+                                @php($isInitialDistribution = strtolower($item->status) === 'diajukan')
+                                <button type="button" class="btn-action btn-salurkan {{ $isInitialDistribution ? '' : 'btn-ubah-saluran' }}" data-id="{{ $item->id }}" data-judul="{{ $item->judul }}" data-status="{{ strtolower($item->status) }}" title="{{ $isInitialDistribution ? 'Salurkan pengaduan' : 'Ubah saluran pengaduan' }}">
+                                    <i class="fa-solid {{ $isInitialDistribution ? 'fa-paper-plane' : 'fa-right-left' }}"></i>
                                 </button>
                             @endif
                         </div>
@@ -226,8 +251,11 @@
         }
     });
 
-    function openSalurkanModal(id, judul) {
-        document.getElementById('salurkan_text').innerHTML = `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
+    function openSalurkanModal(id, judul, status) {
+        const text = status === 'proses'
+            ? `Ubah penyaluran untuk pengaduan <strong>"${judul}"</strong>. Pastikan unit tujuan sudah benar sebelum melanjutkan.`
+            : `Salurkan pengaduan <strong>"${judul}"</strong> ke unit yang berwenang untuk ditindaklanjuti.`;
+        document.getElementById('salurkan_text').innerHTML = text;
         document.getElementById('formSalurkan').action = `{{ url('pengaduan') }}/${id}/salurkan`;
         document.getElementById('modalSalurkan').style.display = 'flex';
     }
@@ -242,7 +270,8 @@
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 const judul = this.getAttribute('data-judul');
-                openSalurkanModal(id, judul);
+                const status = this.getAttribute('data-status');
+                openSalurkanModal(id, judul, status);
             });
         });
     });

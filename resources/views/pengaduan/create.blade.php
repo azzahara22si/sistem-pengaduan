@@ -84,6 +84,87 @@
         padding-right: clamp(30px, 5vw, 40px);
     }
 
+    .urgensi-picker {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .urgensi-option {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        min-width: 100px;
+        text-transform: uppercase;
+        font-size: clamp(11px, 1.8vw, 13px);
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .urgensi-option input {
+        display: none;
+    }
+
+    .urgensi-option:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.08);
+    }
+
+    .urgensi-option.selected {
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+    }
+
+    .urgensi-option.urgensi-rendah.selected {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+    }
+
+    .urgensi-option.urgensi-sedang.selected {
+        background: #fef3f7;
+        border-color: #fcd34d;
+        color: #92400e;
+    }
+
+    .urgensi-option.urgensi-tinggi.selected {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #b91c1c;
+    }
+
+    .urgensi-option input:checked + span {
+        display: inline-flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 10px 16px;
+    }
+
+    .urgensi-option.urgensi-rendah input:checked + span {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+    }
+
+    .urgensi-option.urgensi-sedang input:checked + span {
+        background: #fef3f7;
+        border-color: #fcd34d;
+        color: #92400e;
+    }
+
+    .urgensi-option.urgensi-tinggi input:checked + span {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #b91c1c;
+    }
+
     textarea.form-control {
         min-height: clamp(100px, 20vw, 120px);
         resize: vertical;
@@ -129,6 +210,80 @@
         display: flex;
         gap: 8px;
         align-items: flex-start;
+    }
+
+    .required-star { color: #ef4444; margin-left: 6px; }
+
+    .urgensi-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .urgensi-option {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        min-width: 100px;
+        padding: 10px 16px;
+        font-size: clamp(12px, 1.8vw, 14px);
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .urgensi-option input {
+        display: none;
+    }
+
+    .urgensi-option:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.08);
+    }
+
+    .urgensi-option.selected {
+        border-color: #0d428e;
+        background: #eff6ff;
+        color: #0d428e;
+    }
+
+    .urgensi-option.urgensi-rendah.selected {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+    }
+
+    .urgensi-option.urgensi-sedang.selected {
+        background: #fef3f7;
+        border-color: #fcd34d;
+        color: #92400e;
+    }
+
+    .urgensi-option.urgensi-tinggi.selected {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #b91c1c;
+    }
+
+    .urgensi-option input:checked + span {
+        display: inline-flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 10px 16px;
+    }
+
+    .urgensi-option span {
+        width: 100%;
+        display: inline-flex;
+        justify-content: center;
     }
 
     .form-info-item strong {
@@ -212,27 +367,27 @@
             @csrf
 
             <div class="form-group">
-                <label>Judul Pengaduan</label>
-                <input type="text" name="judul" class="form-control" placeholder="Contoh: AC Ruang Kelas Rusak" required>
+                <label>Judul Pengaduan <span class="required-star">*</span></label>
+                <input type="text" name="judul" class="form-control" placeholder="Contoh: AC Ruang Kelas Rusak" value="{{ old('judul') }}" required>
             </div>
 
             <div class="form-group">
-                <label><i class="fa-solid fa-list" style="margin-right: 5px;"></i> Klasifikasi</label>
+                <label><i class="fa-solid fa-list" style="margin-right: 5px;"></i> Klasifikasi <span class="required-star">*</span></label>
                 <div class="klasifikasi-grid">
-                    <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff;" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
-                        <input type="radio" name="klasifikasi" value="pengaduan" required style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;">
+                    <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff; {{ old('klasifikasi', 'pengaduan') === 'pengaduan' ? 'border-color: #0d428e; background: #eff6ff; box-shadow: 0 0 0 4px rgba(13, 66, 142, 0.1);' : '' }}" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
+                        <input type="radio" name="klasifikasi" value="pengaduan" {{ old('klasifikasi', 'pengaduan') === 'pengaduan' ? 'checked' : '' }} required style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;">
                         <span style="font-size: 13px; font-weight: 600; color: #334155;">
                             <i class="fa-solid fa-exclamation-circle" style="margin-right: 6px;"></i> Pengaduan
                         </span>
                     </label>
-                    <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff;" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
-                        <input type="radio" name="klasifikasi" value="aspirasi" style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;">
+                    <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff; {{ old('klasifikasi') === 'aspirasi' ? 'border-color: #0d428e; background: #eff6ff; box-shadow: 0 0 0 4px rgba(13, 66, 142, 0.1);' : '' }}" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
+                        <input type="radio" name="klasifikasi" value="aspirasi" {{ old('klasifikasi') === 'aspirasi' ? 'checked' : '' }} style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;">
                         <span style="font-size: 13px; font-weight: 600; color: #334155;">
                             <i class="fa-solid fa-lightbulb" style="margin-right: 6px;"></i> Aspirasi
                         </span>
                     </label>
-                    <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff;" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
-                        <input type="radio" name="klasifikasi" value="permintaan_informasi" style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;">
+                    <label style="display: flex; align-items: center; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: normal; transition: all 0.3s; background: #fff; {{ old('klasifikasi') === 'permintaan_informasi' ? 'border-color: #0d428e; background: #eff6ff; box-shadow: 0 0 0 4px rgba(13, 66, 142, 0.1);' : '' }}" onchange="updateKlasifikasiStyle(this)" onclick="updateKlasifikasiStyle(this)">
+                        <input type="radio" name="klasifikasi" value="permintaan_informasi" {{ old('klasifikasi') === 'permintaan_informasi' ? 'checked' : '' }} style="margin-right: 10px; cursor: pointer; accent-color: #0d428e;">
                         <span style="font-size: 13px; font-weight: 600; color: #334155;">
                             <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i> Informasi
                         </span>
@@ -242,34 +397,35 @@
 
             <div class="form-grid-2col">
                 <div class="form-group">
-                    <label><i class="fa-solid fa-building" style="margin-right: 5px;"></i> Unit Tujuan</label>
+                    <label><i class="fa-solid fa-building" style="margin-right: 5px;"></i> Unit Tujuan <span class="required-star">*</span></label>
                     <select name="unit_tujuan" class="form-control" required>
                         <option value="">-- Pilih Unit Tujuan --</option>
                         @foreach($units as $unit)
-                        <option value="{{ $unit->nama_unit }}">{{ $unit->nama_unit }}</option>
+                        <option value="{{ $unit->nama_unit }}" {{ old('unit_tujuan') === $unit->nama_unit ? 'selected' : '' }}>{{ $unit->nama_unit }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fa-solid fa-triangle-exclamation" style="margin-right: 5px;"></i> Tingkat Urgensi</label>
-                    <select name="urgensi" class="form-control" required>
-                        <option value="rendah">Rendah (Informasi)</option>
-                        <option value="sedang" selected>Sedang (Perbaikan Biasa)</option>
-                        <option value="tinggi">Tinggi (Darurat/Kritis)</option>
-                    </select>
+                    <label>Tingkat Urgensi <span class="required-star">*</span></label>
+                        <select name="urgensi" class="form-control" required>
+                            <option value="">-- Pilih Tingkat Urgensi --</option>
+                            <option value="rendah" {{ old('urgensi', 'sedang') === 'rendah' ? 'selected' : '' }}>Rendah</option>
+                            <option value="sedang" {{ old('urgensi', 'sedang') === 'sedang' ? 'selected' : '' }}>Sedang</option>
+                            <option value="tinggi" {{ old('urgensi', 'sedang') === 'tinggi' ? 'selected' : '' }}>Tinggi</option>
+                        </select>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Deskripsi Detail</label>
-                <textarea name="deskripsi" class="form-control" placeholder="Jelaskan secara detail mengenai keluhan atau pengaduan Anda..." required></textarea>
+                <label>Deskripsi Detail <span class="required-star">*</span></label>
+                <textarea name="deskripsi" class="form-control" placeholder="Jelaskan secara detail mengenai keluhan atau pengaduan Anda..." required>{{ old('deskripsi') }}</textarea>
             </div>
 
             <div class="form-group">
                 <label>Bukti Foto (Opsional)</label>
                 <div style="border: 2px dashed #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='#0d428e'" onmouseout="this.style.borderColor='#e2e8f0'" onclick="document.getElementById('foto_input').click()">
-                    <img id="foto_preview" src="" alt="Preview bukti foto" style="display: none; width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-bottom: 12px;">
+                    <img id="foto_preview" src="" alt="Pratinjau bukti foto" style="display: none; width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-bottom: 12px;">
                     <i id="foto_icon" class="fa-solid fa-cloud-arrow-up" style="font-size: 30px; color: #94a3b8; margin-bottom: 10px;"></i>
                     <p id="foto_file_name" style="font-size: 13px; color: #64748b; margin: 0;">Klik untuk mengunggah atau seret file ke sini</p>
                     <p style="font-size: 11px; color: #94a3b8; margin-top: 5px;">PNG, JPG atau JPEG (Max. 2MB)</p>
@@ -307,7 +463,7 @@
         preview.style.display = 'block';
     }
 
-    function updateKlasifikasiStyle(label) {
+    function updateKlasifikasiStyle() {
         // Reset semua label
         document.querySelectorAll('input[name="klasifikasi"]').forEach(radio => {
             radio.parentElement.style.borderColor = '#e2e8f0';
@@ -324,14 +480,29 @@
         }
     }
     
+    function updateUrgensiSelection() {
+        document.querySelectorAll('.urgensi-option').forEach(label => {
+            const input = label.querySelector('input[name="urgensi"]');
+            if (input && input.checked) {
+                label.classList.add('selected');
+            } else {
+                label.classList.remove('selected');
+            }
+        });
+    }
+
     // Initialize styling on page load
     document.addEventListener('DOMContentLoaded', function() {
         updateKlasifikasiStyle();
-    });
-    
-    // Update styling when radio button changes
-    document.querySelectorAll('input[name="klasifikasi"]').forEach(radio => {
-        radio.addEventListener('change', updateKlasifikasiStyle);
+        updateUrgensiSelection();
+
+        // Update styling when radio button changes
+        document.querySelectorAll('input[name="klasifikasi"]').forEach(radio => {
+            radio.addEventListener('change', updateKlasifikasiStyle);
+        });
+        document.querySelectorAll('input[name="urgensi"]').forEach(radio => {
+            radio.addEventListener('change', updateUrgensiSelection);
+        });
     });
 </script>
 @endsection

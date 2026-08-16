@@ -370,18 +370,15 @@
         </button>
 
         <div style="text-align: center; margin-bottom: 25px;">
-            <div style="width: 60px; height: 60px; background: #fffbeb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                <i class="fa-solid fa-star" style="font-size: 28px; color: #fbbf24;"></i>
-            </div>
             <h3 style="font-size: 20px; font-weight: 700; color: #0d2d6e; margin: 0 0 8px 0;">Beri Penilaian</h3>
             <p style="color: #64748b; font-size: 13px; margin: 0;">Seberapa puas Anda dengan penanganan pengaduan ini?</p>
         </div>
 
-        <form id="feedbackForm" method="POST" action="">
+        <form id="feedbackForm" method="POST" action="" onsubmit="return validateRating(this);">
             @csrf
 
             <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; direction: rtl;">
-                <input type="radio" id="star5" name="rating" value="5" style="display: none;" required/>
+                <input type="radio" id="star5" name="rating" value="5" style="display: none;" />
                 <label for="star5" class="star-rating"><i class="fa-solid fa-star"></i></label>
                 <input type="radio" id="star4" name="rating" value="4" style="display: none;" />
                 <label for="star4" class="star-rating"><i class="fa-solid fa-star"></i></label>
@@ -405,6 +402,7 @@
     </div>
 </div>
 
+@push('scripts')
 <script>
     function openFeedbackModal(id) {
         document.getElementById('feedbackForm').action = '/pengaduan/' + id + '/feedback';
@@ -422,7 +420,26 @@
             closeFeedbackModal();
         }
     });
+
+    function validateRating(form) {
+        const checked = form.querySelector('input[name="rating"]:checked');
+        if (!checked) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Isi Penilaian',
+                    text: 'Silakan pilih penilaian (bintang) sebelum mengirim.',
+                    confirmButtonColor: '#0d428e'
+                });
+            } else {
+                alert('Silakan pilih penilaian (bintang) sebelum mengirim.');
+            }
+            return false;
+        }
+        return true;
+    }
 </script>
+@endpush
 @endif
 
 @endsection

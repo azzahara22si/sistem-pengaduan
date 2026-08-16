@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Tanggapan;
 use App\Models\Pengaduan;
+use App\Mail\PengaduanNotification;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class TanggapanController extends Controller
 {
@@ -38,6 +40,19 @@ class TanggapanController extends Controller
 
         if ($request->filled('status')) {
             $pengaduan->update(['status' => $request->status]);
+        }
+
+        try {
+            $recipient = $pengaduan->user?->email;
+            if ($recipient) {
+                $note = $request->filled('status')
+                    ? ('Pengaduan ' . ucfirst($request->status))
+                    : 'Ada Tanggapan Baru';
+
+                Mail::to($recipient)->send(new PengaduanNotification($pengaduan, $note));
+            }
+        } catch (\Exception $e) {
+            report($e);
         }
 
         return redirect()->route('pengaduan.index')->with('success', 'Tanggapan dan status berhasil diperbarui.');

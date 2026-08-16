@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
             ], false));
 
             return (new MailMessage)
-                ->subject('Reset Password - Sistem Pengaduan PCR')
+                ->subject('Atur Ulang Password - Sistem Pengaduan PCR')
                 ->view('emails.reset-password', [
                     'url' => $url,
                     'user' => $notifiable

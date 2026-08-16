@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Reset Password</title>
+    <title>Atur Ulang Password</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -24,19 +24,19 @@
         </div>
         <div class="content">
             <p>Halo <strong>{{ $user->name ?? 'Mahasiswa' }}</strong>,</p>
-            <p>Kami menerima permintaan untuk mereset password akun Anda di Sistem Pengaduan Mahasiswa Politeknik Caltex Riau.</p>
+            <p>Kami menerima permintaan untuk mengatur ulang password akun Anda di Sistem Pengaduan Mahasiswa Politeknik Caltex Riau.</p>
             
             <div class="btn-container">
-                <a href="{{ $url }}" class="btn" style="color: #ffffff !important; background-color: #04396c; display: inline-block; padding: 14px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 15px;">Reset Password Sekarang</a>
+                <a href="{{ $url }}" class="btn" style="color: #ffffff !important; background-color: #04396c; display: inline-block; padding: 14px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 15px;">Atur Ulang Password Sekarang</a>
             </div>
             
-            <p>Tautan reset password ini akan kedaluwarsa dalam waktu 60 menit.</p>
-            <p>Jika Anda tidak pernah merasa meminta reset password, abaikan saja email ini. Akun Anda akan tetap aman.</p>
+            <p>Tautan atur ulang password ini akan kedaluwarsa dalam waktu 60 menit.</p>
+            <p>Jika Anda tidak pernah merasa meminta untuk mengatur ulang password, abaikan saja email ini. Akun Anda akan tetap aman.</p>
             
             <p>Salam hangat,<br><strong>Admin Sistem Pengaduan</strong></p>
 
             <div class="fallback">
-                Jika Anda kesulitan mengklik tombol "Reset Password Sekarang", silakan salin dan tempel (copy-paste) URL berikut ke browser Anda:<br><br>
+                Jika Anda kesulitan mengklik tombol "Atur Ulang Password Sekarang", silakan salin dan tempel URL berikut ke browser Anda:<br><br>
                 <a href="{{ $url }}" style="color: #04396c;">{{ $url }}</a>
             </div>
         </div>

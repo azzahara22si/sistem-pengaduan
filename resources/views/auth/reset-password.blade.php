@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password - Politeknik Caltex Riau</title>
+    <title>Atur Ulang Password - Politeknik Caltex Riau</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -136,7 +136,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="Politeknik Caltex Riau">
         </div>
 
-        <h2>Reset Password</h2>
+        <h2>Atur Ulang Password</h2>
         <p>Masukkan email dan password baru Anda untuk mengatur ulang akses akun.</p>
 
         <form method="POST" action="{{ route('password.store') }}">
@@ -145,7 +145,7 @@
 
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
-                <input id="email" type="email" name="email" value="{{ old('email', $request->email) }}" required autofocus placeholder="Email">
+                <input id="email" type="email" name="email" value="{{ old('email', $request->email) }}" required autofocus placeholder="Alamat Email">
             </div>
             @error('email')
                 <div class="error-msg">{{ $message }}</div>
@@ -167,7 +167,7 @@
                 <div class="error-msg">{{ $message }}</div>
             @enderror
 
-            <button type="submit" class="auth-btn">Reset Password</button>
+            <button type="submit" class="auth-btn">Atur Ulang Password</button>
         </form>
 
         <a href="{{ route('login') }}" class="auth-link">Kembali ke Login</a>

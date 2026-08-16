@@ -17,8 +17,54 @@ class UnitLayananController extends Controller
 
     public function index()
     {
-        $units = UnitLayanan::latest()->get();
-        return view('admin-spmi.kelola-unit', compact('units'));
+        $search = request()->query('search', '');
+        $query = UnitLayanan::query();
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_unit', 'LIKE', '%' . $search . '%')
+                  ->orWhere('email_unit', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $units = $query->orderBy('nama_unit')->paginate(15)->withQueryString();
+        return view('admin-spmi.kelola-unit', compact('units', 'search'));
+    }
+
+    public function export(Request $request)
+    {
+        $search = $request->query('search', '');
+        $query = UnitLayanan::query();
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_unit', 'LIKE', '%' . $search . '%')
+                  ->orWhere('email_unit', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $units = $query->orderBy('nama_unit')->get();
+
+        $filename = 'unit_layanan_export_' . now()->format('Ymd_His') . '.xls';
+        $content = view('admin-spmi.unit-export', compact('units'))->render();
+
+        return response($content, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=utf-8',
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ]);
+    }
+
+    public function print(Request $request)
+    {
+        $search = $request->query('search', '');
+        $query = UnitLayanan::query();
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_unit', 'LIKE', '%' . $search . '%')
+                  ->orWhere('email_unit', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $units = $query->orderBy('nama_unit')->get();
+        return view('admin-spmi.unit-print', compact('units', 'search'));
     }
 
     public function store(Request $request)

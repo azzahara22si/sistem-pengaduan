@@ -322,13 +322,13 @@
             <img src="{{ asset('images/logo.png') }}" alt="Politeknik Caltex Riau">
         </a>
         <ul class="nav-links">
-            <li><a href="#hero">Home</a></li>
+            <li><a href="#hero">Beranda</a></li>
             <li><a href="#panduan">Panduan</a></li>
-            <li><a href="#about">About</a></li>
+            <li><a href="#about">Tentang</a></li>
             <li><a href="#tujuan">Tujuan & Manfaat</a></li>
             <li><a href="#statistik">Statistik</a></li>
             <li><a href="#kontak">Kontak</a></li>
-            <li><a href="{{ route('login') }}" class="btn-login">Login</a></li>
+            <li><a href="{{ route('login') }}" class="btn-login">Masuk</a></li>
         </ul>
         <button class="mobile-toggle" id="mobileToggle">
             <i class="fa-solid fa-bars"></i>
@@ -366,7 +366,7 @@
     </section>
 
     <section id="about">
-        <div class="sec-label"><span>About</span></div>
+        <div class="sec-label"><span>Tentang</span></div>
         <div class="card fade-up">
             <p>Sistem Pengaduan Mahasiswa Berbasis Web Politeknik Caltex Riau merupakan platform digital yang dirancang untuk memfasilitasi mahasiswa dalam menyampaikan berbagai keluhan secara transparan.</p>
             <p>Melalui sistem ini, mahasiswa dapat mengajukan pengaduan secara langsung kepada unit layanan yang berwenang dan memantau perkembangannya secara real-time.</p>

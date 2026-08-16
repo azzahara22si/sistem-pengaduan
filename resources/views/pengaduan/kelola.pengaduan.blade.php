@@ -295,15 +295,14 @@
         }
 
         .filter-bar {
-
             display: flex;
-
             align-items: center;
-
             gap: 8px;
-
             margin-bottom: 16px;
-
+            padding-right: 36px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .filter-bar select,
@@ -330,42 +329,31 @@
 
         }
 
-        .filter-bar select { width: 100px; }
+        .filter-bar select { width: 100px; flex:0 0 auto; }
 
-        .filter-bar input[type="date"] { width: 110px; }
+        .filter-bar input[type="date"] { width: 110px; flex:0 0 auto; }
 
         .filter-spacer { flex: 1; }
 
         .search-wrap {
-
             display: flex;
-
             align-items: center;
-
             border: 1px solid #ccc;
-
-            border-radius: 4px;
-
+            border-radius: 8px;
             overflow: hidden;
-
             height: 30px;
-
+            flex: 0 0 auto;
+            width: 260px;
+            padding: 0 8px;
         }
 
         .search-wrap input {
-
             border: none;
-
             outline: none;
-
-            padding: 0 10px;
-
+            padding: 0 8px;
             font-size: 12px;
-
-            width: 160px;
-
+            width: 100%;
             height: 100%;
-
         }
 
         .search-wrap button {
@@ -496,6 +484,64 @@
 
         .link-salurkan:hover { text-decoration: underline; }
 
+        .btn-export, .btn-print {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .btn-export { background:#10b981; color:#fff; border-color: transparent; }
+        .btn-export:hover { background:#0ea46b; }
+        .btn-print { background:#0d428e; color:#fff; border-color: transparent; }
+        .btn-print:hover { background:#093470; }
+
+        .btn-action-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            min-width: 110px;
+            height: 38px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            background: transparent;
+            border: 1px solid transparent;
+            transition: background .12s, transform .08s, box-shadow .08s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-action-label .fa-solid { font-size: 14px; color: inherit; }
+        .btn-action-label .btn-label { font-size: 13px; line-height: 1; color: inherit; }
+
+        .btn-action-label:focus, .btn-action-label:active { outline: none; box-shadow: none; transform: translateY(0); }
+
+        /* responsive: hide label on small screens to prevent overflow */
+        @media (max-width: 767px) {
+            .filter-actions { gap: 6px; }
+            .btn-action-label { padding: 0; width: 36px; height: 36px; border-radius: 50%; border-color: transparent; }
+            .btn-action-label .btn-label { display: none; }
+            .btn-action-label .fa-solid { margin: 0; }
+        }
+
+        /* Ensure pill buttons keep their labels when combined with .btn-export/.btn-print */
+        .btn-action-label.btn-export,
+        .btn-action-label.btn-print {
+            width: auto !important;
+            height: 38px !important;
+            padding: 6px 12px !important;
+            border-radius: 12px !important;
+            display: inline-flex !important;
+            gap: 8px !important;
+            white-space: nowrap;
+        }
+
     </style>
 
 </head>
@@ -534,7 +580,7 @@
 
                 </span>
 
-                <span class="menu-label">Dashboard</span>
+                <span class="menu-label">Beranda</span>
 
             </a>
 
@@ -594,7 +640,7 @@
 
                 @csrf
 
-                <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket" style="margin-right:8px;"></i>Logout</button>
+                <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket" style="margin-right:8px;"></i>Keluar</button>
 
             </form>
 
@@ -604,19 +650,24 @@
 
     <main class="main">
 
-        <div class="main-title">Kelola pengaduan masuk</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
+            <div class="main-title">Kelola pengaduan masuk</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <!-- moved buttons into filter bar below for alignment -->
+            </div>
+        </div>
 
         <form action="{{ route('pengaduan.index') }}" method="GET" class="filter-bar">
 
-            <select name="kategori" onchange="this.form.submit()">
+            <select name="klasifikasi" onchange="this.form.submit()">
 
-                <option value="">Kategori</option>
+                <option value="">Klasifikasi</option>
 
-                <option value="sarana dan prasarana" {{ request('kategori') == 'sarana dan prasarana' ? 'selected' : '' }}>Sarana dan prasarana</option>
+                <option value="pengaduan" {{ request('klasifikasi') == 'pengaduan' ? 'selected' : '' }}>Pengaduan</option>
 
-                <option value="akademik" {{ request('kategori') == 'akademik' ? 'selected' : '' }}>Akademik</option>
+                <option value="aspirasi" {{ request('klasifikasi') == 'aspirasi' ? 'selected' : '' }}>Aspirasi</option>
 
-                <option value="kemahasiswaan" {{ request('kategori') == 'kemahasiswaan' ? 'selected' : '' }}>Kemahasiswaan</option>
+                <option value="permintaan_informasi" {{ request('klasifikasi') == 'permintaan_informasi' ? 'selected' : '' }}>Permintaan Informasi</option>
 
             </select>
 
@@ -636,7 +687,7 @@
 
             <div class="search-wrap">
 
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari...">
 
                 <button type="submit">
 
@@ -645,6 +696,18 @@
                 </button>
 
             </div>
+            @if(Auth::user()->role === 'admin_spmi')
+            <div class="filter-actions" style="display:flex; gap:8px; align-items:center; margin-left:auto;">
+                <a href="{{ route('pengaduan.export', request()->query()) }}" class="btn-action-label btn-export" title="Export Excel">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span class="btn-label">Export Excel</span>
+                </a>
+                <a href="{{ route('pengaduan.print', request()->query()) }}" target="_blank" class="btn-action-label btn-print" title="Cetak Laporan">
+                    <i class="fa-solid fa-print"></i>
+                    <span class="btn-label">Cetak Laporan</span>
+                </a>
+            </div>
+            @endif
 
         </form>
 
@@ -660,13 +723,15 @@
 
                     <th>Kategori Aduan</th>
 
+                    <th>Tujuan Saluran</th>
+
                     <th>Tanggal</th>
 
                     <th>Solusi</th>
 
                     <th>Status</th>
 
-                    <th>Status</th>
+                    <th>Aksi</th>
 
                 </tr>
 
@@ -683,6 +748,8 @@
                     <td>{{ $item->judul }}</td>
 
                     <td>{{ $item->kategori }}</td>
+
+                    <td>{{ $item->unit_tujuan ?? 'Belum disalurkan' }}</td>
 
                     <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
 
@@ -706,11 +773,11 @@
 
                         <a href="{{ route('pengaduan.detail', $item->id) }}" class="link-detail">Detail</a>
 
-                        @if ($item->status !== 'Selesai')
+                        @if ($item->status !== 'Selesai' && $item->canBeReassigned())
 
                             <form action="{{ route('pengaduan.salurkan', $item->id) }}" method="POST" style="display:inline; margin:0; padding:0;">
                                 @csrf
-                                <button type="submit" class="link-salurkan" style="background:none; border:none; padding:0; cursor:pointer; font:inherit; color:#0d2d6e; font-weight:600;">Salurkan</button>
+                                <button type="submit" class="link-salurkan" style="background:none; border:none; padding:0; cursor:pointer; font:inherit; color:#0d2d6e; font-weight:600;">Ubah Saluran</button>
                             </form>
 
                         @endif

@@ -14,7 +14,7 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
 
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Dashboard
+                        Beranda
                     </x-nav-link>
 
                     <x-nav-link :href="route('pengaduan.index')" :active="request()->routeIs('pengaduan.*')">
@@ -23,7 +23,7 @@
 
                     @if(auth()->user()->isAdmin())
                     <x-nav-link :href="route('dashboard.pengaduan')" :active="request()->routeIs('dashboard.pengaduan')">
-                        Dashboard SPMI
+                        Beranda SPMI
                     </x-nav-link>
                     @endif
 
@@ -41,7 +41,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            Profile
+                            Profil
                         </x-dropdown-link>
 
                         <form method="POST" action="{{ route('logout') }}">
@@ -50,7 +50,7 @@
                                 onclick="event.preventDefault(); this.closest('form').submit();">
                                 <span style="display:inline-flex;align-items:center;">
                                     <i class="fa-solid fa-right-from-bracket" style="width:20px;text-align:center;margin-right:8px;font-size:16px;"></i>
-                                    <span>Logout</span>
+                                    <span>Keluar</span>
                                 </span>
                             </x-dropdown-link>
                         </form>
@@ -71,7 +71,7 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
 
         <x-responsive-nav-link :href="route('dashboard')">
-            Dashboard
+            Beranda
         </x-responsive-nav-link>
 
         <x-responsive-nav-link :href="route('pengaduan.index')">
@@ -80,7 +80,7 @@
 
         @if(auth()->user()->isAdmin())
         <x-responsive-nav-link :href="route('dashboard.pengaduan')">
-            Dashboard SPMI
+            Beranda SPMI
         </x-responsive-nav-link>
         @endif
 

@@ -1,6 +1,6 @@
 @extends('layouts.main-dashboard')
 
-@section('title', 'Dashboard Admin')
+@section('title', 'Beranda Admin')
 
 @push('styles')
 <style>

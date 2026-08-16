@@ -1,6 +1,6 @@
 @extends('layouts.main-dashboard')
 
-@section('title', 'Dashboard Mahasiswa')
+@section('title', 'Beranda Mahasiswa')
 
 @push('styles')
 <style>

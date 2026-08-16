@@ -170,6 +170,64 @@
             text-transform: uppercase;
         }
 
+        .notification-menu {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .notification-toggle {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            cursor: pointer;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 9px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-panel {
+            display: none;
+            position: absolute;
+            top: 44px;
+            right: 0;
+            width: min(360px, calc(100vw - 30px));
+            max-height: 420px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.18);
+            color: #1e293b;
+        }
+
+        .notification-panel.active { display: block; }
+        .notification-panel-header { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; font-weight: 700; }
+        .notification-item { display: block; width: 100%; padding: 13px 16px; border: 0; border-bottom: 1px solid #f1f5f9; background: #fff; text-align: left; cursor: pointer; font-family: inherit; }
+        .notification-item.unread { background: #f0f7ff; }
+        .notification-item-title { display: block; font-size: 12px; font-weight: 700; color: #0d2d6e; margin-bottom: 3px; }
+        .notification-item-message { display: block; font-size: 11px; color: #64748b; line-height: 1.45; }
+        .notification-item-time { display: block; font-size: 10px; color: #94a3b8; margin-top: 5px; }
+        .notification-empty { padding: 24px 16px; color: #64748b; font-size: 12px; text-align: center; }
+
         .content {
             flex: 1;
             padding: clamp(15px, 5vw, 40px);
@@ -546,7 +604,7 @@
         <nav class="sidebar-nav">
             <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard*') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fa-solid fa-table-columns"></i></span>
-                <span>Dashboard</span>
+                <span>Beranda</span>
             </a>
 
             @if(Auth::user()->role === 'mahasiswa')
@@ -591,7 +649,7 @@
                 @csrf
                 <button type="submit" class="logout-btn">
                     <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
-                    <span>Logout</span>
+                    <span>Keluar</span>
                 </button>
             </form>
         </div>
@@ -605,6 +663,33 @@
                 <span></span>
             </div>
             <span class="topbar-title">Sistem Pengaduan Mahasiswa Berbasis Web</span>
+            @php
+                $notifications = Auth::user()->notifications()->latest()->take(6)->get();
+                $unreadNotifications = Auth::user()->unreadNotifications()->count();
+            @endphp
+            <div class="notification-menu">
+                <button type="button" class="notification-toggle" id="notificationToggle" aria-label="Notifikasi">
+                    <i class="fa-solid fa-bell"></i>
+                    @if($unreadNotifications)
+                        <span class="notification-count">{{ $unreadNotifications > 9 ? '9+' : $unreadNotifications }}</span>
+                    @endif
+                </button>
+                <div class="notification-panel" id="notificationPanel">
+                    <div class="notification-panel-header">Notifikasi</div>
+                    @forelse($notifications as $notification)
+                        <form action="{{ route('notifications.read', $notification) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="notification-item {{ is_null($notification->read_at) ? 'unread' : '' }}">
+                                <span class="notification-item-title">{{ $notification->data['title'] ?? 'Notifikasi pengaduan' }}</span>
+                                <span class="notification-item-message">{{ $notification->data['message'] ?? '' }}</span>
+                                <span class="notification-item-time">{{ $notification->created_at->diffForHumans() }}</span>
+                            </button>
+                        </form>
+                    @empty
+                        <div class="notification-empty">Belum ada notifikasi.</div>
+                    @endforelse
+                </div>
+            </div>
         </div>
         <div class="content">
             @yield('content')
@@ -630,6 +715,14 @@
                 overlay.addEventListener('click', function() {
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
+                });
+            }
+
+            const notificationToggle = document.getElementById('notificationToggle');
+            const notificationPanel = document.getElementById('notificationPanel');
+            if (notificationToggle && notificationPanel) {
+                notificationToggle.addEventListener('click', function() {
+                    notificationPanel.classList.toggle('active');
                 });
             }
         });

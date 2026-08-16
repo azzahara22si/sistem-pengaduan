@@ -27,6 +27,17 @@
         flex-wrap: wrap;
     }
 
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: nowrap;
+        padding-right: 36px;
+        width: 100%;
+    }
+
+    .filter-actions { margin-left: auto; display:flex; gap:12px; align-items:center; }
+
     .search-wrap {
         display: flex;
         align-items: center;
@@ -83,6 +94,27 @@
         background: #093470;
         transform: translateY(-2px);
         box-shadow: 0 8px 15px rgba(13, 66, 142, 0.2);
+    }
+
+    /* Style selects inside the filter bar to match search input */
+    .filter-bar select,
+    .filter-bar .select-custom {
+        height: 42px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0 14px;
+        font-size: 13px;
+        color: #334155;
+        background: #fff;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        min-width: 140px;
     }
 
     .status-badge {
@@ -378,24 +410,43 @@
 @section('content')
 
     <div class="page-header">
-        <h2 class="page-title">Kelola User</h2>
-        <div class="header-right">
-            <form action="{{ route('user.index') }}" method="GET" class="search-form" style="display: flex; gap: 10px; align-items: center;">
+        <div class="header-top">
+            <h2 class="page-title">Kelola User</h2>
+        </div>
+
+        <form action="{{ route('user.index') }}" method="GET" class="filter-bar">
+                <select name="role" onchange="this.form.submit()" class="form-control select-custom" style="height:42px;">
+                    <option value="">Semua Role</option>
+                    <option value="mahasiswa" {{ (isset($role) && $role=='mahasiswa') ? 'selected' : '' }}>Mahasiswa</option>
+                    <option value="admin" {{ (isset($role) && $role=='admin') ? 'selected' : '' }}>Admin Unit</option>
+                    <option value="admin_spmi" {{ (isset($role) && $role=='admin_spmi') ? 'selected' : '' }}>Admin SPMI</option>
+                </select>
+
+                <select name="unit" onchange="this.form.submit()" class="form-control select-custom" style="height:42px;">
+                    <option value="">Semua Unit</option>
+                    @foreach($units as $u)
+                        <option value="{{ $u->id }}" {{ (isset($unitId) && $unitId == $u->id) ? 'selected' : '' }}>{{ $u->nama_unit }}</option>
+                    @endforeach
+                </select>
+
                 <div class="search-wrap">
-                    <input type="text" name="search" placeholder="Cari nama, NIM, email, atau role..." value="{{ request('search') }}">
+                    <input type="text" name="search" placeholder="Cari nama, NIM, email..." value="{{ request('search') }}">
                     <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-                @if(request('search'))
-                    <a href="{{ route('user.index') }}" style="font-size: 12px; color: #ef4444; text-decoration: none; font-weight: 600; white-space: nowrap;">
-                        <i class="fa-solid fa-xmark"></i> Reset
-                    </a>
-                @endif
+
+                <div class="filter-actions">
+                    @if(request()->query())
+                        <a href="{{ route('user.index') }}" style="font-size: 12px; color: #ef4444; text-decoration: none; font-weight: 600; white-space: nowrap;">
+                            <i class="fa-solid fa-xmark"></i> Atur Ulang
+                        </a>
+                    @endif
+
+                    <button class="btn-tambah" type="button" onclick="document.getElementById('modalTambah').classList.add('show')">
+                        <span>Tambah User</span>
+                        <span class="plus-icon">+</span>
+                    </button>
+                </div>
             </form>
-            <button class="btn-tambah" onclick="document.getElementById('modalTambah').classList.add('show')">
-                <span>Tambah User</span>
-                <span class="plus-icon">+</span>
-            </button>
-        </div>
     </div>
 
     <div class="table-card" style="overflow-x: auto;">

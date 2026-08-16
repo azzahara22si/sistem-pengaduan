@@ -4,7 +4,7 @@
 
 <div class="container mt-4">
 
-    <h2 class="mb-4">Dashboard Pengaduan</h2>
+    <h2 class="mb-4">Dasbor Pengaduan</h2>
 
     <div class="row">
 

@@ -7,8 +7,9 @@
 
     .page-header {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
         margin-bottom: 30px;
     }
 
@@ -25,7 +26,7 @@
         border-radius: 12px;
         text-decoration: none;
         font-weight: 600;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 8px;
         transition: all 0.3s;
@@ -157,6 +158,56 @@
         box-shadow: 0 0 0 4px rgba(13, 66, 142, 0.1);
     }
 
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: nowrap;
+        padding-right: 36px;
+        width: 100%;
+    }
+
+    .filter-actions { margin-left: auto; display:flex; align-items:center; gap:12px; }
+
+    .btn-create { height: 42px; padding: 0 16px; }
+
+    .search-wrap {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 42px;
+        background: #fff;
+        padding-left: 15px;
+        transition: all 0.3s;
+    }
+
+    .search-wrap:focus-within {
+        border-color: #0d428e;
+        box-shadow: 0 0 0 4px rgba(13, 66, 142, 0.05);
+    }
+
+    .search-wrap input {
+        border: none;
+        outline: none;
+        padding: 0 10px;
+        font-size: 13px;
+        font-family: 'Poppins', sans-serif;
+        width: 220px;
+        color: #334155;
+    }
+
+    .search-wrap button {
+        background: none;
+        border: none;
+        padding: 0 12px;
+        cursor: pointer;
+        color: #64748b;
+    }
+
+    
+
     @media (max-width: 768px) {
         .page-header {
             flex-direction: column;
@@ -184,10 +235,26 @@
 
 @section('content')
 <div class="page-header">
-    <h2 class="page-title">Kelola Unit Layanan</h2>
-    <button class="btn-create" onclick="openModal('modalCreate')">
-        <i class="fa-solid fa-plus"></i> Tambah Unit
-    </button>
+    <div class="header-top" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+        <h2 class="page-title">Kelola Unit Layanan</h2>
+    </div>
+
+    <form action="{{ route('unit.index') }}" method="GET" class="filter-bar">
+        <div class="search-wrap">
+            <input type="text" name="search" placeholder="Cari unit atau email..." value="{{ request('search') }}">
+            <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+
+        <div class="filter-actions">
+            @if(request('search'))
+                <a href="{{ route('unit.index') }}" style="font-size: 12px; color: #ef4444; text-decoration: none; font-weight: 600; white-space: nowrap;">Atur Ulang</a>
+            @endif
+
+            <button class="btn-create" type="button" onclick="openModal('modalCreate')">
+                <i class="fa-solid fa-plus"></i> Tambah Unit
+            </button>
+        </div>
+    </form>
 </div>
 
 <div class="table-card" style="overflow-x: auto;">
