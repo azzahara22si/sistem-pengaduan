@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('unit_layanans', function (Blueprint $table) {
+        if (!Schema::hasTable('unit_layanans')) {
+            Schema::create('unit_layanans', function (Blueprint $table) {
             $table->id();
             $table->string('nama_unit');
             $table->text('deskripsi_unit')->nullable();
             $table->string('email_unit')->unique();
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**

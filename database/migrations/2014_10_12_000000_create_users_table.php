@@ -13,7 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
@@ -22,8 +23,9 @@ return new class extends Migration
             $table->enum('role', ['mahasiswa', 'admin', 'admin_spmi'])->default('mahasiswa');
             $table->unsignedBigInteger('unit_id')->nullable()->index();
             $table->rememberToken();
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**

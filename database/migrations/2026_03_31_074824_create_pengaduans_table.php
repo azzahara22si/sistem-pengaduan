@@ -12,8 +12,9 @@ return new class extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::create('pengaduans', function (Blueprint $table) {
+    {
+        if (!Schema::hasTable('pengaduans')) {
+            Schema::create('pengaduans', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->string('judul');
@@ -23,9 +24,10 @@ return new class extends Migration
         $table->string('status')->default('diajukan');
         $table->unsignedBigInteger('unit_id')->nullable()->index();
         $table->string('foto')->nullable();
-        $table->timestamps();
-    });
-}
+                $table->timestamps();
+            });
+        }
+    }
 
     /**
      * Reverse the migrations.
