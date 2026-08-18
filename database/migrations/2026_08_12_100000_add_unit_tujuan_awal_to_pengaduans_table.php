@@ -10,7 +10,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pengaduans', function (Blueprint $table) {
-            $table->string('unit_tujuan_awal')->nullable()->after('unit_tujuan');
+            if (!Schema::hasColumn('pengaduans', 'unit_tujuan_awal')) {
+                $table->string('unit_tujuan_awal')->nullable()->after('unit_tujuan');
+            }
         });
 
         DB::table('pengaduans')->orderBy('id')->each(function ($pengaduan) {
