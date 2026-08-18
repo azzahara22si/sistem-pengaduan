@@ -240,11 +240,20 @@
         }
     });
 
+    const urgencyLabels = {!! json_encode($urgencyStats->pluck('urgensi')->map(fn ($urgensi) => ucfirst($urgensi))) !!};
+    const urgencyValues = {!! json_encode($urgencyStats->pluck('total')) !!};
+    const urgencyColors = urgencyLabels.map((label) => {
+        const value = label.toLowerCase();
+        if (value === 'tinggi') return '#ef4444';
+        if (value === 'sedang') return '#f59e0b';
+        return '#94a3b8';
+    });
+
     new Chart(document.getElementById('urgencyChart'), {
         type: 'doughnut',
         data: {
-            labels: {!! json_encode($urgencyStats->pluck('urgensi')->map(fn ($urgensi) => ucfirst($urgensi))) !!},
-            datasets: [{ data: {!! json_encode($urgencyStats->pluck('total')) !!}, backgroundColor: ['#ef4444', '#f59e0b', '#94a3b8'], borderWidth: 0 }]
+            labels: urgencyLabels,
+            datasets: [{ data: urgencyValues, backgroundColor: urgencyColors, borderWidth: 0 }]
         },
         options: {
             responsive: true,
