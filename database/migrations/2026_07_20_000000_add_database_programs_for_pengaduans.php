@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('riwayat_status_pengaduans', function (Blueprint $table) {
+        Schema::createIfNotExists('riwayat_status_pengaduans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pengaduan_id')->constrained()->cascadeOnDelete();
             $table->string('status_lama');
