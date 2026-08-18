@@ -9,13 +9,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::createIfNotExists('riwayat_status_pengaduans', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pengaduan_id')->constrained()->cascadeOnDelete();
-            $table->string('status_lama');
-            $table->string('status_baru');
-            $table->timestamp('created_at')->useCurrent();
-        });
+        if (!Schema::hasTable('riwayat_status_pengaduans')) {
+            Schema::create('riwayat_status_pengaduans', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('pengaduan_id')->constrained()->cascadeOnDelete();
+                $table->string('status_lama');
+                $table->string('status_baru');
+                $table->timestamp('created_at')->useCurrent();
+            });
+        }
 
         if (DB::getDriverName() !== 'mysql') {
             return;
