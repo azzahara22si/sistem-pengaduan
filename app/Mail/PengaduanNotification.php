@@ -13,14 +13,16 @@ class PengaduanNotification extends Mailable
 
     public $pengaduan;
     public $note;
+    public $audience;
 
     /**
-     * Create a new message instance.
+     * @param string $audience One of: 'mahasiswa', 'admin_spmi', 'admin_unit'
      */
-    public function __construct(Pengaduan $pengaduan, string $note = null)
+    public function __construct(Pengaduan $pengaduan, string $note = null, string $audience = 'admin_spmi')
     {
         $this->pengaduan = $pengaduan;
         $this->note = $note;
+        $this->audience = $audience;
     }
 
     /**
@@ -28,12 +30,20 @@ class PengaduanNotification extends Mailable
      */
     public function build()
     {
-        $subject = 'Pengaduan Baru: ' . ($this->pengaduan->judul ?? 'Tanpa Judul');
+        $judul = $this->pengaduan->judul ?? 'Tanpa Judul';
+
+        $subject = match ($this->audience) {
+            'mahasiswa' => 'Update Pengaduan Anda: ' . $judul,
+            'admin_unit' => 'Pengaduan Diteruskan ke Unit Anda: ' . $judul,
+            default => 'Pengaduan Baru Masuk: ' . $judul,
+        };
+
         if ($this->note) {
             $subject = $this->note . ' - ' . $subject;
         }
 
         return $this->subject($subject)
-            ->view('emails.pengaduan-notification');
+            ->view('emails.pengaduan-notification')
+            ->with('audience', $this->audience);
     }
 }

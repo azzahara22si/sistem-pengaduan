@@ -433,6 +433,16 @@
                 </div>
             </div>
 
+            <div class="form-group" style="background: #f0f9ff; border: 1px solid #dbeafe; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 0; font-weight: normal;">
+                    <input type="checkbox" name="is_anonymous" value="1" {{ old('is_anonymous') ? 'checked' : '' }} style="width: 18px; height: 18px; cursor: pointer; accent-color: #0d428e;">
+                    <span style="color: #0d2d6e; font-weight: 600; font-size: 14px;">
+                        <i class="fa-solid fa-mask" style="margin-right: 6px;"></i> Kirim pengaduan secara anonim
+                    </span>
+                </label>
+                <p style="margin: 8px 0 0 28px; color: #64748b; font-size: 12px;">Identitas Anda sama sekali tidak akan ditampilkan kepada siapa pun. Pengaduan akan sepenuhnya anonim.</p>
+            </div>
+
             <button type="submit" class="btn-submit">
                 <i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> Kirim Pengaduan
             </button>

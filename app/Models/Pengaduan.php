@@ -22,7 +22,12 @@ class Pengaduan extends Model
         'status',
         'unit_id',
         'rating',
-        'feedback'
+        'feedback',
+        'is_anonymous'
+    ];
+
+    protected $casts = [
+        'is_anonymous' => 'boolean',
     ];
 
     // Relasi ke user (yang membuat pengaduan)
@@ -69,5 +74,21 @@ class Pengaduan extends Model
 
         return in_array($status, ['diajukan', 'proses'], true)
             && !$this->hasUnitResponse();
+    }
+
+    /**
+     * Get the reporter name or "Anonim" if pengaduan is anonymous
+     */
+    public function getReporterName(): string
+    {
+        return $this->is_anonymous ? 'Anonim' : ($this->user?->name ?? 'Tidak Diketahui');
+    }
+
+    /**
+     * Get the reporter NIM or null if pengaduan is anonymous
+     */
+    public function getReporterNim(): ?string
+    {
+        return $this->is_anonymous ? null : $this->user?->nim;
     }
 }

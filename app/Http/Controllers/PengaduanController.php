@@ -189,7 +189,7 @@ class PengaduanController extends Controller
             $unitAdmins = User::where('role', 'admin')->where('unit_id', $unit->id)->whereNotNull('email')->get();
             foreach ($unitAdmins as $unitAdmin) {
                 $note = 'Pengaduan Diteruskan ke Unit ' . $unit->nama_unit;
-                Mail::to($unitAdmin->email)->send(new PengaduanNotification($pengaduan, $note));
+                Mail::to($unitAdmin->email)->send(new PengaduanNotification($pengaduan, $note, 'admin_unit'));
             }
         } catch (\Exception $e) {
             report($e);
@@ -235,7 +235,7 @@ class PengaduanController extends Controller
                 . '<td>' . e($pengaduan->judul) . '</td>'
                 . '<td>' . e($pengaduan->unit_tujuan_awal ?: $pengaduan->unit_tujuan) . '</td>'
                 . '<td>' . e($pengaduan->unit_id ? $pengaduan->unit_tujuan : 'Belum ditetapkan') . '</td>'
-                . '<td>' . e($pengaduan->user->name ?? '-') . '</td>'
+                . '<td>' . e($pengaduan->getReporterName()) . '</td>'
                 . '<td>' . e(ucfirst($pengaduan->urgensi)) . '</td>'
                 . '<td>' . e(ucfirst($pengaduan->status)) . '</td>'
                 . '</tr>';
@@ -306,6 +306,7 @@ class PengaduanController extends Controller
             'urgensi' => 'required|in:rendah,sedang,tinggi',
             'klasifikasi' => 'required|in:pengaduan,aspirasi,permintaan_informasi',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=4096,max_height=4096',
+            'is_anonymous' => 'nullable|boolean',
         ]);
 
         $fotoPath = null;
@@ -323,13 +324,14 @@ class PengaduanController extends Controller
             'klasifikasi' => $validated['klasifikasi'],
             'foto' => $fotoPath,
             'status' => 'diajukan',
+            'is_anonymous' => $validated['is_anonymous'] ?? false,
         ]);
 
         // Notify admin SPMI about new pengaduan
         try {
             $adminSpmiUsers = User::where('role', 'admin_spmi')->whereNotNull('email')->get();
             foreach ($adminSpmiUsers as $adminSpmi) {
-                Mail::to($adminSpmi->email)->send(new PengaduanNotification($pengaduan, 'Pengaduan Baru Masuk'));
+                Mail::to($adminSpmi->email)->send(new PengaduanNotification($pengaduan, 'Pengaduan Baru Masuk', 'admin_spmi'));
             }
         } catch (\Exception $e) {
             report($e);
@@ -386,6 +388,7 @@ class PengaduanController extends Controller
             'urgensi' => 'required|in:rendah,sedang,tinggi',
             'klasifikasi' => 'required|in:pengaduan,aspirasi,permintaan_informasi',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=4096,max_height=4096',
+            'is_anonymous' => 'nullable|boolean',
         ]);
 
         $data = [
@@ -395,6 +398,7 @@ class PengaduanController extends Controller
             'unit_tujuan_awal' => $validated['unit_tujuan'],
             'urgensi' => $validated['urgensi'],
             'klasifikasi' => $validated['klasifikasi'],
+            'is_anonymous' => $validated['is_anonymous'] ?? false,
         ];
 
         if ($request->hasFile('foto')) {
@@ -441,7 +445,7 @@ class PengaduanController extends Controller
                     default => 'Status Pengaduan Diperbarui',
                 };
 
-                Mail::to($recipient)->send(new PengaduanNotification($pengaduan, $note));
+                Mail::to($recipient)->send(new PengaduanNotification($pengaduan, $note, 'mahasiswa'));
             }
         } catch (\Exception $e) {
             report($e);

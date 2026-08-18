@@ -303,8 +303,10 @@
                             <div class="cell-subtitle">ID: #ADU-{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</div>
                         </td>
                         <td>
-                            <div style="font-weight: 600;">{{ $item->user->name }}</div>
+                            <div style="font-weight: 600;">{{ $item->getReporterName() }}</div>
+                            @if(!$item->is_anonymous)
                             <div class="cell-subtitle">{{ $item->user->email }}</div>
+                            @endif
                         </td>
                         <td>
                             <div class="cell-date">{{ $item->updated_at->format('d M Y') }}</div>

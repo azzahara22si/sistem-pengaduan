@@ -745,7 +745,7 @@
                         <td data-label="No">{{ ($pengaduans->currentPage() - 1) * $pengaduans->perPage() + $index + 1 }}</td>
                         <td data-label="Judul" style="font-weight: 600; color: #0d2d6e;">{{ $p->judul }}</td>
                         @if(Auth::user()->role !== 'mahasiswa')
-                        <td data-label="Pengirim" style="font-size: 12px;">{{ $p->user->name ?? 'Mahasiswa' }}</td>
+                        <td data-label="Pengirim" style="font-size: 12px;">{{ $p->getReporterName() }}</td>
                         @endif
                         <td data-label="Klasifikasi">
                             @php

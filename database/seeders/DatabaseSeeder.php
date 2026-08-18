@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['email' => 'admin_spmi@example.com'],
+            ['email' => 'fadhilmain29+adminspmi@gmail.com'],
             [
                 'name' => 'Admin SPMI',
                 'password' => Hash::make('password123'),
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'fadhilmain29+adminunit@gmail.com'],
             [
                 'name' => 'Admin Unit',
                 'password' => Hash::make('password123'),
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['email' => 'mahasiswa@example.com'],
+            ['email' => 'fadhilmain29+mahasiswa@gmail.com'],
             [
                 'name' => 'Mahasiswa',
                 'password' => Hash::make('password123'),

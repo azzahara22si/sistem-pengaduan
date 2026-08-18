@@ -49,7 +49,7 @@ class TanggapanController extends Controller
                     ? ('Pengaduan ' . ucfirst($request->status))
                     : 'Ada Tanggapan Baru';
 
-                Mail::to($recipient)->send(new PengaduanNotification($pengaduan, $note));
+                Mail::to($recipient)->send(new PengaduanNotification($pengaduan, $note, 'mahasiswa'));
             }
         } catch (\Exception $e) {
             report($e);

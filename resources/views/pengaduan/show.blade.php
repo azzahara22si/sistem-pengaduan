@@ -382,7 +382,7 @@
             </div>
             <div class="info-item">
                 <label>Pelapor</label>
-                <p>{{ $pengaduan->user->name }} ({{ ucfirst($pengaduan->user->role) }})</p>
+                <p>{{ $pengaduan->getReporterName() }}{{ !$pengaduan->is_anonymous ? ' (' . ucfirst($pengaduan->user->role) . ')' : '' }}</p>
             </div>
         </div>
 

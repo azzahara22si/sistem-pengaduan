@@ -42,7 +42,7 @@
                     <td>{{ $pengaduan->judul }}</td>
                     <td>{{ $pengaduan->unit_tujuan_awal ?: $pengaduan->unit_tujuan }}</td>
                     <td>{{ $pengaduan->unit_id ? $pengaduan->unit_tujuan : 'Belum ditetapkan' }}</td>
-                    <td>{{ $pengaduan->user->name ?? '-' }}</td>
+                    <td>{{ $pengaduan->getReporterName() }}</td>
                     <td>{{ ucfirst($pengaduan->urgensi) }}</td>
                     <td>{{ ucfirst($pengaduan->status) }}</td>
                 </tr>

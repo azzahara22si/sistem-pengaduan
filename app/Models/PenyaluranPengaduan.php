@@ -11,6 +11,10 @@ class PenyaluranPengaduan extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+
     protected $fillable = [
         'pengaduan_id',
         'from_unit_id',
