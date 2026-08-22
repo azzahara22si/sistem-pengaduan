@@ -93,7 +93,7 @@
         }
     </style>
 
-    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px;">
+    <div class="stats-grid admin-chart-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px;">
         <div class="table-card">
             <h4 class="card-title">Jumlah pengaduan per unit layanan</h4>
             <div style="height: 250px;">
@@ -110,7 +110,7 @@
 
     <div class="table-card">
         <div class="table-responsive">
-            <div style="min-width: 800px;">
+            <div class="admin-table-inner" style="min-width: 800px;">
                 <table>
             <thead>
                 <tr>
@@ -197,6 +197,18 @@
     </div>
 
     <style>
+        @media (max-width: 768px) {
+            .admin-chart-grid {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 15px !important;
+                margin-bottom: 20px !important;
+            }
+
+            .admin-table-inner {
+                min-width: 680px !important;
+            }
+        }
+
         @media (max-width: 640px) {
             .modal-content {
                 width: calc(100vw - 20px) !important;

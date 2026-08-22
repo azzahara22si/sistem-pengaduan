@@ -22,6 +22,7 @@
             background-color: #f8fafc;
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .sidebar {
@@ -131,6 +132,7 @@
             flex-direction: column;
             overflow-x: hidden;
             margin-left: 200px;
+            min-width: 0;
         }
 
         .topbar {
@@ -231,6 +233,7 @@
         .content {
             flex: 1;
             padding: clamp(15px, 5vw, 40px);
+            min-width: 0;
         }
 
         .welcome-card {
@@ -309,6 +312,7 @@
             margin-bottom: clamp(15px, 3vw, 25px);
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            max-width: 100%;
         }
 
         .card-title {
@@ -324,6 +328,7 @@
         }
 
         table { width: 100%; border-collapse: collapse; min-width: 100%; }
+        img, canvas, video { max-width: 100%; height: auto; }
         th { text-align: left; padding: clamp(8px, 2vw, 12px); border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: clamp(10px, 1.8vw, 12px); }
         td { padding: clamp(8px, 2vw, 12px); border-bottom: 1px solid #f1f5f9; font-size: clamp(11px, 2vw, 13px); color: #1e293b; }
 
@@ -430,6 +435,7 @@
                 width: 100%;
                 margin-left: 0 !important;
             }
+            .content > * { max-width: 100%; }
             .topbar {
                 justify-content: space-between;
                 padding: 0 clamp(10px, 2vw, 15px);
@@ -467,6 +473,11 @@
             
             .table-card {
                 padding: clamp(12px, 2vw, 15px);
+            }
+
+            .table-responsive {
+                max-width: 100%;
+                overflow-x: auto;
             }
             
             table { font-size: clamp(10px, 1.8vw, 12px); }
@@ -532,6 +543,10 @@
             
             .content {
                 padding: 12px;
+            }
+
+            .topbar {
+                gap: 10px;
             }
 
             .welcome-card {

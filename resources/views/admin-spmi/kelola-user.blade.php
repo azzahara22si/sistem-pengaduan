@@ -31,8 +31,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        flex-wrap: nowrap;
-        padding-right: 36px;
+        flex-wrap: wrap;
         width: 100%;
     }
 
@@ -363,6 +362,21 @@
         font-weight: 500;
     }
 
+    .user-table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .user-table-inner {
+        min-width: 900px;
+    }
+
+    .user-action {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 8px;
+    }
+
     @media (max-width: 768px) {
         .page-header {
             flex-direction: column;
@@ -373,6 +387,29 @@
         .header-right {
             flex-direction: column;
             align-items: stretch;
+        }
+
+        .filter-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0;
+        }
+
+        .filter-bar select,
+        .filter-bar .search-wrap,
+        .filter-bar .filter-actions {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .filter-bar .search-wrap,
+        .filter-bar .filter-actions {
+            grid-column: 1 / -1;
+        }
+
+        .filter-actions {
+            margin-left: 0;
         }
 
         .search-wrap {
@@ -402,6 +439,100 @@
         .user-pagination {
             align-items: stretch;
             text-align: center;
+        }
+
+        .table-card {
+            overflow: visible;
+            padding: 12px;
+        }
+
+        .user-table-scroll {
+            overflow: visible;
+        }
+
+        .user-table-inner {
+            min-width: 0;
+        }
+
+        .user-table {
+            display: block;
+        }
+
+        .user-table thead {
+            display: none;
+        }
+
+        .user-table tbody,
+        .user-table tr {
+            display: block;
+        }
+
+        .user-table tbody tr:not(:has(td[colspan])) {
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .user-table tbody tr:not(:has(td[colspan])):last-child {
+            border-bottom: 0;
+        }
+
+        .user-table tbody tr:not(:has(td[colspan])) td {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 5px 0;
+            border: 0;
+            text-align: right;
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+
+        .user-table tbody tr:not(:has(td[colspan])) td::before {
+            flex: 0 0 86px;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(1)::before { content: 'No'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(2)::before { content: 'Nama'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(3)::before { content: 'NIM'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(4)::before { content: 'Email'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(5)::before { content: 'Unit'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(6)::before { content: 'Role'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(7)::before { content: 'Status'; }
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(8) {
+            justify-content: flex-end;
+            padding-top: 10px;
+        }
+
+        .user-table tbody tr:not(:has(td[colspan])) td:nth-child(8)::before {
+            content: 'Aksi';
+            margin-right: auto;
+        }
+
+        .user-table tbody tr td[colspan] {
+            display: block;
+            padding: 24px 8px;
+            border: 0;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .filter-bar {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-bar select {
+            grid-column: 1 / -1;
+        }
+
+        .page-title {
+            font-size: 21px;
         }
     }
 </style>
@@ -449,9 +580,9 @@
             </form>
     </div>
 
-    <div class="table-card" style="overflow-x: auto;">
-        <div style="min-width: 900px;">
-            <table>
+    <div class="table-card user-table-scroll">
+        <div class="user-table-inner">
+            <table class="user-table">
             <thead>
                 <tr>
                     <th style="width: 60px;">No</th>
@@ -486,13 +617,15 @@
 
                         <button type="button" 
                                 onclick="openEditModal({{ json_encode($user) }})"
-                                style="background: none; border: none; color: #64748b; cursor: pointer; margin: 0 5px;">
+                            class="user-action"
+                            style="background: none; border: none; color: #64748b; cursor: pointer; margin: 0 5px;">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
 
                         <button type="button" 
                                 onclick="openDeleteModal({{ $user->id }}, '{{ $user->name }}')"
-                                style="background: none; border: none; color: #ef4444; cursor: pointer; margin: 0 5px;">
+                            class="user-action"
+                            style="background: none; border: none; color: #ef4444; cursor: pointer; margin: 0 5px;">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>

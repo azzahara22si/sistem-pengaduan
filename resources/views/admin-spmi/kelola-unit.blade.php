@@ -162,8 +162,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        flex-wrap: nowrap;
-        padding-right: 36px;
+        flex-wrap: wrap;
         width: 100%;
     }
 
@@ -206,6 +205,15 @@
         color: #64748b;
     }
 
+    .unit-table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .unit-table-inner {
+        min-width: 800px;
+    }
+
     
 
     @media (max-width: 768px) {
@@ -218,6 +226,27 @@
         .btn-create {
             width: 100%;
             justify-content: center;
+        }
+
+        .filter-bar {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 0;
+        }
+
+        .filter-bar .search-wrap,
+        .filter-bar .filter-actions {
+            width: 100%;
+        }
+
+        .filter-actions {
+            margin-left: 0;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            flex: 1;
         }
 
         .modal-content {
@@ -257,8 +286,8 @@
     </form>
 </div>
 
-<div class="table-card" style="overflow-x: auto;">
-    <div style="min-width: 800px;">
+<div class="table-card unit-table-scroll">
+    <div class="unit-table-inner">
         <table>
         <thead>
             <tr>

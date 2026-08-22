@@ -279,6 +279,7 @@
             padding: 20px 24px;
 
             overflow-x: auto;
+            min-width: 0;
 
         }
 
@@ -524,6 +525,79 @@
 
         /* responsive: hide label on small screens to prevent overflow */
         @media (max-width: 767px) {
+            .topbar {
+                padding: 0 12px;
+            }
+
+            .topbar-title {
+                font-size: 11px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .layout {
+                position: relative;
+                border-width: 1px;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 46px;
+                bottom: 0;
+                left: -150px;
+                width: 140px;
+                z-index: 20;
+                transition: left 0.25s ease;
+                box-shadow: 8px 0 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .main {
+                width: 100%;
+                padding: 16px 12px;
+                overflow-x: auto;
+            }
+
+            .filter-bar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                padding-right: 0;
+                overflow: visible;
+            }
+
+            .filter-bar select,
+            .filter-bar input[type="date"],
+            .filter-bar .search-wrap,
+            .filter-bar .filter-actions {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .filter-spacer {
+                display: none;
+            }
+
+            .filter-bar .search-wrap,
+            .filter-bar .filter-actions {
+                grid-column: 1 / -1;
+            }
+
+            .filter-actions {
+                justify-content: flex-end;
+                margin-left: 0 !important;
+            }
+
+            .table-scroll-hint {
+                font-size: 10px;
+                color: #94a3b8;
+                margin: -4px 0 8px;
+            }
+
             .filter-actions { gap: 6px; }
             .btn-action-label { padding: 0; width: 36px; height: 36px; border-radius: 50%; border-color: transparent; }
             .btn-action-label .btn-label { display: none; }
@@ -550,7 +624,7 @@
 
 <div class="topbar">
 
-    <div class="topbar-hamburger">
+    <div class="topbar-hamburger" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Buka menu">
 
         <span></span><span></span><span></span>
 
@@ -562,7 +636,7 @@
 
 <div class="layout">
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="mobileSidebar">
 
         <div class="sidebar-logo">
 
@@ -807,6 +881,23 @@
     </main>
 
 </div>
+
+<script>
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+
+    function toggleMobileSidebar() {
+        mobileSidebar.classList.toggle('open');
+    }
+
+    mobileMenuToggle.addEventListener('click', toggleMobileSidebar);
+    mobileMenuToggle.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleMobileSidebar();
+        }
+    });
+</script>
 
 </body>
 
