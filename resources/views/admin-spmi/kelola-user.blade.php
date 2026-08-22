@@ -372,9 +372,10 @@
     }
 
     .user-action {
-        min-width: 44px;
         min-height: 44px;
-        padding: 8px;
+        min-width: 0;
+        padding: 8px 4px;
+        margin: 0 2px !important;
     }
 
     @media (max-width: 768px) {
@@ -507,6 +508,7 @@
         .user-table tbody tr:not(:has(td[colspan])) td:nth-child(7)::before { content: 'Status'; }
         .user-table tbody tr:not(:has(td[colspan])) td:nth-child(8) {
             justify-content: flex-end;
+            gap: 0;
             padding-top: 10px;
         }
 
