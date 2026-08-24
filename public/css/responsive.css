@@ -4,6 +4,10 @@ html, body {
     overflow-x: hidden;
 }
 
+body {
+    min-width: 320px;
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -186,6 +190,116 @@ img, svg, canvas, video {
 
 button, input, select, textarea {
     max-width: 100%;
+}
+
+/* Shared guards for layouts outside the dashboard shell. */
+.container,
+.container-fluid,
+.max-w-7xl,
+.form-container,
+.table-card,
+.card {
+    width: 100%;
+    max-width: 100%;
+}
+
+.table-card,
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table-card > table,
+.table-responsive > table {
+    min-width: 620px;
+}
+
+.form-card,
+.modal-content,
+.modal-dialog {
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .container,
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .page-header,
+    .header-top,
+    .filter-bar,
+    .filter-actions {
+        width: 100%;
+    }
+
+    .filter-bar,
+    .filter-actions {
+        align-items: stretch;
+    }
+
+    .filter-select,
+    .filter-date,
+    .date-filter,
+    .date-filter-group,
+    .search-wrap {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .filter-actions {
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .table-card {
+        padding: 15px;
+    }
+
+    .table-card > table,
+    .table-responsive > table {
+        min-width: 560px;
+    }
+
+    .modal-responsive,
+    .modal-responsive-md {
+        width: calc(100vw - 24px);
+        max-width: calc(100vw - 24px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card,
+    .auth-card,
+    .register-card {
+        width: calc(100% - 24px) !important;
+        margin: 12px !important;
+        padding: 28px 18px !important;
+        border-radius: 24px !important;
+    }
+
+    .login-card p {
+        margin-bottom: 24px;
+    }
+
+    .table-card {
+        padding: 12px;
+    }
+
+    .table-card > table,
+    .table-responsive > table {
+        min-width: 500px;
+    }
+
+    .btn-touch,
+    .btn-submit,
+    button[type="submit"] {
+        min-height: 44px;
+    }
 }
 
 /* Responsive Logo */
