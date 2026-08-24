@@ -193,7 +193,7 @@
                         <div class="activity-title">{{ $p->judul }}</div>
                         <div class="activity-meta">
                             <span style="color: {{ $p->status === 'selesai' ? '#10b981' : ($p->status === 'proses' ? '#f97316' : '#fbbf24') }}; font-weight: 700; text-transform: capitalize;">{{ $p->status }}</span> 
-                            &bull; {{ $p->created_at->diffForHumans() }}
+                            &bull; Dibuat {{ $p->created_at->format('d/m/Y H:i') }} WIB
                         </div>
                     </div>
                 </div>

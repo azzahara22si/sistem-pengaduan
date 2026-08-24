@@ -117,7 +117,7 @@
                     <th>No</th>
                     <th>Judul Aduan</th>
                     <th>Unit Tujuan</th>
-                    <th>Tanggal</th>
+                    <th>Dibuat Pada</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -128,7 +128,7 @@
                     <td>{{ ($pengaduans->currentPage() - 1) * $pengaduans->perPage() + $index + 1 }}</td>
                     <td style="font-weight: 600;">{{ $item->judul }}</td>
                     <td>{{ $item->unit_tujuan }}</td>
-                    <td>{{ $item->created_at->format('d/m/Y') }}</td>
+                    <td style="white-space: nowrap;">{{ $item->created_at->format('d/m/Y H:i') }} WIB</td>
                     <td>
                         @php
                             $statusClass = 'status-diajukan';

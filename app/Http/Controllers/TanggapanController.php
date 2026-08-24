@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tanggapan;
 use App\Models\Pengaduan;
+use App\Models\PengaduanStatusHistory;
 use App\Mail\PengaduanNotification;
 use Illuminate\Http\Request;
 
@@ -39,7 +40,16 @@ class TanggapanController extends Controller
         ]);
 
         if ($request->filled('status')) {
+            $statusBerubah = $pengaduan->status !== $request->status;
             $pengaduan->update(['status' => $request->status]);
+
+            if ($statusBerubah) {
+                PengaduanStatusHistory::create([
+                    'pengaduan_id' => $pengaduan->id,
+                    'status' => $request->status,
+                    'user_id' => Auth::id(),
+                ]);
+            }
         }
 
         try {

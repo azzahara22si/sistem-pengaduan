@@ -594,6 +594,7 @@
                     <th>Unit</th>
                     <th>Role</th>
                     <th>Status</th>
+                    <th>Dibuat Pada</th>
                     <th style="text-align: center;">Aksi</th>
                 </tr>
             </thead>
@@ -615,6 +616,7 @@
                             {{ $user->status ?? 'Aktif' }}
                         </span>
                     </td>
+                    <td style="white-space: nowrap;">{{ $user->created_at->format('d/m/Y H:i') }} WIB</td>
                     <td style="text-align: center;">
 
                         <button type="button" 

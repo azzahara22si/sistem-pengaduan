@@ -288,6 +288,7 @@
                         <th style="width: 60px;">No</th>
                         <th>Judul Aduan</th>
                         <th>Pelapor</th>
+                        <th>Dibuat Pada</th>
                         <th>Tanggal Selesai</th>
                         <th>Urgensi</th>
                         <th>Status</th>
@@ -307,6 +308,10 @@
                             @if(!$item->is_anonymous)
                             <div class="cell-subtitle">{{ $item->user->email }}</div>
                             @endif
+                        </td>
+                        <td>
+                            <div class="cell-date">{{ $item->created_at->format('d M Y') }}</div>
+                            <div class="cell-time">{{ $item->created_at->format('H:i') }} WIB</div>
                         </td>
                         <td>
                             <div class="cell-date">{{ $item->updated_at->format('d M Y') }}</div>

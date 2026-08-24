@@ -799,7 +799,7 @@
 
                     <th>Tujuan Saluran</th>
 
-                    <th>Tanggal</th>
+                    <th>Dibuat Pada</th>
 
                     <th>Solusi</th>
 
@@ -825,7 +825,7 @@
 
                     <td>{{ $item->unit_tujuan ?? 'Belum disalurkan' }}</td>
 
-                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
+                    <td style="white-space: nowrap;">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y H:i') }} WIB</td>
 
                     <td>
 

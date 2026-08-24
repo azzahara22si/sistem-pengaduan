@@ -233,6 +233,85 @@
         color: #fff;
     }
 
+    .status-history {
+        margin-top: 20px;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #f8fafc;
+    }
+
+    .status-history h3 {
+        margin-bottom: 16px;
+        color: #0d2d6e;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .status-timeline {
+        display: grid;
+        gap: 0;
+    }
+
+    .status-timeline-item {
+        position: relative;
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 12px;
+        min-height: 70px;
+    }
+
+    .status-timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        top: 28px;
+        bottom: 0;
+        left: 13px;
+        width: 2px;
+        background: #dbe3ef;
+    }
+
+    .status-timeline-dot {
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        font-size: 12px;
+    }
+
+    .status-timeline-item.status-diajukan .status-timeline-dot { background: #fef3c7; color: #92400e; }
+    .status-timeline-item.status-proses .status-timeline-dot { background: #ffedd5; color: #c2410c; }
+    .status-timeline-item.status-selesai .status-timeline-dot { background: #dcfce7; color: #166534; }
+
+    .status-timeline-content {
+        padding: 4px 12px 18px 0;
+    }
+
+    .status-timeline-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+    }
+
+    .status-timeline-heading strong {
+        color: #0d428e;
+        font-size: 13px;
+    }
+
+    .status-timeline-heading time,
+    .status-timeline-handler {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .status-timeline-handler {
+        margin-top: 4px;
+    }
+
     @media (max-width: 992px) {
         .detail-container {
             grid-template-columns: 1fr;
@@ -385,6 +464,30 @@
                 <p>{{ $pengaduan->getReporterName() }}{{ !$pengaduan->is_anonymous ? ' (' . ucfirst($pengaduan->user->role) . ')' : '' }}</p>
             </div>
         </div>
+
+        @if($pengaduan->statusHistory->isNotEmpty())
+            <div class="status-history">
+                <h3>Riwayat Status Pengaduan</h3>
+                <div class="status-timeline">
+                    @foreach($pengaduan->statusHistory as $riwayat)
+                        <div class="status-timeline-item status-{{ $riwayat->status }}">
+                            <span class="status-timeline-dot">
+                                <i class="fa-solid {{ $riwayat->status === 'diajukan' ? 'fa-file-circle-plus' : ($riwayat->status === 'proses' ? 'fa-spinner' : 'fa-check') }}"></i>
+                            </span>
+                            <div class="status-timeline-content">
+                                <div class="status-timeline-heading">
+                                    <strong>{{ ucfirst($riwayat->status) }}</strong>
+                                    <time datetime="{{ $riwayat->created_at->toIso8601String() }}">{{ $riwayat->created_at->format('d F Y, H:i') }} WIB</time>
+                                </div>
+                                <div class="status-timeline-handler">
+                                    {{ $riwayat->user ? 'Ditangani oleh: ' . $riwayat->user->name : 'Dibuat oleh: ' . $pengaduan->getReporterName() }}
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         @if($pengaduan->penyaluranHistory->isNotEmpty())
             <div class="history-card" style="margin-top: 20px; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; background: #f8fafc;">

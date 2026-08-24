@@ -19,6 +19,7 @@
     <div>
         <h2 style="font-size: 24px; font-weight: 700; color: #0d2d6e; margin-bottom: 5px;">Rekapitulasi Pengaduan</h2>
         <p style="color: #64748b; font-size: 14px;">Ringkasan kinerja penanganan pengaduan untuk {{ $labelPeriode }}.</p>
+        <p style="color: #94a3b8; font-size: 12px; margin-top: 5px;">Laporan dibuat pada {{ now()->format('d/m/Y H:i') }} WIB.</p>
     </div>
     <div style="display: flex; gap: 10px;">
         <button onclick="window.print()" style="padding: 10px 20px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; color: #64748b; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">

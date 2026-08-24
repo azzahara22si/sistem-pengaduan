@@ -5,6 +5,7 @@
             <th>Nama Unit</th>
             <th>Email Unit</th>
             <th>Deskripsi</th>
+            <th>Dibuat Pada</th>
         </tr>
     </thead>
     <tbody>
@@ -14,6 +15,7 @@
             <td>{{ $unit->nama_unit }}</td>
             <td>{{ $unit->email_unit }}</td>
             <td>{{ strip_tags($unit->deskripsi_unit) }}</td>
+            <td>{{ $unit->created_at->format('d/m/Y H:i') }} WIB</td>
         </tr>
         @endforeach
     </tbody>

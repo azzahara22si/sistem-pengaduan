@@ -133,7 +133,7 @@
                     </div>
                     <div>
                         <div class="activity-title">{{ $p->judul }}</div>
-                        <div class="activity-meta">{{ $p->created_at->diffForHumans() }}</div>
+                        <div class="activity-meta">Dibuat {{ $p->created_at->format('d/m/Y H:i') }} WIB</div>
                     </div>
                 </div>
                 <a href="{{ route('pengaduan.show', $p->id) }}" class="activity-btn">Detail <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i></a>

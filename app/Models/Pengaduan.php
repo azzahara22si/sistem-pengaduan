@@ -46,6 +46,11 @@ class Pengaduan extends Model
         return $this->hasMany(PenyaluranPengaduan::class)->orderBy('created_at', 'desc');
     }
 
+    public function statusHistory()
+    {
+        return $this->hasMany(PengaduanStatusHistory::class)->orderBy('created_at');
+    }
+
     // Relasi ke tanggapan (1 pengaduan = banyak tanggapan)
     public function tanggapan()
     {

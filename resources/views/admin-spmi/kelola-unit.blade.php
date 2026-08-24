@@ -294,9 +294,11 @@
                 <th>Unit</th>
                 <th>Email</th>
                 <th>Deskripsi</th>
+                <th>Dibuat Pada</th>
                 <th style="text-align: center;">Aksi</th>
             </tr>
         </thead>
+                <td style="white-space: nowrap;">{{ $unit->created_at->format('d/m/Y H:i') }} WIB</td>
         <tbody>
             @forelse($units as $unit)
             <tr>

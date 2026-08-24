@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengaduan;
+use App\Models\PengaduanStatusHistory;
 use App\Models\PenyaluranPengaduan;
 use App\Models\UnitLayanan;
 use App\Models\User;
@@ -16,6 +17,35 @@ use Illuminate\Validation\Rule;
 
 class PengaduanController extends Controller
 {
+    private function calculateWorkingHours($start, $end): float
+    {
+        if ($end->lte($start)) {
+            return 0;
+        }
+
+        $workingMinutes = 0;
+        $currentDay = $start->copy()->startOfDay();
+
+        while ($currentDay->lte($end)) {
+            if ($currentDay->isWeekday()) {
+                $workStart = $currentDay->copy()->setTime(7, 0);
+                $workEnd = $currentDay->isFriday()
+                    ? $currentDay->copy()->setTime(16, 30)
+                    : $currentDay->copy()->setTime(16, 0);
+                $intervalStart = $start->greaterThan($workStart) ? $start : $workStart;
+                $intervalEnd = $end->lessThan($workEnd) ? $end : $workEnd;
+
+                if ($intervalEnd->gt($intervalStart)) {
+                    $workingMinutes += $intervalStart->diffInMinutes($intervalEnd);
+                }
+            }
+
+            $currentDay->addDay();
+        }
+
+        return $workingMinutes / 60;
+    }
+
     private function ensureAdminSpmi(): void
     {
         abort_unless(Auth::user()?->role === 'admin_spmi', 403);
@@ -83,6 +113,8 @@ class PengaduanController extends Controller
             'status' => ['nullable', Rule::in(['diajukan', 'proses', 'selesai'])],
             'date' => ['nullable', 'date_format:Y-m-d'],
             'tanggal' => ['nullable', 'date_format:Y-m-d'],
+            'date_from' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:date_to'],
+            'date_to' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:date_from'],
             'search' => ['nullable', 'string', 'max:100'],
         ]);
 
@@ -120,6 +152,12 @@ class PengaduanController extends Controller
         $selectedDate = $validated['date'] ?? $validated['tanggal'] ?? null;
         if (!empty($selectedDate)) {
             $query->whereDate('created_at', $selectedDate);
+        }
+        if (!empty($validated['date_from'])) {
+            $query->whereDate('created_at', '>=', $validated['date_from']);
+        }
+        if (!empty($validated['date_to'])) {
+            $query->whereDate('created_at', '<=', $validated['date_to']);
         }
 
         if (!empty($validated['search'])) {
@@ -206,6 +244,8 @@ class PengaduanController extends Controller
             'unit' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', Rule::in(['diajukan', 'proses', 'selesai'])],
             'date' => ['nullable', 'date_format:Y-m-d'],
+            'date_from' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:date_to'],
+            'date_to' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:date_from'],
             'search' => ['nullable', 'string', 'max:100'],
         ]);
 
@@ -219,6 +259,12 @@ class PengaduanController extends Controller
         }
         if (!empty($validated['date'])) {
             $query->whereDate('created_at', $validated['date']);
+        }
+        if (!empty($validated['date_from'])) {
+            $query->whereDate('created_at', '>=', $validated['date_from']);
+        }
+        if (!empty($validated['date_to'])) {
+            $query->whereDate('created_at', '<=', $validated['date_to']);
         }
         if (!empty($validated['search'])) {
             $query->where('judul', 'LIKE', '%' . $validated['search'] . '%');
@@ -259,7 +305,7 @@ class PengaduanController extends Controller
     {
         $this->ensureAdminSpmi();
 
-        $params = $request->only(['unit', 'status', 'date', 'search', 'klasifikasi', 'tanggal']);
+        $params = $request->only(['unit', 'status', 'date', 'date_from', 'date_to', 'search', 'klasifikasi', 'tanggal']);
 
         $query = Pengaduan::with('user');
 
@@ -275,6 +321,12 @@ class PengaduanController extends Controller
         $date = $params['date'] ?? $params['tanggal'] ?? null;
         if (!empty($date)) {
             $query->whereDate('created_at', $date);
+        }
+        if (!empty($params['date_from'])) {
+            $query->whereDate('created_at', '>=', $params['date_from']);
+        }
+        if (!empty($params['date_to'])) {
+            $query->whereDate('created_at', '<=', $params['date_to']);
         }
         if (!empty($params['search'])) {
             $query->where('judul', 'LIKE', '%' . $params['search'] . '%');
@@ -327,11 +379,16 @@ class PengaduanController extends Controller
             'is_anonymous' => $validated['is_anonymous'] ?? false,
         ]);
 
+        PengaduanStatusHistory::create([
+            'pengaduan_id' => $pengaduan->id,
+            'status' => 'diajukan',
+        ]);
+
         // Notify admin SPMI about new pengaduan
         try {
             $adminSpmiUsers = User::where('role', 'admin_spmi')->whereNotNull('email')->get();
             foreach ($adminSpmiUsers as $adminSpmi) {
-                Mail::to($adminSpmi->email)->send(new PengaduanNotification($pengaduan, 'Pengaduan Baru Masuk', 'admin_spmi'));
+                Mail::to($adminSpmi->email)->send(new PengaduanNotification($pengaduan, null, 'admin_spmi'));
             }
         } catch (\Exception $e) {
             report($e);
@@ -344,6 +401,8 @@ class PengaduanController extends Controller
     public function show(Pengaduan $pengaduan)
     {
         $this->ensureCanView($pengaduan);
+
+        $pengaduan->load(['statusHistory.user', 'penyaluranHistory.user', 'tanggapan.user']);
 
         return view('pengaduan.show', compact('pengaduan'));
     }
@@ -434,7 +493,16 @@ class PengaduanController extends Controller
         $pengaduan = Pengaduan::findOrFail($id);
         $this->ensureCanHandle($pengaduan);
 
+        $statusBerubah = $pengaduan->status !== $validated['status'];
         $pengaduan->update(['status' => $validated['status']]);
+
+        if ($statusBerubah) {
+            PengaduanStatusHistory::create([
+                'pengaduan_id' => $pengaduan->id,
+                'status' => $validated['status'],
+                'user_id' => Auth::id(),
+            ]);
+        }
 
         try {
             $recipient = $pengaduan->user?->email;
@@ -546,12 +614,12 @@ class PengaduanController extends Controller
             ->map(function ($pengaduan) {
                 $waktuSelesai = $pengaduan->tanggapan->max('created_at') ?? $pengaduan->updated_at;
 
-                return $pengaduan->created_at->diffInHours($waktuSelesai);
+                return $this->calculateWorkingHours($pengaduan->created_at, $waktuSelesai);
             })
             ->filter(fn ($jam) => $jam >= 0);
 
         $rataRataPenyelesaianJam = round($durasiPenyelesaian->avg() ?? 0, 1);
-        $selesaiSesuaiSla = $durasiPenyelesaian->filter(fn ($jam) => $jam <= 168)->count();
+        $selesaiSesuaiSla = $durasiPenyelesaian->filter(fn ($jam) => $jam <= 45)->count();
         $slaPersentase = $selesaiPengaduans->isNotEmpty()
             ? round(($selesaiSesuaiSla / $selesaiPengaduans->count()) * 100, 1)
             : 0;

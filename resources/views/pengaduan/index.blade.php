@@ -30,10 +30,10 @@
         display: flex;
         align-items: center;
         gap: clamp(8px, 2vw, 12px);
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-right: 36px;
-        -webkit-overflow-scrolling: touch;
+        flex-wrap: wrap;
+        overflow: visible;
+        padding-right: 0;
+        row-gap: 14px;
     }
 
     .filter-select, .filter-date {
@@ -53,7 +53,8 @@
     .date-filter {
         position: relative;
         height: clamp(32px, 8vh, 38px);
-        min-width: 150px;
+        width: 292px;
+        max-width: 100%;
         border: 1px solid #e2e8f0;
         border-radius: clamp(6px, 1vw, 10px);
         padding: 0 clamp(10px, 2vw, 12px);
@@ -63,6 +64,30 @@
         color: #64748b;
         background: #fff;
         transition: border-color 0.3s;
+    }
+
+    .date-filter-group {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        max-width: 100%;
+    }
+
+    .date-range-picker {
+        position: relative;
+    }
+
+    .date-range-picker input[type="text"] {
+        cursor: text;
+        padding-right: 10px;
+    }
+
+    .filter-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+        margin-left: auto;
     }
 
     .date-filter:focus-within {
@@ -85,12 +110,85 @@
         font-size: clamp(11px, 2vw, 13px);
         color: #0d2d6e;
         outline: none;
+        cursor: text;
+    }
+
+    .date-range-calendar {
+        position: absolute;
+        z-index: 20;
+        top: calc(100% + 8px);
+        left: 0;
+        width: 292px;
+        padding: 14px;
+        background: #fff;
+        border: 1px solid #dbe3ef;
+        border-radius: 12px;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, .16);
+    }
+
+    .date-calendar-head,
+    .date-calendar-week,
+    .date-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+    }
+
+    .date-calendar-head {
+        grid-template-columns: 32px 1fr 32px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .date-calendar-head button,
+    .date-calendar-day {
+        border: 0;
+        background: transparent;
+        color: #334155;
         cursor: pointer;
     }
 
-    .date-filter input::-webkit-calendar-picker-indicator {
-        cursor: pointer;
-        opacity: 0.8;
+    .date-calendar-head button {
+        height: 30px;
+        border-radius: 6px;
+        font-size: 18px;
+    }
+
+    .date-calendar-head button:hover { background: #eff6ff; }
+
+    .date-calendar-month {
+        text-align: center;
+        font-size: 13px;
+        font-weight: 700;
+        color: #0d2d6e;
+    }
+
+    .date-calendar-week {
+        margin-bottom: 5px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .date-calendar-day {
+        height: 30px;
+        border-radius: 7px;
+        font-size: 12px;
+    }
+
+    .date-calendar-day:hover { background: #dbeafe; }
+    .date-calendar-day.is-outside { color: #cbd5e1; }
+    .date-calendar-day.is-selected { background: #0d428e; color: #fff; font-weight: 700; }
+    .date-calendar-day.is-between { background: #eff6ff; color: #0d428e; border-radius: 0; }
+
+    .date-calendar-hint {
+        margin: 10px 0 0;
+        padding-top: 9px;
+        border-top: 1px solid #eef2f7;
+        color: #64748b;
+        font-size: 11px;
+        text-align: center;
     }
 
     /* Make search a normal fixed-width input on desktop, full-width on small screens */
@@ -103,9 +201,10 @@
         height: clamp(32px, 8vh, 38px);
         background: #fff;
         padding: 0 8px;
-        flex: 0 0 auto;
+        flex: 1 1 220px;
         width: 260px;
-        max-width: 32%;
+        max-width: 300px;
+        min-width: 210px;
     }
 
     .search-wrap input {
@@ -485,6 +584,16 @@
             border-radius: 10px;
         }
 
+        .date-filter-group,
+        .date-range-fields {
+            width: 100%;
+        }
+
+        .date-range-picker,
+        .date-range-calendar {
+            width: 100%;
+        }
+
         .search-wrap input {
             width: 100%;
             max-width: none;
@@ -690,17 +799,38 @@
                 <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
 
-            <div class="date-filter">
-                <i class="fa-solid fa-calendar-days"></i>
-                <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()" aria-label="Filter tanggal" placeholder="Pilih tanggal">
+            <div class="date-filter-group">
+                <div class="date-range-picker" id="date_range_picker">
+                    <div class="date-filter">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <input id="date_range_display" type="text" value="{{ request('date_from') && request('date_to') ? (request('date_from') === request('date_to') ? \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') : \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') . ' - ' . \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')) : '' }}" placeholder="Pilih rentang tanggal" title="Pilih rentang tanggal" autocomplete="off" aria-label="Pilih rentang tanggal">
+                    </div>
+                    <input id="date_from" type="hidden" name="date_from" value="{{ request('date_from') }}">
+                    <input id="date_to" type="hidden" name="date_to" value="{{ request('date_to') }}">
+                    <div class="date-range-calendar" id="date_range_calendar" hidden>
+                        <div class="date-calendar-head">
+                            <button type="button" id="date_prev_month" aria-label="Bulan sebelumnya">&lsaquo;</button>
+                            <div class="date-calendar-month" id="date_calendar_month"></div>
+                            <button type="button" id="date_next_month" aria-label="Bulan berikutnya">&rsaquo;</button>
+                        </div>
+                        <div class="date-calendar-week"><span>Mg</span><span>Sn</span><span>Sl</span><span>Rb</span><span>Km</span><span>Jm</span><span>Sb</span></div>
+                        <div class="date-calendar-grid" id="date_calendar_grid"></div>
+                        <p class="date-calendar-hint" id="date_calendar_hint">Pilih tanggal awal</p>
+                    </div>
+                </div>
             </div>
 
             <div class="search-wrap">
                 <input type="text" name="search" placeholder="Cari pengaduan..." value="{{ request('search') }}">
                 <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
+            @if(request()->anyFilled(['unit', 'status', 'date', 'date_from', 'date_to', 'search']))
+                <a href="{{ route('pengaduan.index') }}" class="reset-filter">
+                    <i class="fa-solid fa-xmark"></i> Atur Ulang
+                </a>
+            @endif
             @if(Auth::user()->role === 'admin_spmi')
-            <div class="filter-actions" style="display:flex; gap:8px; align-items:center; margin-left:auto;">
+            <div class="filter-actions">
                 <a href="{{ route('pengaduan.export', request()->query()) }}" class="btn-action-label btn-export" title="Export Excel">
                     <i class="fa-solid fa-file-excel"></i>
                     <span class="btn-label">Export Excel</span>
@@ -710,11 +840,6 @@
                     <span class="btn-label">Cetak Laporan</span>
                 </a>
             </div>
-            @endif
-            @if(request()->anyFilled(['unit', 'status', 'date', 'search']))
-                <a href="{{ route('pengaduan.index') }}" class="reset-filter">
-                    <i class="fa-solid fa-xmark"></i> Atur Ulang
-                </a>
             @endif
             
         </form>
@@ -734,7 +859,7 @@
                         <th>Urgensi</th>
                         <th>Unit Tujuan</th>
                         <th>Unit Penanganan</th>
-                        <th>Tanggal</th>
+                        <th>Dibuat Pada</th>
                         <th>Status</th>
                         <th style="text-align: center;">Aksi</th>
                     </tr>
@@ -781,7 +906,7 @@
                                 <span class="unit-belum-ditetapkan">Belum ditetapkan</span>
                             @endif
                         </td>
-                        <td data-label="Tanggal" style="font-size: 12px;">{{ $p->created_at->format('d/m/Y') }}</td>
+                        <td data-label="Dibuat Pada" style="font-size: 12px; white-space: nowrap;">{{ $p->created_at->format('d/m/Y H:i') }} WIB</td>
                         <td data-label="Status">
                             <span class="status-badge status-{{ strtolower($p->status) }}">
                                 {{ $p->status }}
@@ -1038,6 +1163,157 @@
             }
             return true;
         }
+
+        const dateRangePicker = document.getElementById('date_range_picker');
+        const dateRangeDisplay = document.getElementById('date_range_display');
+        const dateFromInput = document.getElementById('date_from');
+        const dateToInput = document.getElementById('date_to');
+        const dateRangeCalendar = document.getElementById('date_range_calendar');
+        const dateCalendarMonth = document.getElementById('date_calendar_month');
+        const dateCalendarGrid = document.getElementById('date_calendar_grid');
+        const dateCalendarHint = document.getElementById('date_calendar_hint');
+        let calendarMonth = new Date();
+        let selectedStart = dateFromInput.value ? new Date(`${dateFromInput.value}T00:00:00`) : null;
+        let selectedEnd = dateToInput.value ? new Date(`${dateToInput.value}T00:00:00`) : null;
+
+        if (selectedStart) {
+            calendarMonth = new Date(selectedStart.getFullYear(), selectedStart.getMonth(), 1);
+        }
+
+        function formatDisplayDate(dateValue) {
+            return `${String(dateValue.getDate()).padStart(2, '0')}/${String(dateValue.getMonth() + 1).padStart(2, '0')}/${dateValue.getFullYear()}`;
+        }
+
+        function formatInputDate(dateValue) {
+            return `${dateValue.getFullYear()}-${String(dateValue.getMonth() + 1).padStart(2, '0')}-${String(dateValue.getDate()).padStart(2, '0')}`;
+        }
+
+        function updateDateRangeValue() {
+            dateFromInput.value = selectedStart ? formatInputDate(selectedStart) : '';
+            dateToInput.value = selectedEnd ? formatInputDate(selectedEnd) : '';
+            dateRangeDisplay.value = selectedStart && selectedEnd
+                ? (formatInputDate(selectedStart) === formatInputDate(selectedEnd)
+                    ? formatDisplayDate(selectedStart)
+                    : `${formatDisplayDate(selectedStart)} - ${formatDisplayDate(selectedEnd)}`)
+                : selectedStart ? formatDisplayDate(selectedStart) : '';
+            dateCalendarHint.textContent = selectedStart && !selectedEnd ? 'Pilih tanggal akhir' : 'Pilih tanggal awal';
+        }
+
+        function renderDateCalendar() {
+            const monthName = calendarMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            dateCalendarMonth.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+            dateCalendarGrid.innerHTML = '';
+
+            const firstDay = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+            const daysInMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+            const previousMonthDays = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 0).getDate();
+
+            for (let cellIndex = 0; cellIndex < 42; cellIndex += 1) {
+                const dayOffset = cellIndex - firstDay.getDay() + 1;
+                const calendarDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), dayOffset);
+                const dayButton = document.createElement('button');
+                dayButton.type = 'button';
+                dayButton.className = 'date-calendar-day';
+                dayButton.textContent = calendarDate.getDate();
+
+                if (dayOffset < 1 || dayOffset > daysInMonth) {
+                    dayButton.classList.add('is-outside');
+                }
+                if (selectedStart && formatInputDate(calendarDate) === formatInputDate(selectedStart)) {
+                    dayButton.classList.add('is-selected');
+                }
+                if (selectedEnd && formatInputDate(calendarDate) === formatInputDate(selectedEnd)) {
+                    dayButton.classList.add('is-selected');
+                }
+                if (selectedStart && selectedEnd && calendarDate > selectedStart && calendarDate < selectedEnd) {
+                    dayButton.classList.add('is-between');
+                }
+
+                dayButton.addEventListener('click', () => {
+                    if (dayOffset < 1 || dayOffset > daysInMonth) return;
+                    if (!selectedStart || selectedEnd) {
+                        selectedStart = calendarDate;
+                        selectedEnd = null;
+                    } else if (calendarDate < selectedStart) {
+                        selectedEnd = selectedStart;
+                        selectedStart = calendarDate;
+                    } else {
+                        selectedEnd = calendarDate;
+                    }
+                    updateDateRangeValue();
+                    renderDateCalendar();
+                    if (selectedStart && selectedEnd) dateRangeCalendar.hidden = true;
+                });
+                dateCalendarGrid.appendChild(dayButton);
+            }
+        }
+
+        function parseTypedDateRange() {
+            const singleMatch = dateRangeDisplay.value.match(/^\s*(\d{1,2})\/(\d{1,2})\/(\d{4})\s*$/);
+            if (singleMatch) {
+                const singleDate = new Date(Number(singleMatch[3]), Number(singleMatch[2]) - 1, Number(singleMatch[1]));
+                const isValidDate = !Number.isNaN(singleDate.getTime())
+                    && singleDate.getDate() === Number(singleMatch[1])
+                    && singleDate.getMonth() === Number(singleMatch[2]) - 1
+                    && singleDate.getFullYear() === Number(singleMatch[3]);
+                if (!isValidDate) return false;
+
+                selectedStart = singleDate;
+                selectedEnd = singleDate;
+                updateDateRangeValue();
+                return true;
+            }
+
+            const matches = dateRangeDisplay.value.match(/^\s*(\d{1,2})\/(\d{1,2})\/(\d{4})\s*-\s*(\d{1,2})\/(\d{1,2})\/(\d{4})\s*$/);
+            if (!matches) return false;
+
+            const startDate = new Date(Number(matches[3]), Number(matches[2]) - 1, Number(matches[1]));
+            const endDate = new Date(Number(matches[6]), Number(matches[5]) - 1, Number(matches[4]));
+            const validDates = [startDate, endDate].every((dateValue) => !Number.isNaN(dateValue.getTime()))
+                && startDate.getDate() === Number(matches[1])
+                && endDate.getDate() === Number(matches[4]);
+            if (!validDates || endDate < startDate) return false;
+
+            selectedStart = startDate;
+            selectedEnd = endDate;
+            updateDateRangeValue();
+            return true;
+        }
+
+        dateRangeDisplay.closest('form').addEventListener('submit', (event) => {
+            if (!dateRangeDisplay.value.trim()) return;
+            if (!parseTypedDateRange()) {
+                event.preventDefault();
+                alert('Gunakan format tanggal: dd/mm/yyyy atau dd/mm/yyyy - dd/mm/yyyy');
+                return;
+            }
+            if (selectedStart && !selectedEnd) {
+                selectedEnd = selectedStart;
+                updateDateRangeValue();
+            }
+        });
+
+        dateRangeDisplay.addEventListener('focus', () => {
+            dateRangeCalendar.hidden = false;
+            renderDateCalendar();
+        });
+        dateRangeDisplay.addEventListener('input', () => {
+            dateFromInput.value = '';
+            dateToInput.value = '';
+        });
+        document.getElementById('date_prev_month').addEventListener('click', () => {
+            calendarMonth.setMonth(calendarMonth.getMonth() - 1);
+            renderDateCalendar();
+        });
+        document.getElementById('date_next_month').addEventListener('click', () => {
+            calendarMonth.setMonth(calendarMonth.getMonth() + 1);
+            renderDateCalendar();
+        });
+        document.addEventListener('click', (event) => {
+            if (!dateRangePicker.contains(event.target)) dateRangeCalendar.hidden = true;
+        });
+        renderDateCalendar();
+
     </script>
     <style>
         @keyframes slideUp {

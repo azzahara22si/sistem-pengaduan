@@ -32,15 +32,13 @@ class PengaduanNotification extends Mailable
     {
         $judul = $this->pengaduan->judul ?? 'Tanpa Judul';
 
-        $subject = match ($this->audience) {
-            'mahasiswa' => 'Update Pengaduan Anda: ' . $judul,
-            'admin_unit' => 'Pengaduan Diteruskan ke Unit Anda: ' . $judul,
-            default => 'Pengaduan Baru Masuk: ' . $judul,
-        };
-
-        if ($this->note) {
-            $subject = $this->note . ' - ' . $subject;
-        }
+        $subject = $this->note
+            ? $this->note . ': ' . $judul
+            : match ($this->audience) {
+                'mahasiswa' => 'Update Pengaduan Anda: ' . $judul,
+                'admin_unit' => 'Pengaduan Diteruskan ke Unit Anda: ' . $judul,
+                default => 'Pengaduan Baru Masuk: ' . $judul,
+            };
 
         return $this->subject($subject)
             ->view('emails.pengaduan-notification')

@@ -15,6 +15,7 @@
                     <th style="border:1px solid #ddd; padding:8px;">Nama Unit</th>
                     <th style="border:1px solid #ddd; padding:8px;">Email Unit</th>
                     <th style="border:1px solid #ddd; padding:8px;">Deskripsi</th>
+                    <th style="border:1px solid #ddd; padding:8px;">Dibuat Pada</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +25,7 @@
                     <td style="border:1px solid #ddd; padding:8px;">{{ $unit->nama_unit }}</td>
                     <td style="border:1px solid #ddd; padding:8px;">{{ $unit->email_unit }}</td>
                     <td style="border:1px solid #ddd; padding:8px;">{!! nl2br(e($unit->deskripsi_unit)) !!}</td>
+                    <td style="border:1px solid #ddd; padding:8px; white-space:nowrap;">{{ $unit->created_at->format('d/m/Y H:i') }} WIB</td>
                 </tr>
                 @endforeach
             </tbody>
